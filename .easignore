@@ -44,8 +44,3 @@ app-example
 *.aab
 *.apk
 *.ipa
-
-google-services.json
-GoogleService-Info.plist
-key.pem
-key.json

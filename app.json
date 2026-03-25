@@ -2,7 +2,7 @@
   "expo": {
     "name": "Goamgo",
     "slug": "foamgo",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "foamgo",
@@ -64,6 +64,7 @@
     "runtimeVersion": {
       "policy": "appVersion"
     },
+     "owner": "2mm",
     "updates": {
       "url": "https://u.expo.dev/d2fbf022-a18d-44fb-a49e-f04088c4517d",
       "enableBsdiffPatchSupport": true

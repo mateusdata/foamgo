@@ -79,3 +79,8 @@ npx expo export -p web
 eas deploy --prod
 ```
 
+
+# Base65 for envs
+gzip -c GoogleService-Info.plist | base64 -w 0 > ios_gzip_base64.txt
+
+gzip -c google-services.json | base64 -w 0 > android_gzip_base64.txt
