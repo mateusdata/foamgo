@@ -1,181 +1,186 @@
-import { Image } from 'expo-image';
-import { SymbolView } from 'expo-symbols';
-import React from 'react';
-import { Platform, Pressable, ScrollView, StyleSheet } from 'react-native';
+import dayjs from 'dayjs';
+import 'dayjs/locale/pt-br';
+import React, { useMemo, useState } from 'react';
+import {
+  Alert,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  useColorScheme,
+  View
+} from 'react-native';
+import {
+  AgendaList,
+  CalendarProvider,
+  ExpandableCalendar,
+  LocaleConfig
+} from 'react-native-calendars';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { ExternalLink } from '@/components/external-link';
+// Seus componentes base
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { Collapsible } from '@/components/ui/collapsible';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
-import { useTheme } from '@/hooks/use-theme';
+import { Spacing } from '@/constants/theme';
 
-export default function TabTwoScreen() {
-  const safeAreaInsets = useSafeAreaInsets();
-  const insets = {
-    ...safeAreaInsets,
-    bottom: safeAreaInsets.bottom + BottomTabInset + Spacing.three,
+// Configuração de Idioma
+LocaleConfig.locales['pt-br'] = {
+  monthNames: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
+  monthNamesShort: ['Jan.', 'Fev.', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul.', 'Ago', 'Set.', 'Out.', 'Nov.', 'Dez.'],
+  dayNames: ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'],
+  dayNamesShort: ['Dom.', 'Seg.', 'Ter.', 'Qua.', 'Qui.', 'Sex.', 'Sáb.'],
+  today: "Hoje"
+};
+LocaleConfig.defaultLocale = 'pt-br';
+dayjs.locale('pt-br');
+
+// Mock de dados para teste (Já que você não quer importar de fora)
+const MOCK_BOOKINGS = [
+  { id: '1', scheduledAt: dayjs().set('hour', 10).toISOString(), status: 'CONFIRMED', service: { name: 'Lavagem Completa' }, user: { name: 'João Silva' } },
+  { id: '2', scheduledAt: dayjs().set('hour', 14).toISOString(), status: 'COMPLETED', service: { name: 'Ducha Rápida' }, user: { name: 'Maria Souza' } },
+  { id: '3', scheduledAt: dayjs().add(1, 'day').set('hour', 9).toISOString(), status: 'CANCELLED', service: { name: 'Polimento' }, user: { name: 'Carlos Alberto' } },
+];
+
+export default function ExploreCalendarScreen() {
+  const insets = useSafeAreaInsets();
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
+  const [selectedStatus, setSelectedStatus] = useState('ALL');
+
+  const handleItemPress = (id: string) => {
+    Alert.alert('Agendamento', `ID: ${id}\nEm desenvolvimento`);
   };
-  const theme = useTheme();
 
-  const contentPlatformStyle = Platform.select({
-    android: {
-      paddingTop: insets.top,
-      paddingLeft: insets.left,
-      paddingRight: insets.right,
-      paddingBottom: insets.bottom,
-    },
-    web: {
-      paddingTop: Spacing.six,
-      paddingBottom: Spacing.four,
-    },
-  });
+  // Processamento dos itens para o formato da Agenda
+  const agendaItems = useMemo(() => {
+    const groups: any = {};
+    MOCK_BOOKINGS.forEach(booking => {
+      const date = dayjs(booking.scheduledAt).format('YYYY-MM-DD');
+      if (!groups[date]) groups[date] = [];
+      groups[date].push(booking);
+    });
+    return Object.keys(groups).map(date => ({ title: date, data: groups[date] }));
+  }, []);
+
+  const theme = {
+    calendarBackground: isDark ? '#1C1C1E' : '#FFFFFF',
+    dayTextColor: isDark ? '#FFFFFF' : '#2d4150',
+    monthTextColor: isDark ? '#FFFFFF' : '#2d4150',
+    selectedDayBackgroundColor: '#007AFF',
+    todayTextColor: '#007AFF',
+    arrowColor: '#007AFF',
+    dotColor: '#007AFF',
+    agendaKnobColor: isDark ? '#3A3A3C' : '#E5E5EA',
+  };
+
+  const renderItem = ({ item }: any) => {
+    const time = dayjs(item.scheduledAt).format('HH:mm');
+    const statusColor = item.status === 'CONFIRMED' ? '#66BB6A' : item.status === 'COMPLETED' ? '#42A5F5' : '#EF5350';
+
+    return (
+      <TouchableOpacity 
+        style={[styles.itemCard, { backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF' }]}
+        onPress={() => handleItemPress(item.id)}
+      >
+        <View style={styles.itemHeader}>
+          <ThemedText type="smallBold">{time}</ThemedText>
+          <View style={[styles.statusBadge, { backgroundColor: statusColor }]} />
+        </View>
+        <ThemedText type="defaultSemiBold">{item.user.name}</ThemedText>
+        <ThemedText type="small" style={{ opacity: 0.6 }}>{item.service.name}</ThemedText>
+      </TouchableOpacity>
+    );
+  };
 
   return (
-    <ScrollView
-      style={[styles.scrollView, { backgroundColor: theme.background }]}
-      contentInset={insets}
-      contentContainerStyle={[styles.contentContainer, contentPlatformStyle]}>
-      <ThemedView style={styles.container}>
-        <ThemedView style={styles.titleContainer}>
-          <ThemedText type="subtitle">Explore</ThemedText>
-          <ThemedText style={styles.centerText} themeColor="textSecondary">
-            This starter app includes example{'\n'}code to help you get started.
-          </ThemedText>
-
-          <ExternalLink href="https://docs.expo.dev" asChild>
-            <Pressable style={({ pressed }) => pressed && styles.pressed}>
-              <ThemedView type="backgroundElement" style={styles.linkButton}>
-                <ThemedText type="link">Expo documentation</ThemedText>
-                <SymbolView
-                  tintColor={theme.text}
-                  name={{ ios: 'arrow.up.right.square', android: 'link', web: 'link' }}
-                  size={12}
-                />
-              </ThemedView>
-            </Pressable>
-          </ExternalLink>
-        </ThemedView>
-
-        <ThemedView style={styles.sectionsWrapper}>
-          <Collapsible title="File-based routing">
-            <ThemedText type="small">
-              This app has two screens: <ThemedText type="code">src/app/index.tsx</ThemedText> and{' '}
-              <ThemedText type="code">src/app/explore.tsx</ThemedText>
-            </ThemedText>
-            <ThemedText type="small">
-              The layout file in <ThemedText type="code">src/app/_layout.tsx</ThemedText> sets up
-              the tab navigator.
-            </ThemedText>
-            <ExternalLink href="https://docs.expo.dev/router/introduction">
-              <ThemedText type="linkPrimary">Learn more</ThemedText>
-            </ExternalLink>
-          </Collapsible>
-
-          <Collapsible title="Android, iOS, and web support">
-            <ThemedView type="backgroundElement" style={styles.collapsibleContent}>
-              <ThemedText type="small">
-                You can open this project on Android, iOS, and the web. To open the web version,
-                press <ThemedText type="smallBold">w</ThemedText> in the terminal running this
-                project.
-              </ThemedText>
-              <Image
-                source={require('@/assets/images/tutorial-web.png')}
-                style={styles.imageTutorial}
+    <ThemedView style={styles.container}>
+      <CalendarProvider date={dayjs().format('YYYY-MM-DD')}>
+        <AgendaList
+          sections={agendaItems}
+          renderItem={renderItem}
+          stickySectionHeadersEnabled={false}
+          ListHeaderComponent={() => (
+            <View style={{ paddingTop: insets.top + Spacing.two }}>
+              <View style={styles.filterBar}>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                  {['ALL', 'CONFIRMED', 'COMPLETED', 'CANCELLED'].map((s) => (
+                    <TouchableOpacity 
+                      key={s} 
+                      onPress={() => setSelectedStatus(s)}
+                      style={[styles.filterBtn, selectedStatus === s && styles.filterBtnActive]}
+                    >
+                      <ThemedText style={[styles.filterText, selectedStatus === s && { color: '#FFF' }]}>
+                        {s === 'ALL' ? 'Todos' : s}
+                      </ThemedText>
+                    </TouchableOpacity>
+                  ))}
+                </ScrollView>
+              </View>
+              <ExpandableCalendar 
+                theme={theme} 
+                firstDay={1}
+                hideKnob={false}
               />
-            </ThemedView>
-          </Collapsible>
-
-          <Collapsible title="Images">
-            <ThemedText type="small">
-              For static images, you can use the <ThemedText type="code">@2x</ThemedText> and{' '}
-              <ThemedText type="code">@3x</ThemedText> suffixes to provide files for different
-              screen densities.
-            </ThemedText>
-            <Image source={require('@/assets/images/react-logo.png')} style={styles.imageReact} />
-            <ExternalLink href="https://reactnative.dev/docs/images">
-              <ThemedText type="linkPrimary">Learn more</ThemedText>
-            </ExternalLink>
-          </Collapsible>
-
-          <Collapsible title="Light and dark mode components">
-            <ThemedText type="small">
-              This template has light and dark mode support. The{' '}
-              <ThemedText type="code">useColorScheme()</ThemedText> hook lets you inspect what the
-              user&apos;s current color scheme is, and so you can adjust UI colors accordingly.
-            </ThemedText>
-            <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
-              <ThemedText type="linkPrimary">Learn more</ThemedText>
-            </ExternalLink>
-          </Collapsible>
-
-          <Collapsible title="Animations">
-            <ThemedText type="small">
-              This template includes an example of an animated component. The{' '}
-              <ThemedText type="code">src/components/ui/collapsible.tsx</ThemedText> component uses
-              the powerful <ThemedText type="code">react-native-reanimated</ThemedText> library to
-              animate opening this hint.
-            </ThemedText>
-          </Collapsible>
-        </ThemedView>
-        {Platform.OS === 'web' && <WebBadge />}
-      </ThemedView>
-    </ScrollView>
+            </View>
+          )}
+          sectionStyle={[styles.sectionTitle, { color: isDark ? '#8E8E93' : '#3A3A3C' }]}
+        />
+      </CalendarProvider>
+    </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
-  scrollView: {
+  container: {
     flex: 1,
   },
-  contentContainer: {
+  filterBar: {
+    paddingHorizontal: 16,
+    paddingBottom: 12,
+  },
+  filterBtn: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    marginRight: 8,
+    backgroundColor: '#8E8E9322',
+  },
+  filterBtnActive: {
+    backgroundColor: '#007AFF',
+  },
+  filterText: {
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  itemCard: {
+    marginHorizontal: 16,
+    marginTop: 12,
+    padding: 16,
+    borderRadius: 12,
+    borderLeftWidth: 4,
+    borderLeftColor: '#007AFF',
+    ...Platform.select({
+      ios: { shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4 },
+      android: { elevation: 3 }
+    })
+  },
+  itemHeader: {
     flexDirection: 'row',
-    justifyContent: 'center',
-  },
-  container: {
-    maxWidth: MaxContentWidth,
-    flexGrow: 1,
-  },
-  titleContainer: {
-    gap: Spacing.three,
+    justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: Spacing.four,
-    paddingVertical: Spacing.six,
+    marginBottom: 4,
   },
-  centerText: {
-    textAlign: 'center',
+  statusBadge: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
   },
-  pressed: {
-    opacity: 0.7,
-  },
-  linkButton: {
-    flexDirection: 'row',
-    paddingHorizontal: Spacing.four,
-    paddingVertical: Spacing.two,
-    borderRadius: Spacing.five,
-    justifyContent: 'center',
-    gap: Spacing.one,
-    alignItems: 'center',
-  },
-  sectionsWrapper: {
-    gap: Spacing.five,
-    paddingHorizontal: Spacing.four,
-    paddingTop: Spacing.three,
-  },
-  collapsibleContent: {
-    alignItems: 'center',
-  },
-  imageTutorial: {
-    width: '100%',
-    aspectRatio: 296 / 171,
-    borderRadius: Spacing.three,
-    marginTop: Spacing.two,
-  },
-  imageReact: {
-    width: 100,
-    height: 100,
-    alignSelf: 'center',
-  },
+  sectionTitle: {
+    paddingHorizontal: 16,
+    paddingTop: 20,
+    paddingBottom: 8,
+    fontSize: 14,
+    fontWeight: 'bold',
+    textTransform: 'capitalize'
+  }
 });

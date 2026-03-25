@@ -1,98 +1,201 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import React from 'react';
+import {
+  Dimensions,
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  useColorScheme,
+  View
+} from 'react-native';
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+// Usei o Ionicons porque vi no seu código, mas se não quiser 
+// nenhuma lib, pode substituir por um caractere de texto como "•" ou ">"
+import { Ionicons } from '@expo/vector-icons';
 
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
-  return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
+const { width } = Dimensions.get('window');
+
+export default function PartnerHome() {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
+
+  // Cores dinâmicas para simular o seu ThemedView
+  const themeContainer = isDark ? '#000000' : '#F2F2F7';
+  const themeCard = isDark ? '#1C1C1E' : '#FFFFFF';
+  const themeText = isDark ? '#FFFFFF' : '#000000';
+  const themeSubText = '#8E8E93';
+
+  const ActionCard = ({ title, subtitle, icon }: any) => (
+    <TouchableOpacity
+      style={[styles.actionCard, { backgroundColor: themeCard }]}
+      activeOpacity={0.7}
+    >
+      <View style={[styles.actionIconWrapper, { backgroundColor: isDark ? '#2C2C2E' : '#F2F2F7' }]}>
+        <Ionicons name={icon} size={24} color="#007AFF" />
+      </View>
+      <View style={styles.actionContent}>
+        <Text style={[styles.actionTitle, { color: themeText }]}>{title}</Text>
+        <Text style={styles.actionSubtitle}>{subtitle}</Text>
+      </View>
+      <Ionicons name="chevron-forward" size={18} color="#C7C7CC" />
+    </TouchableOpacity>
   );
-}
 
-export default function HomeScreen() {
   return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
+    <SafeAreaView style={{ flex: 1, backgroundColor: themeContainer }}>
+      <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
+      <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 40 }}>
+        
+        {/* Header Simples */}
+        <View style={styles.header}>
+          <View>
+            <Text style={styles.greeting}>Olá, Mateus</Text>
+            <Text style={[styles.companyName, { color: themeText }]}>Foam GO Partner</Text>
+          </View>
+          <TouchableOpacity style={styles.notificationBtn}>
+             <Ionicons name="notifications-outline" size={24} color={themeText} />
+          </TouchableOpacity>
+        </View>
 
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
+        {/* Card de Estatísticas */}
+        <View style={[styles.mainStatsCard, { backgroundColor: themeCard }]}>
+          <View style={styles.statsRow}>
+            <View style={styles.statItem}>
+              <Text style={[styles.statNumber, { color: themeText }]}>12</Text>
+              <Text style={styles.statLabel}>Agendamentos Hoje</Text>
+            </View>
 
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
+            <View style={styles.divider} />
+
+            <View style={styles.statItem}>
+              <Text style={[styles.statNumber, { color: themeText }]}>R$ 1.250,00</Text>
+              <Text style={styles.statLabel}>Receita do Mês</Text>
+            </View>
+          </View>
+        </View>
+
+        {/* Seção de Acesso Rápido */}
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: themeText }]}>Acesso Rápido</Text>
+          
+          <ActionCard 
+            title="Gerenciar Times" 
+            subtitle="Equipes e colaboradores" 
+            icon="people-outline" 
           />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
+          <ActionCard 
+            title="Serviços" 
+            subtitle="Catálogo e preços" 
+            icon="construct-outline" 
           />
-        </ThemedView>
+          <ActionCard 
+            title="Lava Jato" 
+            subtitle="Configurações do negócio" 
+            icon="business-outline" 
+          />
+          <ActionCard 
+            title="Disponibilidade" 
+            subtitle="Horários de atendimento" 
+            icon="time-outline" 
+          />
+        </View>
 
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    paddingHorizontal: 20,
+  },
+  header: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 20,
+    marginBottom: 25,
   },
-  safeArea: {
+  greeting: {
+    fontSize: 14,
+    color: '#8E8E93',
+    fontWeight: '500',
+  },
+  companyName: {
+    fontSize: 26,
+    fontWeight: 'bold',
+  },
+  notificationBtn: {
+    padding: 8,
+  },
+  mainStatsCard: {
+    borderRadius: 20,
+    padding: 20,
+    marginBottom: 30,
+    // Sombra leve para Android/iOS
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 3,
+  },
+  statsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  statItem: {
     flex: 1,
-    paddingHorizontal: Spacing.four,
     alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
   },
-  heroSection: {
+  statNumber: {
+    fontSize: 22,
+    fontWeight: '800',
+  },
+  statLabel: {
+    fontSize: 12,
+    color: '#8E8E93',
+    marginTop: 4,
+  },
+  divider: {
+    width: 1,
+    height: 40,
+    backgroundColor: '#E5E5EA',
+  },
+  section: {
+    flex: 1,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    marginBottom: 15,
+  },
+  actionCard: {
+    flexDirection: 'row',
     alignItems: 'center',
+    padding: 16,
+    borderRadius: 16,
+    marginBottom: 12,
+  },
+  actionIconWrapper: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
     justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 16,
+  },
+  actionContent: {
     flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
   },
-  title: {
-    textAlign: 'center',
+  actionTitle: {
+    fontSize: 16,
+    fontWeight: '600',
   },
-  code: {
-    textTransform: 'uppercase',
-  },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
+  actionSubtitle: {
+    fontSize: 13,
+    color: '#8E8E93',
   },
 });
