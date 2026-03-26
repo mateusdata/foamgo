@@ -6,31 +6,32 @@ export default function AppIndex() {
   
   if (!user) return null;
 
-  const selectedMode = activeRole?.toUpperCase() || user?.role?.toUpperCase();
   const isPartner = user?.role === 'PARTNER';
   const isTeamMember = !!user?.activeCompanyId;
 
   console.log('DISPATCHER DEBUG', {
     activeRole,
-    selectedMode,
     userRole: user?.role,
     isPartner,
     isTeamMember,
     activeCompanyId: user?.activeCompanyId,
-    memberships: user?.memberships,
   });
 
-  if (selectedMode === 'CLIENT' || selectedMode === 'USER') {
+  // If user explicitly switched to a role in the app menu:
+  if (activeRole === 'CLIENT' || activeRole === 'USER') {
     return <Redirect href={"/(client)" as any} />;
   }
-
-  if (selectedMode === 'PARTNER') {
+  
+  if (activeRole === 'PARTNER') {
     if (isPartner) return <Redirect href={"/(partner)" as any} />;
     if (isTeamMember) return <Redirect href={"/(team)" as any} />;
     return <Redirect href={"/(client)" as any} />;
   }
 
+  // Default routing based on highest privilege:
   if (isPartner) return <Redirect href={"/(partner)" as any} />;
   if (isTeamMember) return <Redirect href={"/(team)" as any} />;
+  
+  // Default to client
   return <Redirect href={"/(client)" as any} />;
 }

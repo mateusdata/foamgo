@@ -1,16 +1,26 @@
-import AvatarUser from '@/components/avatar-user';
-import { ThemedPressable } from '@/components/themed-pressable';
-import { ThemedScrollView } from '@/components/themed-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Colors } from '@/constants/theme';
-import { useAuth } from '@/contexts/auth-provider';
-import { Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
-import { router } from 'expo-router';
-import React from 'react';
-import { StyleSheet, View, useColorScheme, Alert, Linking } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, useColorScheme, Linking } from 'react-native'
+import React from 'react'
 
-const Profile = () => {
+import { useForm } from "react-hook-form"
+import { Colors } from '@/constants/theme'
+import { api } from '@/config/api'
+import { z } from 'zod'
+import { zodResolver } from "@hookform/resolvers/zod"
+import { router } from 'expo-router'
+import { Ionicons, MaterialIcons } from '@expo/vector-icons'
+import { Alert } from 'react-native'
+import { useAuth } from '@/contexts/auth-provider'
+import { ThemedView } from '@/components/themed-view'
+import PaperInput from '@/components/inputs/paper-input'
+import { PrimaryButton } from '@/components/buttons/primary-button'
+import { ThemedScrollView } from '@/components/themed-scroll-view'
+import AvatarUser from '@/components/avatar-user'
+import { ThemedText } from '@/components/themed-text'
+import { ThemedPressable } from '@/components/themed-pressable'
+
+
+
+const Account = () => {
     const { logOut } = useAuth();
     const colorScheme = useColorScheme() || 'light';
 
@@ -39,23 +49,18 @@ const Profile = () => {
                         label="Conta"
                         description="Gerenciar informações pessoais"
                         onPress={() => router.push("/(client)/account/my-informations")}
+                        showBorder={true}
+                    />
+                    <MenuItem
+                        icon={<Ionicons name="settings-outline" size={24} color={Colors.primary} />}
+                        label="Configurações"
+                        description="Abrir configurações do dispositivo"
+                        onPress={() => {
+                            Linking.openSettings();
+                        }}
                         showBorder={false}
                     />
                 </View>
-
-                {
-                    false && <View style={styles.menuGroup}>
-                        <MenuItem
-                            icon={<Ionicons name="settings-outline" size={24} color={Colors.primary} />}
-                            label="Configurações"
-                            description="Abrir configurações do dispositivo"
-                            onPress={() => {
-                                Linking.openSettings();
-                            }}
-                            showBorder={false}
-                        />
-                    </View>
-                }
             </View>
 
 
@@ -67,34 +72,52 @@ const Profile = () => {
                         label="Ajuda"
                         description="Central de ajuda e FAQ"
                         onPress={() => router.push("/(client)/account/help")}
+                        showBorder={true}
+                    />
+                    <MenuItem
+                        icon={<Ionicons name="star-outline" size={24} color={Colors.primary} />}
+                        label="Avaliação"
+                        description="Avaliar o aplicativo"
+                        onPress={() => alert('Funcionalidade em desenvolvimento')}
                         showBorder={false}
                     />
                 </View>
-
-                {
-                    false && <View style={styles.menuGroup}>
-                        <MenuItem
-                            icon={<Ionicons name="star-outline" size={24} color={Colors.primary} />}
-                            label="Avaliação"
-                            description="Avaliar o aplicativo"
-                            onPress={() => alert('Funcionalidade em desenvolvimento')}
-                            showBorder={false}
-                        />
-                    </View>
-                }
             </View>
 
 
-            <View style={[styles.sectionContainer, { marginBottom: 100 }]}>
-                <View style={styles.menuGroup}>
-                    <MenuItem
-                        icon={<Ionicons name="log-out-outline" size={24} color="#FF4757" />}
-                        label="Sair da conta"
-                        description="Desconectar do aplicativo"
-                        onPress={logOut}
-                        showBorder={false}
-                        isDestructive={true}
-                    />
+            <View style={styles.sectionContainer}>
+                <View style={styles.sectionContainer}>
+                    <View style={styles.menuGroup}>
+
+                        <MenuItem
+                            icon={<Ionicons name="trash-outline" size={24} color="#FF4757" />}
+                            label="Excluir conta"
+                            description="Apagar dados permanentemente"
+                            onPress={() => {
+                                Alert.alert(
+                                    'Excluir conta',
+                                    'Tem certeza que deseja excluir sua conta? Essa ação é irreversível.',
+                                    [
+                                        { text: 'Cancelar', style: 'cancel' },
+                                        {
+                                            text: 'Excluir',
+                                            style: 'destructive',
+                                            onPress: async () => {
+                                                try {
+                                                    await api.delete('/users/me');
+                                                    logOut();
+                                                } catch (error) {
+                                                    Alert.alert('Erro', 'Não foi possível excluir a conta.');
+                                                }
+                                            }
+                                        }
+                                    ]
+                                );
+                            }}
+                            showBorder={false}
+                            isDestructive={true}
+                        />
+                    </View>
                 </View>
             </View>
 
@@ -186,13 +209,12 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     sectionContainer: {
-        marginBottom: 22,
-        gap: 12,
+        marginBottom: 32,
     },
     sectionTitle: {
         fontSize: 18,
         fontWeight: '600',
-        marginBottom: 2,
+        marginBottom: 12,
         marginLeft: 4,
     },
     menuGroup: {
@@ -245,4 +267,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Profile;
+export default Account;

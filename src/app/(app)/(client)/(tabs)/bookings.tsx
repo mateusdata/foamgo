@@ -134,7 +134,7 @@ export default function MyBookingsScreen() {
       <TouchableOpacity
         style={[styles.card, { backgroundColor: isDark ? '#1C1C1E' : '#FFF', borderColor: isDark ? '#333' : '#E0E0E0' }]}
         activeOpacity={0.7}
-        onPress={() => router.push(`/(app)/(tabs)/booking/${item.id}`)}
+        onPress={() => router.push(`/(client)/bookings/${item.id}`)}
       >
         <View style={styles.cardHeader}>
           {company?.avatar ? (

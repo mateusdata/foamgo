@@ -66,7 +66,7 @@ const FeaturedCard = ({ item }: { item: CarWash }) => {
 
   const handlePress = async () => {
     await saveVisitedCarWash(item.id)
-    router.push({ pathname: "/companies/[companyId]/booking", params: { companyId: item.id } })
+    router.push({ pathname: "/(client)/companies/[companyId]/booking", params: { companyId: item.id } })
   }
 
   return (
@@ -93,7 +93,7 @@ const CarWashListItem = ({ item }: { item: CarWash }) => {
 
   const handlePress = async () => {
     await saveVisitedCarWash(item.id)
-    router.push({ pathname: "/companies/[companyId]/booking", params: { companyId: item.id } })
+    router.push({ pathname: "/(client)/companies/[companyId]/booking", params: { companyId: item.id } })
   }
 
   return (

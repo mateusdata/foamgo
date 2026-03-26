@@ -1,4 +1,4 @@
-import AvatarUser from '@/components/avatar-user';
+import AvatarCompany from '@/components/avatar-company';
 import { ThemedPressable } from '@/components/themed-pressable';
 import { ThemedScrollView } from '@/components/themed-scroll-view';
 import { ThemedText } from '@/components/themed-text';
@@ -26,7 +26,7 @@ const Profile = () => {
         >
 
             <ThemedView style={styles.headerContainer}>
-                <AvatarUser />
+                <AvatarCompany />
 
             </ThemedView>
 
@@ -38,7 +38,7 @@ const Profile = () => {
                         icon={<Ionicons name="person-outline" size={24} color={Colors.primary} />}
                         label="Conta"
                         description="Gerenciar informações pessoais"
-                        onPress={() => router.push("/account/my-informations")}
+                        onPress={() => router.push("/(partner)/account/my-informations")}
                         showBorder={false}
                     />
                 </View>
@@ -66,7 +66,7 @@ const Profile = () => {
                         icon={<Ionicons name="help-circle-outline" size={24} color={Colors.primary} />}
                         label="Ajuda"
                         description="Central de ajuda e FAQ"
-                        onPress={() => router.push("/account/help")}
+                        onPress={() => router.push("/(partner)/account/help")}
                         showBorder={false}
                     />
                 </View>

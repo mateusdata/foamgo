@@ -1,20 +1,47 @@
-import AvatarUser from '@/components/avatar-user';
 import { ThemedPressable } from '@/components/themed-pressable';
 import { ThemedScrollView } from '@/components/themed-scroll-view';
 import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
 import { Colors } from '@/constants/theme';
 import { useAuth } from '@/contexts/auth-provider';
-import { Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
+import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React from 'react';
-import { StyleSheet, View, useColorScheme, Alert, Linking } from 'react-native';
+import { StyleSheet, View, useColorScheme, Alert } from 'react-native';
+import parsePhoneNumberFromString from 'libphonenumber-js';
+import { api } from '@/config/api';
 
-const Profile = () => {
-    const { logOut } = useAuth();
+
+const MyInformations = () => {
+    const { user, logOut } = useAuth();
     const colorScheme = useColorScheme() || 'light';
 
+    const deleteAccount = async () => {
+        try {
 
+            const response = await api.delete('/users');
+            logOut();
+
+        } catch (error) {
+            Alert.alert('Erro', 'Ocorreu um erro ao apagar a conta. Tente novamente mais tarde.');
+        }
+    }
+    const handleDeleteAccount = () => {
+        Alert.alert(
+            'Apagar conta',
+            'Esta ação não pode ser desfeita. Todos os seus dados serão permanentemente removidos.',
+            [
+                {
+                    text: 'Cancelar',
+                    style: 'cancel',
+                },
+                {
+                    text: 'Apagar',
+                    style: 'destructive',
+                    onPress: deleteAccount,
+                },
+            ]
+        );
+    };
 
     return (
         <ThemedScrollView
@@ -22,76 +49,71 @@ const Profile = () => {
             lightColor="#F8F8F8"
             darkColor="#121212"
             style={styles.container}
-
         >
-
-            <ThemedView style={styles.headerContainer}>
-                <AvatarUser />
-
-            </ThemedView>
-
-
+            {/* Seção Informações Pessoais */}
             <View style={styles.sectionContainer}>
-                <ThemedText style={styles.sectionTitle}>Perfil</ThemedText>
+                <ThemedText style={styles.sectionTitle}>Informações Pessoais</ThemedText>
                 <View style={styles.menuGroup}>
                     <MenuItem
                         icon={<Ionicons name="person-outline" size={24} color={Colors.primary} />}
-                        label="Conta"
-                        description="Gerenciar informações pessoais"
-                        onPress={() => router.push("/(client)/account/my-informations")}
+                        label="Nome de usuário"
+                        description={user?.name || "Definir nome de usuário"}
+                        onPress={() => router.push("/(team)/account/change-name")}
                         showBorder={false}
                     />
                 </View>
 
-                {
-                    false && <View style={styles.menuGroup}>
-                        <MenuItem
-                            icon={<Ionicons name="settings-outline" size={24} color={Colors.primary} />}
-                            label="Configurações"
-                            description="Abrir configurações do dispositivo"
-                            onPress={() => {
-                                Linking.openSettings();
-                            }}
-                            showBorder={false}
-                        />
-                    </View>
-                }
+                <View style={styles.menuGroup}>
+                    <MenuItem
+                        icon={<Ionicons name="mail-outline" size={24} color={Colors.primary} />}
+                        label="Email"
+                        description={user?.email || "Adicionar email"}
+                        onPress={() => router.push("/(team)/account/change-email")}
+                        showBorder={false}
+                    />
+                </View>
+
+
+                <View style={styles.menuGroup}>
+                    <MenuItem
+                        icon={<Ionicons name="call-outline" size={24} color={Colors.primary} />}
+                        label="Telefone"
+                        description={parsePhoneNumberFromString(user?.phone ?? '', 'BR')?.formatNational() ?? "Adicionar telefone"}
+                        onPress={() => router.push("/(team)/account/change-phone")}
+                        showBorder={false}
+                    />
+                </View>
+
+                <View style={[styles.menuGroup, { marginTop: 12 }]}>
+                    <MenuItem
+                        icon={<Ionicons name="business-outline" size={24} color={Colors.primary} />}
+                        label="Lavajato Padrão"
+                        description="Alterar lavajato ativo"
+                        onPress={() => router.push("/(team)/account/change-company")}
+                        showBorder={false}
+                    />
+                </View>
             </View>
 
-
+            {/* Seção Segurança */}
             <View style={styles.sectionContainer}>
-                <ThemedText style={styles.sectionTitle}>Suporte</ThemedText>
+                <ThemedText style={styles.sectionTitle}>Segurança</ThemedText>
                 <View style={styles.menuGroup}>
                     <MenuItem
-                        icon={<Ionicons name="help-circle-outline" size={24} color={Colors.primary} />}
-                        label="Ajuda"
-                        description="Central de ajuda e FAQ"
-                        onPress={() => router.push("/(client)/account/help")}
+                        icon={<Ionicons name="lock-closed-outline" size={24} color={Colors.primary} />}
+                        label="Senha"
+                        description="Alterar senha de acesso"
+                        onPress={() => router.push("/(team)/account/change-password")}
                         showBorder={false}
                     />
                 </View>
 
-                {
-                    false && <View style={styles.menuGroup}>
-                        <MenuItem
-                            icon={<Ionicons name="star-outline" size={24} color={Colors.primary} />}
-                            label="Avaliação"
-                            description="Avaliar o aplicativo"
-                            onPress={() => alert('Funcionalidade em desenvolvimento')}
-                            showBorder={false}
-                        />
-                    </View>
-                }
-            </View>
-
-
-            <View style={[styles.sectionContainer, { marginBottom: 100 }]}>
                 <View style={styles.menuGroup}>
                     <MenuItem
-                        icon={<Ionicons name="log-out-outline" size={24} color="#FF4757" />}
-                        label="Sair da conta"
-                        description="Desconectar do aplicativo"
-                        onPress={logOut}
+                        icon={<Ionicons name="trash-outline" size={24} color="#FF4757" />}
+                        label="Apagar conta"
+                        description="Remover permanentemente sua conta"
+                        onPress={handleDeleteAccount}
                         showBorder={false}
                         isDestructive={true}
                     />
@@ -135,7 +157,10 @@ const MenuItem = ({
             onPress={onPress}
         >
             <View style={styles.menuContent}>
-                <View style={styles.menuIconContainer}>
+                <View style={[
+                    styles.menuIconContainer,
+                    isDestructive && { backgroundColor: 'rgba(255, 71, 87, 0.1)' }
+                ]}>
                     {icon}
                 </View>
                 <View style={styles.menuTextContainer}>
@@ -148,7 +173,12 @@ const MenuItem = ({
                         {label}
                     </ThemedText>
                     {description && (
-                        <ThemedText style={styles.menuDescription}>
+                        <ThemedText
+                            style={[
+                                styles.menuDescription,
+                                isDestructive && { color: '#FF4757', opacity: 0.8 }
+                            ]}
+                        >
                             {description}
                         </ThemedText>
                     )}
@@ -157,7 +187,7 @@ const MenuItem = ({
             <MaterialIcons
                 name="arrow-forward-ios"
                 size={16}
-                color={colorScheme === 'light' ? '#C0C0C0' : '#666666'}
+                color={isDestructive ? '#FF4757' : (colorScheme === 'light' ? '#C0C0C0' : '#666666')}
             />
         </ThemedPressable>
     );
@@ -167,23 +197,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingHorizontal: 20,
-    },
-    headerContainer: {
-        alignItems: 'center',
-
-        marginBottom: 8,
-    },
-    userName: {
-        fontSize: 24,
-        fontWeight: '700',
-        marginTop: 16,
-        textAlign: 'center',
-    },
-    userEmail: {
-        fontSize: 16,
-        opacity: 0.7,
-        marginTop: 4,
-        textAlign: 'center',
+        paddingTop: 20,
     },
     sectionContainer: {
         marginBottom: 22,
@@ -245,4 +259,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Profile;
+export default MyInformations;
