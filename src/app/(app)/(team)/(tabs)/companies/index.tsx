@@ -118,6 +118,7 @@ const TeamCompanies = () => {
     return (
         <ThemedView style={{ flex: 1 }} lightColor="#F8F8F8" darkColor="#121212">
             <ThemedScrollView
+            contentInsetAdjustmentBehavior="automatic"
             style={{ flex: 1 }}
             contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 40, flexGrow: 1 }}
             lightColor="#F8F8F8"
