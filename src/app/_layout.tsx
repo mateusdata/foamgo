@@ -36,7 +36,7 @@ function RootNavigation() {
       </Stack.Protected>
 
       <Stack.Protected guard={true}>
-        <Stack.Screen name="(client)" />
+        <Stack.Screen name="(auth)" options={{headerShown: false  }} />
       </Stack.Protected>
 
 
