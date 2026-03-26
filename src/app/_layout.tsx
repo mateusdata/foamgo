@@ -1,6 +1,5 @@
 import PushNotification from '@/components/notification'
 import { SplashScreenController } from '@/components/splash'
-import { ThemedText } from '@/components/themed-text'
 import { useAuth } from '@/contexts/auth-provider'
 import Providers from '@/contexts/providers'
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native'
@@ -31,7 +30,6 @@ function RootNavigation() {
   const { user } = useAuth()
 
   return (
-
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Protected guard={!!user}>
         <Stack.Screen name="(app)" />
@@ -41,6 +39,5 @@ function RootNavigation() {
         <Stack.Screen name="(auth)" />
       </Stack.Protected>
     </Stack>
-
   )
 }

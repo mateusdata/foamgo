@@ -27,9 +27,6 @@ export default function AvatarCompany() {
         try {
             setLoading(true);
 
-            const response = await fetch(selectedImageUri);
-            const blob = await response.blob();
-
             const formData: any = new FormData();
             formData.append('avatar', {
                 uri: selectedImageUri,
@@ -37,9 +34,7 @@ export default function AvatarCompany() {
                 type: 'image/jpeg',
             });
 
-            await api.put(`/companies/avatar`, formData, {
-                headers: { 'Content-Type': 'multipart/form-data' },
-            });
+            await api.put(`/companies/avatar`, formData);
 
             await refreshUser();
             Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);

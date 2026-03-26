@@ -139,16 +139,6 @@ const Subscription = () => {
 
     return (
         <ThemedView style={styles.container}>
-            {Platform.OS === 'android' && (
-                <TouchableOpacity
-                    onPress={() => router.back()}
-                    style={styles.closeButton}
-                    accessibilityRole="button"
-                    accessibilityLabel="Fechar tela de assinatura"
-                >
-                    <Ionicons name="close" size={24} color={isDark ? '#FFFFFF' : '#111111'} />
-                </TouchableOpacity>
-            )}
             <ThemedScrollView contentContainerStyle={styles.content}>
                 <View style={styles.header}>
                     <Image
@@ -243,6 +233,16 @@ const Subscription = () => {
                     </TouchableOpacity>
                 </View>
             </ThemedScrollView>
+            {Platform.OS === 'android' && (
+                <TouchableOpacity
+                    onPress={() => router.back()}
+                    style={styles.closeButton}
+                    accessibilityRole="button"
+                    accessibilityLabel="Fechar tela de assinatura"
+                >
+                    <Ionicons name="close" size={18} color={isDark ? '#FFFFFF' : '#111111'} />
+                </TouchableOpacity>
+            )}
         </ThemedView>
     )
 }
@@ -261,23 +261,25 @@ export default Subscription;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        display: 'contents',
     },
     closeButton: {
         position: 'absolute',
-        top: Platform.OS === 'android' ? 52 : 16,
-        right: 16,
+        top: 60,
+        alignSelf: 'center',
+        left: 0,
+        right: 0,
+        marginHorizontal: 16,
         zIndex: 10,
-        width: 36,
-        height: 36,
+        width: 24,
+        height: 24,
         borderRadius: 18,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: 'rgba(0,0,0,0.08)',
+        backgroundColor: 'rgba(0,0,0,0.1)',
     },
     content: {
         padding: 20,
-        paddingTop: Platform.OS === 'android' ? 68 : 20,
+        paddingTop: 76,
         paddingBottom: 40,
     },
     header: {
