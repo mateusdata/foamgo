@@ -4,6 +4,8 @@ import { ThemedText } from '@/components/themed-text'
 import { ThemedView } from '@/components/themed-view'
 import { api } from '@/config/api'
 import { Colors } from '@/constants/theme'
+import { Ionicons } from '@expo/vector-icons'
+import { router } from 'expo-router'
 import React, { useEffect, useState } from 'react'
 import { Alert, Image, Linking, StyleSheet, TouchableOpacity, useColorScheme, View, ActivityIndicator, Platform } from 'react-native'
 import Purchases, { PurchasesPackage } from 'react-native-purchases'
@@ -137,6 +139,16 @@ const Subscription = () => {
 
     return (
         <ThemedView style={styles.container}>
+            {Platform.OS === 'android' && (
+                <TouchableOpacity
+                    onPress={() => router.back()}
+                    style={styles.closeButton}
+                    accessibilityRole="button"
+                    accessibilityLabel="Fechar tela de assinatura"
+                >
+                    <Ionicons name="close" size={24} color={isDark ? '#FFFFFF' : '#111111'} />
+                </TouchableOpacity>
+            )}
             <ThemedScrollView contentContainerStyle={styles.content}>
                 <View style={styles.header}>
                     <Image
@@ -251,8 +263,21 @@ const styles = StyleSheet.create({
         flex: 1,
         display: 'contents',
     },
+    closeButton: {
+        position: 'absolute',
+        top: Platform.OS === 'android' ? 52 : 16,
+        right: 16,
+        zIndex: 10,
+        width: 36,
+        height: 36,
+        borderRadius: 18,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'rgba(0,0,0,0.08)',
+    },
     content: {
         padding: 20,
+        paddingTop: Platform.OS === 'android' ? 68 : 20,
         paddingBottom: 40,
     },
     header: {
