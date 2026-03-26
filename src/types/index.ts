@@ -71,10 +71,12 @@ export interface User {
 
 export interface AuthContextProps {
   user: User | null;
+  activeRole: string | null;
   isLoading: boolean;
   setUser: (user: User | null) => void;
+  setActiveRole: (role: string | null) => void;
   logOut: () => Promise<void>;
-  login: (email: string, password: string) => Promise<User | null>;
+  login: (email: string, password: string, roleFlag?: string) => Promise<User | null>;
   refreshUser: () => Promise<User | null>;
   
   signInWithGoogle: (role?: string | string[]) => Promise<void>;

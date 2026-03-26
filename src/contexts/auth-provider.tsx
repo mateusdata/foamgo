@@ -15,6 +15,7 @@ const AuthContext = React.createContext<AuthContextProps>({} as AuthContextProps
 
 export default function AuthProvider({ children }: React.PropsWithChildren<{}>) {
   const [user, setUser] = React.useState<User | null>(null);
+  const [activeRole, setActiveRole] = React.useState<string | null>(null);
   const [isLoading, setIsLoading] = React.useState(true);
 
   useEffect(() => {
@@ -31,8 +32,12 @@ export default function AuthProvider({ children }: React.PropsWithChildren<{}>) 
     try {
       setIsLoading(true);
       const stored = await AsyncStorage.getItem('user');
+      const savedRole = await AsyncStorage.getItem('activeRole');
       if (stored) {
         setUser(JSON.parse(stored));
+      }
+      if (savedRole) {
+        setActiveRole(savedRole);
       }
     } catch (_) {
       // storage corrompido: deixa user nulo, root layout redireciona para login
@@ -63,9 +68,12 @@ export default function AuthProvider({ children }: React.PropsWithChildren<{}>) 
 
   // ─── Login com email/senha ────────────────────────────────────────────────
   // NÃO navega aqui. A navegação fica no root _layout.tsx via `user.role`.
-  const login = async (email: string, password: string): Promise<User | null> => {
+  const login = async (email: string, password: string, roleFlag?: string): Promise<User | null> => {
     try {
       const response = await api.post('/auth/login', { email, password });
+      const roleToSave = roleFlag ? roleFlag.toUpperCase() : response.data.role;
+      await AsyncStorage.setItem('activeRole', roleToSave);
+      setActiveRole(roleToSave);
       await loadUser(response.data);
       const fresh = await refreshUser();
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
@@ -84,6 +92,10 @@ export default function AuthProvider({ children }: React.PropsWithChildren<{}>) 
       const response = await api.post('/auth/google', {
         idToken: userInfo.data?.idToken,
       });
+      const roleStr = Array.isArray(role) ? role[0] : role;
+      const roleToSave = roleStr ? roleStr.toUpperCase() : response.data.role;
+      await AsyncStorage.setItem('activeRole', roleToSave);
+      setActiveRole(roleToSave);
       await loadUser(response.data);
       await refreshUser();
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
@@ -107,6 +119,10 @@ export default function AuthProvider({ children }: React.PropsWithChildren<{}>) 
         ],
       });
       const response = await api.post('/auth/apple', credential);
+      const roleStr = Array.isArray(role) ? role[0] : role;
+      const roleToSave = roleStr ? roleStr.toUpperCase() : response.data.role;
+      await AsyncStorage.setItem('activeRole', roleToSave);
+      setActiveRole(roleToSave);
       await loadUser(response.data);
       await refreshUser();
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
@@ -125,6 +141,7 @@ export default function AuthProvider({ children }: React.PropsWithChildren<{}>) 
       setIsLoading(true);
       await AsyncStorage.clear();
       setUser(null);
+      setActiveRole(null);
       router.replace('/(auth)/sign-in');
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
     } catch (_) {
@@ -140,7 +157,7 @@ export default function AuthProvider({ children }: React.PropsWithChildren<{}>) 
 
   return (
     <AuthContext.Provider
-      value={{ user, setUser, logOut, isLoading, login, refreshUser, signInWithGoogle, signInWithApple }}
+      value={{ user, activeRole, setUser, setActiveRole, logOut, isLoading, login, refreshUser, signInWithGoogle, signInWithApple }}
     >
       {children}
     </AuthContext.Provider>

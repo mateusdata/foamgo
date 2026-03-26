@@ -3,15 +3,11 @@ import React from 'react'
 
 export default function AppLayout() {
   return (
-    <Stack
-      initialRouteName="(client)"
-      screenOptions={{ headerShown: false }}
-    >
-    {/*usa redirect para evitar dor de cabeça */}
-    
-      <Stack.Screen redirect={false} name="(client)" />
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="index" />
+      <Stack.Screen name="(client)" />
       <Stack.Screen name="(team)" />
-      <Stack.Screen name="(parter)" />
+      <Stack.Screen name="(partner)" />
     </Stack>
   )
 }

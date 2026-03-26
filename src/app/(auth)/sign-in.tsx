@@ -61,10 +61,10 @@ export default function SignIn() {
     }
   };
 
-  const loginApple = async (credential: any) => {
+  const loginApple = async () => {
     try {
       setAppleLoading(true);
-      await signInWithApple(credential, role);
+      await signInWithApple(role);
     } catch (error) {
       console.log(error);
     } finally {
@@ -75,7 +75,7 @@ export default function SignIn() {
   const onSubmit = async (data: { email: string, password: string }) => {
     try {
       setLoading(true)
-      await login(data.email, data.password)
+      await login(data.email, data.password, role)
     } catch (error: unknown | any) {
       if (error?.status === 401) {
         return setError("password", { message: "Usuário ou senha incorretos" })

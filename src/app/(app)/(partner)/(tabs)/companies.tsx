@@ -5,7 +5,7 @@ import { ThemedView } from '@/components/themed-view'
 export default function Companies() {
   return (
     <ThemedView style={styles.container}>
-      <Text>companies</Text>
+      <Text>Pagina do parceiro</Text>
     </ThemedView>
   )
 }
