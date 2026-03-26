@@ -6,11 +6,31 @@ export default function AppIndex() {
   
   if (!user) return null;
 
-  const currentMode = activeRole?.toUpperCase() || user?.role?.toUpperCase();
+  const selectedMode = activeRole?.toUpperCase() || user?.role?.toUpperCase();
+  const isPartner = user?.role === 'PARTNER';
+  const isTeamMember = !!user?.activeCompanyId;
 
-  if (currentMode === 'CLIENT' || currentMode === 'USER') return <Redirect href={"/(client)" as any} />;
-  if (currentMode === 'PARTNER') return <Redirect href={"/(partner)" as any} />;
-  if (currentMode === 'WORKER' || currentMode === 'TEAM') return <Redirect href={"/(team)" as any} />;
+  console.log('DISPATCHER DEBUG', {
+    activeRole,
+    selectedMode,
+    userRole: user?.role,
+    isPartner,
+    isTeamMember,
+    activeCompanyId: user?.activeCompanyId,
+    memberships: user?.memberships,
+  });
 
+  if (selectedMode === 'CLIENT' || selectedMode === 'USER') {
+    return <Redirect href={"/(client)" as any} />;
+  }
+
+  if (selectedMode === 'PARTNER') {
+    if (isPartner) return <Redirect href={"/(partner)" as any} />;
+    if (isTeamMember) return <Redirect href={"/(team)" as any} />;
+    return <Redirect href={"/(client)" as any} />;
+  }
+
+  if (isPartner) return <Redirect href={"/(partner)" as any} />;
+  if (isTeamMember) return <Redirect href={"/(team)" as any} />;
   return <Redirect href={"/(client)" as any} />;
 }

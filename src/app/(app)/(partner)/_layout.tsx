@@ -13,5 +13,3 @@ export default function PartnerStack() {
     <Stack initialRouteName="(tabs)" screenOptions={{headerShown: true, headerTitle: 'Partner'}} />
   );
 }
-
-

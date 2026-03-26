@@ -142,7 +142,7 @@ export default function AuthProvider({ children }: React.PropsWithChildren<{}>) 
       await AsyncStorage.clear();
       setUser(null);
       setActiveRole(null);
-      router.replace('/(auth)/sign-in');
+      router.replace('/');
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
     } catch (_) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);

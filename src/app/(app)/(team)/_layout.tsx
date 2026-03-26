@@ -5,7 +5,7 @@ import { useAuth } from '@/contexts/auth-provider';
 export default function TeamStack() {
   const { user } = useAuth();
 
-  if (user?.role !== 'WORKER') {
+  if (!user?.activeCompanyId) {
     return <Redirect href={"/" as any} />;
   }
 
@@ -13,5 +13,3 @@ export default function TeamStack() {
     <Stack initialRouteName="(tabs)" screenOptions={{headerShown: true, headerTitle: 'Team'}} />
   );
 }
-
-
