@@ -78,7 +78,7 @@ const MyInformations = () => {
                         icon={<Ionicons name="call-outline" size={24} color={Colors.primary} />}
                         label="Telefone"
                         description={parsePhoneNumberFromString(user?.phone ?? '', 'BR')?.formatNational() ?? "Adicionar telefone"}
-                        onPress={() => router.push("/(client)/account/change-phone")}
+                        onPress={() => router.push("/(app)/(client)/account/change-phone")}
                         showBorder={false}
                     />
                 </View>
@@ -88,7 +88,7 @@ const MyInformations = () => {
                         icon={<Ionicons name="car-outline" size={24} color={Colors.primary} />}
                         label="Veículos"
                         description={user?.vehicles?.find(v => v.isDefault) ? `${user?.vehicles?.find(v => v.isDefault)?.model} - ${user?.vehicles?.find(v => v.isDefault)?.plate}` : "Adicionar veículo"}
-                        onPress={() => router.push("/(client)/vehicles/add-vehicle")}
+                        onPress={() => router.push("/(app)/(client)/vehicles/add-vehicle")}
                         showBorder={false}
                     />
                 </View>
