@@ -8,7 +8,8 @@
     "scheme": "foamgo",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./assets/expo.icon",
+      //"icon": "./assets/expo.icon",
+      "icon": "./assets/images/icon.png",
       "bundleIdentifier": "com.m2.blippartner",
       "googleServicesFile": "./GoogleService-Info.plist",
       "usesAppleSignIn": true,
@@ -64,7 +65,7 @@
     "runtimeVersion": {
       "policy": "appVersion"
     },
-     "owner": "2mm",
+    "owner": "2mm",
     "updates": {
       "url": "https://u.expo.dev/d2fbf022-a18d-44fb-a49e-f04088c4517d",
       "enableBsdiffPatchSupport": true
