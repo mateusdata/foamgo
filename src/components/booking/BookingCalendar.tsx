@@ -177,7 +177,7 @@ export const BookingCalendar = ({
     // ===== HEADER QUE ROLA JUNTO =====
      const insets = useSafeAreaInsets();
    const ListHeaderComponent = () => (
-    <SafeAreaView edges={['top', "bottom"]} style={{paddingTop: insets.top }} >
+    <SafeAreaView edges={['top']} >
         {/* Filtros */}
         <View style={styles.filtersContainer}>
             <ScrollView 

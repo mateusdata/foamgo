@@ -1,4 +1,4 @@
-import { StyleSheet, TouchableOpacity, View, ScrollView, Alert } from 'react-native'
+import { StyleSheet, TouchableOpacity, View, ScrollView, Alert, Platform } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { api } from '@/config/api'
 import { useForm } from "react-hook-form"
@@ -152,8 +152,17 @@ export default function AddVehicle() {
 
     return (
         <ThemedView style={styles.container}>
-            <Stack.Screen options={{ title: editingVehicle ? 'Editar Veículo' : 'Adicionar Veículo', animation: "none" }} />
+            <Stack.Screen options={{ headerShown: false, animation: "none" }} />
             <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+                <View style={styles.customHeader}>
+                    <TouchableOpacity onPress={() => router.back()} style={{ padding: 4 }}>
+                        <Ionicons name="close" size={28} color={isDark ? '#fff' : '#000'} />
+                    </TouchableOpacity>
+                    <ThemedText style={{ fontSize: 20, fontWeight: 'bold' }}>
+                        {editingVehicle ? 'Editar Veículo' : 'Adicionar Veículo'}
+                    </ThemedText>
+                    <View style={{ width: 28 }} />
+                </View>
 
                 <ThemedView style={styles.formContainer}>
 
@@ -266,7 +275,8 @@ export default function AddVehicle() {
 const styles = StyleSheet.create({
     container: { flex: 1, padding: 0 },
     scrollView: { flex: 1 },
-    formContainer: { paddingHorizontal: 20, paddingTop: 20 },
+    customHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: Platform.OS === 'ios' ? 50 : 30, paddingBottom: 10 },
+    formContainer: { paddingHorizontal: 20, paddingTop: 10 },
     title: { fontSize: 24, fontWeight: 'bold', marginBottom: 20 },
     cancelButton: { alignItems: 'center', marginTop: 10, marginBottom: 10 },
     cancelButtonText: { color: Colors.primary, fontSize: 14 },

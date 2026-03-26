@@ -42,7 +42,7 @@ export default function ChangePhone() {
 
       const cleanPhone = data.phone.replace(/[\s\(\)\-]/g, '')
 
-      await api.patch(`/users/${user?.id}`, {
+      await api.patch('/users', {
         phone: cleanPhone
       })
 

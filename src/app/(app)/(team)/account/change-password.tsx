@@ -38,7 +38,7 @@ export default function ChangePassword() {
     try {
       const checkPassword = await login(user!.email, data.currentPassword)
       if (checkPassword) {
-        await api.patch(`/users/${user?.id}`, {
+        await api.patch('/users', {
           password: data.newPassword
         })
         router.back()

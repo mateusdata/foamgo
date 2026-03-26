@@ -16,7 +16,7 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <StatusBar style='light' />
+        <StatusBar style='auto' />
         <Providers>
           <SplashScreenController />
           <PushNotification />

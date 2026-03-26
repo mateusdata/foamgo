@@ -36,7 +36,7 @@ export default function ChangeName() {
       setLoading(true)
 
       // Requisição PATCH para atualizar o nome
-      await api.patch(`/users/${user?.id}`, {
+      await api.patch('/users', {
         name: data.name
       })
 

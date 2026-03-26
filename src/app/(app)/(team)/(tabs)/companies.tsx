@@ -116,7 +116,10 @@ const TeamCompanies = () => {
 
     return (
         <ThemedScrollView
-            style={styles.container}
+            style={{ flex: 1 }}
+            contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 40, flexGrow: 1 }}
+            lightColor="#F8F8F8"
+            darkColor="#121212"
             refreshControl={
                 <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
@@ -202,7 +205,6 @@ const TeamCompanies = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingHorizontal: 16
     },
     header: {
         paddingTop: 12,

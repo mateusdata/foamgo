@@ -21,8 +21,8 @@ const Profile = () => {
             contentInsetAdjustmentBehavior="automatic"
             lightColor="#F8F8F8"
             darkColor="#121212"
-            style={styles.container}
-
+            style={{ flex: 1 }}
+            contentContainerStyle={{ paddingHorizontal: 20, flexGrow: 1, paddingBottom: 50 }}
         >
 
             <ThemedView style={styles.headerContainer}>
@@ -166,7 +166,6 @@ const MenuItem = ({
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingHorizontal: 20,
     },
     headerContainer: {
         alignItems: 'center',

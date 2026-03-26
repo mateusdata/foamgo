@@ -46,7 +46,7 @@ export default function ChangeEmail() {
     try {            
       await login(user.email, data.password)
                   
-      await api.patch(`/users/${user?.id}`, {
+      await api.patch('/users', {
         email: data.email
       })
             

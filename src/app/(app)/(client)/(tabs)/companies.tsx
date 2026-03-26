@@ -248,6 +248,8 @@ export default function HomeScreen() {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[Colors.primary]} />}
         showsVerticalScrollIndicator={false}
         contentInsetAdjustmentBehavior='automatic'
+        lightColor="#F8F8F8"
+        darkColor="#121212"
       >
 
         <View style={styles.header}>
