@@ -1,4 +1,3 @@
-
 export const configGoogleSignin  = {
   webClientId: '653997904905-u37j5gsr3a78gj7r92tse3c6o375rli2.apps.googleusercontent.com', // client ID of type WEB for your server. Required to get the `idToken` on the user object, and for offline access.
   scopes: [
@@ -10,7 +9,7 @@ export const configGoogleSignin  = {
   hostedDomain: '', // specifies a hosted domain restriction
   forceCodeForRefreshToken: false, // [Android] related to `serverAuthCode`, read the docs link below *.
   accountName: '', // [Android] specifies an account name on the device that should be used
-  iosClientId: '653997904905-7qr3liuftmjabl9k272u9kf5d1l5nieg.apps.googleusercontent.com', // [iOS] if you want to specify the client ID of type iOS (otherwise, it is taken from GoogleService-Info.plist)
+  iosClientId: '653997904905-hf21khohakshfhdnco2kiv6t1pqn999l.apps.googleusercontent.com', // [iOS] if you want to specify the client ID of type iOS (otherwise, it is taken from GoogleService-Info.plist)
   googleServicePlistPath: '', // [iOS] if you renamed your GoogleService-Info file, new name here, e.g. "GoogleService-Info-Staging"
   op: '', // [iOS] The OpenID2 realm of the home web server. This allows Google to include the user's OpenID Identifier in the OpenID Connect ID token.
   profileImageSize: 120, // [iOS] The desired height (and width) of the profile image. Defaults to 120px
