@@ -10,24 +10,24 @@ export default function WelcomeScreen() {
   const colorScheme = useColorScheme()
   const isDark = colorScheme === 'dark'
 
-  // Valores animados para cada card
+ 
   const float1 = useRef(new Animated.Value(0)).current
   const float2 = useRef(new Animated.Value(0)).current
   const float3 = useRef(new Animated.Value(0)).current
 
   useEffect(() => {
-    // Função para criar a animação de flutuação (sobe e desce suavemente)
+   
     const createFloatingAnimation = (animatedValue: Animated.Value, duration: number, delay: number) => {
       return Animated.loop(
         Animated.sequence([
           Animated.timing(animatedValue, {
-            toValue: -15, // Sobe 15 pixels
+            toValue: -15,
             duration: duration,
             delay: delay,
             useNativeDriver: true,
           }),
           Animated.timing(animatedValue, {
-            toValue: 0, // Volta para a posição original
+            toValue: 0,
             duration: duration,
             useNativeDriver: true,
           })
@@ -35,7 +35,7 @@ export default function WelcomeScreen() {
       )
     }
 
-    // Iniciando as animações com tempos e delays diferentes para ficar natural
+   
     createFloatingAnimation(float1, 3000, 0).start()
     createFloatingAnimation(float2, 2500, 500).start()
     createFloatingAnimation(float3, 3500, 1000).start()
@@ -112,13 +112,13 @@ export default function WelcomeScreen() {
       <View style={styles.footer}>
         <PrimaryButton 
           name='Sou cliente' 
-          onPress={() => router.push('/client')} // Ajuste a rota conforme seu app
+          onPress={() => router.push('/sign-in?role=client')}
         />
 
         <PrimaryButton 
           name='Sou parceiro' 
           variant='secondary'
-          onPress={() => router.push('/partner')} // Ajuste a rota conforme seu app
+          onPress={() => router.push('/sign-in?role=partner')}
         />
       </View>
     </ThemedView>
@@ -131,15 +131,15 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    paddingTop: 50, // Reduzido de 80 para subir a imagem
+    paddingTop: 50,
     paddingHorizontal: 28,
   },
   heroSection: {
     alignItems: 'center',
-    marginBottom: 40, // Reduzido de 60 para dar mais espaço aos cards
+    marginBottom: 40,
   },
   iconContainer: {
-    marginBottom: 16, // Reduzido para aproximar a logo do texto
+    marginBottom: 16,
     backgroundColor: 'transparent',
   },
   iconCircle: {
@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
-    marginTop: -20, // Puxa os cards um pouco mais para cima
+    marginTop: -20,
   },
   floatingCard: {
     position: 'absolute',

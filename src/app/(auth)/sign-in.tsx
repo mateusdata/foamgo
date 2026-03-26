@@ -5,8 +5,8 @@ import { ThemedView } from '@/components/themed-view'
 import { Colors } from '@/constants/theme'
 import { useAuth } from '@/contexts/auth-provider'
 import { zodResolver } from "@hookform/resolvers/zod"
-import { router } from 'expo-router'
-import React from 'react'
+import { router, useLocalSearchParams, useNavigation } from 'expo-router'
+import React, { useEffect } from 'react'
 import { useForm } from "react-hook-form"
 import { Image, Platform, StyleSheet, TouchableOpacity, View, useColorScheme } from 'react-native'
 import { z } from 'zod'
@@ -18,6 +18,19 @@ GoogleSignin.configure(configGoogleSignin);
 
 export default function SignIn() {
   const { login, signInWithGoogle, signInWithApple } = useAuth()
+  const navigation = useNavigation();
+  // Pegando a flag da rota anterior (ex: ?role=client ou ?role=partner)
+  const { role } = useLocalSearchParams<{ role: string }>()
+  
+  useEffect(() => {
+    const isPartner = role?.toUpperCase() === 'PARTNER';
+    
+    // Altera as opções do header dinamicamente
+    navigation.setOptions({
+      headerTitle: isPartner ? 'Conta do Parceiro' : 'Conta do Cliente'
+    });
+  }, [role, navigation]);
+  
   const colorScheme = useColorScheme()
   const isDark = colorScheme === 'dark'
   const defaultValues = { email: __DEV__ ? 'parceiro@gmail.com' : '', password: __DEV__ ? '123456' : '' }
@@ -36,24 +49,22 @@ export default function SignIn() {
     resolver: zodResolver(schema),
   });
 
-
   const loginGoogle = async () => {
     try {
       setGoogleLoading(true);
-      await signInWithGoogle();
+      // Passamos a role para o context repassar ao sign-up caso dê 404
+      await signInWithGoogle(role); 
     } catch (error) {
-      //console.log(error);
+      // console.log(error);
     } finally {
       setGoogleLoading(false);
     }
   };
 
-
-
   const loginApple = async (credential: any) => {
     try {
       setAppleLoading(true);
-      await signInWithApple(credential);
+      await signInWithApple(credential, role);
     } catch (error) {
       console.log(error);
     } finally {
@@ -61,16 +72,13 @@ export default function SignIn() {
     }
   };
 
-
-
-
   const onSubmit = async (data: { email: string, password: string }) => {
     try {
       setLoading(true)
-      await login(data!.email, data?.password)
+      await login(data.email, data.password)
     } catch (error: unknown | any) {
       if (error?.status === 401) {
-        return setError("password", { message: "Usuario ou senha incorretos" })
+        return setError("password", { message: "Usuário ou senha incorretos" })
       }
       else if (error?.status === 404) {
         return setError("email", { message: "Conta não encontrada" })
@@ -80,6 +88,11 @@ export default function SignIn() {
     }
   }
 
+  // Função para navegar para o cadastro levando a flag
+  const handleGoToSignUp = () => {
+    router.push({ pathname: "/(auth)/sign-up", params: { role } });
+  }
+
   return (
     <ThemedView style={styles.container}>
       <ThemedText style={styles.welcomeText}>
@@ -87,29 +100,10 @@ export default function SignIn() {
       </ThemedText>
 
       <ThemedView style={styles.formContainer}>
-        <PaperInput
-          name="email"
-          control={control}
-          label="E-mail"
-          keyboardType="email-address"
-          autoCapitalize="none"
-          error={errors?.email?.message}
-        />
+        <PaperInput name="email" control={control} label="E-mail" keyboardType="email-address" autoCapitalize="none" error={errors?.email?.message} />
+        <PaperInput name="password" control={control} label="Senha" showPasswordToggle={true} watch={watch} error={errors?.password?.message} />
 
-        <PaperInput
-          name="password"
-          control={control}
-          label="Senha"
-          showPasswordToggle={true}
-          watch={watch}
-          error={errors?.password?.message}
-        />
-
-        <PrimaryButton
-          loading={loading}
-          name='Entrar'
-          onPress={handleSubmit(onSubmit)}
-        />
+        <PrimaryButton loading={loading} name='Entrar' onPress={handleSubmit(onSubmit)} />
 
         <View style={styles.dividerContainer}>
           <View style={styles.divider} />
@@ -118,9 +112,7 @@ export default function SignIn() {
         </View>
 
         <ThemedView style={{ gap: 10 }}>
-
           <PrimaryButton
-
             onPress={loginGoogle}
             loading={googleLoading}
             icon={() => <Image source={require('@/assets/images/google.png')} style={{ width: 15, height: 15, marginRight: 1 }} />}
@@ -129,35 +121,26 @@ export default function SignIn() {
             name='Entrar com Google'
           />
 
-          {Platform.OS === 'ios' && <PrimaryButton
-
-            onPress={loginApple}
-            loading={appleLoading}
-            icon={() => <FontAwesome name="apple" size={18} color="white" style={{ marginRight: 1 }} />}
-            buttonColor={"black"}
-            textColor={Colors.dark.text}
-            name='Entrar com Apple'
-          />}
+          {Platform.OS === 'ios' && (
+            <PrimaryButton
+              onPress={loginApple}
+              loading={appleLoading}
+              icon={() => <FontAwesome name="apple" size={18} color="white" style={{ marginRight: 1 }} />}
+              buttonColor={"black"}
+              textColor={Colors.dark.text}
+              name='Entrar com Apple'
+            />
+          )}
         </ThemedView>
 
-
-        <TouchableOpacity
-          onPress={() => router.push("/forgot-password")}
-          style={styles.forgotPasswordContainer}
-        >
-          <ThemedText style={styles.forgotPasswordText}>
-            Esqueceu a senha?
-          </ThemedText>
+        <TouchableOpacity onPress={() => router.push("/(auth)/forgot-password")} style={styles.forgotPasswordContainer}>
+          <ThemedText style={styles.forgotPasswordText}>Esqueceu a senha?</ThemedText>
         </TouchableOpacity>
 
         <ThemedView style={styles.registerContainer}>
-          <ThemedText style={styles.registerText}>
-            Não tem uma conta?{' '}
-          </ThemedText>
-          <TouchableOpacity onPress={() => router.push("/sign-up")}>
-            <ThemedText style={styles.registerLink}>
-              Criar conta
-            </ThemedText>
+          <ThemedText style={styles.registerText}>Não tem uma conta?{' '}</ThemedText>
+          <TouchableOpacity onPress={handleGoToSignUp}>
+            <ThemedText style={styles.registerLink}>Criar conta</ThemedText>
           </TouchableOpacity>
         </ThemedView>
       </ThemedView>

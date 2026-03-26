@@ -4,7 +4,7 @@ import React from 'react';
 
 export default function TeamStack() {
   return (
-    <Stack />
+    <Stack initialRouteName="(tabs)" screenOptions={{headerShown: true, headerTitle: 'Team'}} />
   );
 }
 

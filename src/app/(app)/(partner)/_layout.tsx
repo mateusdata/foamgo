@@ -4,7 +4,7 @@ import React from 'react';
 
 export default function PartnerStack() {
   return (
-    <Stack />
+    <Stack initialRouteName="(tabs)" screenOptions={{headerShown: true, headerTitle: 'Partner'}} />
   );
 }
 

@@ -8,8 +8,8 @@ import { api } from '@/config/api'
 import { Colors } from '@/constants/theme'
 import { useAuth } from '@/contexts/auth-provider'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { router } from 'expo-router'
-import React from 'react'
+import { router, useLocalSearchParams, useNavigation } from 'expo-router'
+import React, { useEffect } from 'react'
 import { useForm } from "react-hook-form"
 import { KeyboardAvoidingView, Platform, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { z } from 'zod'
@@ -17,34 +17,43 @@ import { z } from 'zod'
 export default function SignUp() {
   const { login } = useAuth()
   const [loading, setLoading] = React.useState(false)
+  
+  // Pega a flag e normaliza para uppercase (CLIENT ou PARTNER)
+  const { role } = useLocalSearchParams<{ role: string }>()
+  const userRole = role?.toUpperCase() || 'CLIENT'
+  const isPartner = userRole === 'PARTNER'
 
+    const navigation = useNavigation();
+    useEffect(() => {
+      const isPartner = role?.toUpperCase() === 'PARTNER';
+      
+      // Altera as opções do header dinamicamente
+      navigation.setOptions({
+        headerTitle: isPartner ? 'Conta do Parceiro' : 'Conta do Cliente'
+      });
+    }, [role, navigation]);
+
+  // Schema de validação dinâmico
   const schema = z.object({
-    name: z.string().min(1, { message: "Nome é obrigatório" })
-      .min(2, { message: "Nome deve ter no mínimo 2 caracteres" }),
+    name: z.string().min(2, { message: "Nome deve ter no mínimo 2 caracteres" }),
     email: z.string().email({ message: "E-mail inválido" }).trim().toLowerCase(),
-    password: z.string().min(1, { message: "Senha é obrigatória" })
-      .min(6, { message: "Senha deve ter no mínimo 6 caracteres" }),
-    companyName: z.string().min(1, { message: "Nome o lava jato é obrigatório" })
-      .min(2, { message: "Nome o lava jato deve ter no mínimo 2 caracteres" }),
+    password: z.string().min(6, { message: "Senha deve ter no mínimo 6 caracteres" }),
+    companyName: z.string().optional()
+  }).superRefine((data, ctx) => {
+    // Exige o nome do lava jato apenas se for parceiro
+    if (isPartner && (!data.companyName || data.companyName.trim().length < 2)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Nome do Lava Jato é obrigatório",
+        path: ["companyName"]
+      });
+    }
+  });
 
-  })
-
-  type FormValues = {
-    name: string;
-    email: string;
-    password: string;
-    companyName: string;
-
-  };
+  type FormValues = z.infer<typeof schema>;
 
   const { watch, control, setError, handleSubmit, formState: { errors } } = useForm<FormValues>({
-    defaultValues: {
-      name: '',
-      email: '',
-      password: '',
-      companyName: '',
-
-    },
+    defaultValues: { name: '', email: '', password: '', companyName: '' },
     resolver: zodResolver(schema),
   });
 
@@ -52,21 +61,20 @@ export default function SignUp() {
     try {
       setLoading(true)
 
-      // 1. Criar usuário primeiro
       const userData = {
         name: data.name,
         email: data.email,
         password: data.password,
-        role: 'PARTNER',
-        companyName: data.companyName
+        role: userRole,
+        ...(isPartner && { companyName: data.companyName }) // Envia companyName só se for parceiro
       }
 
       const response = await api.post('/users', userData)
 
       if (response?.status === 201) {
         await login(data.email, data.password)
+        // O _layout.tsx já vai interceptar o login e mandar pra aba certa baseada na role!
       }
-
 
     } catch (error: any) {
       if (error?.response?.status === 409) {
@@ -74,8 +82,6 @@ export default function SignUp() {
         return
       }
       setError('email', { message: 'Erro ao criar conta' })
-
-
     } finally {
       setLoading(false)
     }
@@ -87,64 +93,33 @@ export default function SignUp() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
     >
-      <ThemedScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingBottom: 60 }}
-      >
+      <ThemedScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingBottom: 60 }}>
         <ThemedView style={styles.formContainer}>
+          <ThemedText style={styles.welcomeText}>
+            {isPartner ? 'Criar Conta Parceiro' : 'Criar Conta Cliente'}
+          </ThemedText>
 
-          <PaperInput
-            name="name"
-            control={control}
-            label="Nome Completo"
-            autoCapitalize="words"
-            error={errors?.name?.message}
-          />
+          <PaperInput name="name" control={control} label="Nome Completo" autoCapitalize="words" error={errors?.name?.message} />
+          <PaperInput name="email" control={control} label="E-mail" keyboardType="email-address" autoCapitalize="none" error={errors?.email?.message} />
+          <PaperInput name="password" control={control} label="Senha" showPasswordToggle={true} watch={watch} error={errors?.password?.message} />
 
-          <PaperInput
-            name="email"
-            control={control}
-            label="E-mail"
-            keyboardType="email-address"
-            autoCapitalize="none"
-            error={errors?.email?.message}
-          />
+          {/* Renderiza o input de Lava Jato condicionalmente */}
+          {isPartner && (
+            <PaperInput
+              name="companyName"
+              control={control}
+              label="Nome do Lava Jato"
+              autoCapitalize="words"
+              error={errors?.companyName?.message}
+            />
+          )}
 
-          <PaperInput
-            name="password"
-            control={control}
-            label="Senha"
-            showPasswordToggle={true}
-            watch={watch}
-            error={errors?.password?.message}
-          />
-
-
-
-          <PaperInput
-            name="companyName"
-            control={control}
-            label="Nome do lava Jato"
-            autoCapitalize="words"
-            error={errors?.companyName?.message}
-          />
-
-
-
-          <PrimaryButton
-            loading={loading}
-            name='Criar Conta de Parceiro'
-            onPress={handleSubmit(onSubmit)}
-          />
+          <PrimaryButton loading={loading} name='Criar Conta' onPress={handleSubmit(onSubmit)} />
 
           <View style={styles.loginContainer}>
-            <ThemedText style={styles.loginText}>
-              Já tem uma conta?{' '}
-            </ThemedText>
-            <TouchableOpacity onPress={() => router.push("/sign-in")}>
-              <ThemedText style={styles.loginLink}>
-                Entrar
-              </ThemedText>
+            <ThemedText style={styles.loginText}>Já tem uma conta?{' '}</ThemedText>
+            <TouchableOpacity onPress={() => router.push({ pathname: "/(auth)/sign-in", params: { role } })}>
+              <ThemedText style={styles.loginLink}>Entrar</ThemedText>
             </TouchableOpacity>
           </View>
         </ThemedView>

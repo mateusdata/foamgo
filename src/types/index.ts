@@ -71,11 +71,12 @@ export interface User {
 
 export interface AuthContextProps {
   user: User | null;
-  setUser: React.Dispatch<React.SetStateAction<User | null>>;
-  logOut: () => void;
   isLoading: boolean;
+  setUser: (user: User | null) => void;
+  logOut: () => Promise<void>;
   login: (email: string, password: string) => Promise<User | null>;
   refreshUser: () => Promise<User | null>;
-  signInWithGoogle: () => Promise<void>;
-  signInWithApple: (credential: any) => Promise<void>;
+  
+  signInWithGoogle: (role?: string | string[]) => Promise<void>;
+  signInWithApple: (role?: string | string[]) => Promise<void>;
 }

@@ -76,7 +76,7 @@ export default function AuthProvider({ children }: React.PropsWithChildren<{}>) 
   };
 
   // ─── Login com Google ─────────────────────────────────────────────────────
-  const signInWithGoogle = async () => {
+  const signInWithGoogle = async (role?: string | string[]) => {
     try {
       await GoogleSignin.hasPlayServices();
       await GoogleSignin.signOut();
@@ -88,15 +88,17 @@ export default function AuthProvider({ children }: React.PropsWithChildren<{}>) 
       await refreshUser();
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     } catch (error: any) {
-      if (error?.status === 404) {
-        // Usuário não cadastrado: manda para o cadastro
-        router.push('/(auth)/sign-up');
+      // Verifica se o usuário não existe para mandar para o cadastro com a role
+      if (error?.status === 404 || error?.response?.status === 404) {
+        router.push({ pathname: '/(auth)/sign-up', params: { role } });
+      } else {
+        throw error; // Repassa outros erros (como falta de internet)
       }
     }
   };
 
   // ─── Login com Apple ──────────────────────────────────────────────────────
-  const signInWithApple = async () => {
+  const signInWithApple = async (role?: string | string[]) => {
     try {
       const credential = await AppleAuthentication.signInAsync({
         requestedScopes: [
@@ -109,12 +111,14 @@ export default function AuthProvider({ children }: React.PropsWithChildren<{}>) 
       await refreshUser();
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     } catch (error: any) {
-      if (error?.status === 404) {
-        router.push('/(auth)/sign-up');
+      // Verifica se o usuário não existe para mandar para o cadastro com a role
+      if (error?.status === 404 || error?.response?.status === 404) {
+        router.push({ pathname: '/(auth)/sign-up', params: { role } });
+      } else {
+        throw error;
       }
     }
   };
-
   // ─── Logout ───────────────────────────────────────────────────────────────
   const logOut = async () => {
     try {
