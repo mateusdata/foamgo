@@ -4,7 +4,7 @@ import { ThemedView } from '@/components/themed-view';
 import { Colors } from '@/constants/theme';
 import { useAuth } from '@/contexts/auth-provider';
 import { Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
+import { router, Stack, useFocusEffect } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
 import { RefreshControl, StyleSheet, TouchableOpacity, useColorScheme, View } from 'react-native';
 import dayjs from 'dayjs';
@@ -113,6 +113,7 @@ const TeamCompanies = () => {
     const activeMembership = user?.memberships?.find(m => m.team?.companyId === user?.activeCompanyId);
     const companyName = activeMembership?.team?.company?.name || user?.company?.name || 'Lava Jato';
     const teamName = activeMembership?.team?.name;
+
 
     return (
         <ThemedView style={{ flex: 1 }} lightColor="#F8F8F8" darkColor="#121212">

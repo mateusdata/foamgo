@@ -6,8 +6,8 @@ import { ThemedView } from '@/components/themed-view';
 import { Colors } from '@/constants/theme';
 import { useAuth } from '@/contexts/auth-provider';
 import { Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
-import { router } from 'expo-router';
-import React from 'react';
+import { router, useFocusEffect } from 'expo-router';
+import React, { useCallback } from 'react';
 import { StyleSheet, View, useColorScheme, Alert, Linking } from 'react-native';
 
 const Profile = () => {
@@ -15,9 +15,9 @@ const Profile = () => {
     const colorScheme = useColorScheme() || 'light';
 
 
-
     return (
         <ThemedScrollView
+            showsVerticalScrollIndicator={false}
             contentInsetAdjustmentBehavior="automatic"
             lightColor="#F8F8F8"
             darkColor="#121212"

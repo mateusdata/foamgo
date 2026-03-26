@@ -5,7 +5,7 @@ import { ThemedView } from '@/components/themed-view';
 import { Colors } from '@/constants/theme';
 import { useAuth } from '@/contexts/auth-provider';
 import { Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
+import { router, Stack, useFocusEffect } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
 import { RefreshControl, StyleSheet, TouchableOpacity, useColorScheme, View, Dimensions } from 'react-native';
 import dayjs from 'dayjs';
@@ -108,6 +108,7 @@ const PartnerCompanies = () => {
             currency: 'BRL'
         }).format(value);
     };
+
 
     return (
         <ThemedView style={{ flex: 1 }} lightColor="#F8F8F8" darkColor="#121212">

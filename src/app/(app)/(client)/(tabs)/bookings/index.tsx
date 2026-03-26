@@ -13,13 +13,13 @@ import {
 } from 'react-native'
 
 import { api } from '@/config/api'
+import { useFocusEffect, router } from 'expo-router'
 import { Colors } from '@/constants/theme'
 import { Ionicons } from '@expo/vector-icons'
 
 import dayjs from 'dayjs';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
 import 'dayjs/locale/pt-br';
-import { router, useFocusEffect } from 'expo-router'
 import { useAuth } from '@/contexts/auth-provider'
 import { ThemedText } from '@/components/themed-text'
 import { ThemedView } from '@/components/themed-view'
@@ -156,6 +156,7 @@ export default function MyBookingsScreen() {
       </TouchableOpacity>
     )
   }
+
 
   return (
     <ThemedView style={styles.container}>

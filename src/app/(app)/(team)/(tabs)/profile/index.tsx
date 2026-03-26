@@ -6,8 +6,8 @@ import { ThemedView } from '@/components/themed-view';
 import { Colors } from '@/constants/theme';
 import { useAuth } from '@/contexts/auth-provider';
 import { Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
-import { router } from 'expo-router';
-import React from 'react';
+import { router, useFocusEffect } from 'expo-router';
+import React, { useCallback } from 'react';
 import { StyleSheet, View, useColorScheme, Alert, Linking } from 'react-native';
 
 const Profile = () => {
@@ -15,14 +15,14 @@ const Profile = () => {
     const colorScheme = useColorScheme() || 'light';
 
 
-
     return (
         <ThemedScrollView
+            showsVerticalScrollIndicator={false}
             contentInsetAdjustmentBehavior="automatic"
             lightColor="#F8F8F8"
             darkColor="#121212"
-            style={{ flex: 1 }}
-            contentContainerStyle={{ paddingHorizontal: 20, flexGrow: 1, paddingBottom: 50 }}
+            style={styles.container}
+
         >
 
             <ThemedView style={styles.headerContainer}>
@@ -38,7 +38,7 @@ const Profile = () => {
                         icon={<Ionicons name="person-outline" size={24} color={Colors.primary} />}
                         label="Conta"
                         description="Gerenciar informações pessoais"
-                        onPress={() => router.push("/(app)/(client)/account/my-informations")}
+                        onPress={() => router.push("/account/my-informations")}
                         showBorder={false}
                     />
                 </View>
@@ -66,7 +66,7 @@ const Profile = () => {
                         icon={<Ionicons name="help-circle-outline" size={24} color={Colors.primary} />}
                         label="Ajuda"
                         description="Central de ajuda e FAQ"
-                        onPress={() => router.push("/(app)/(client)/account/help")}
+                        onPress={() => router.push("/account/help")}
                         showBorder={false}
                     />
                 </View>
@@ -166,6 +166,7 @@ const MenuItem = ({
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        paddingHorizontal: 20,
     },
     headerContainer: {
         alignItems: 'center',

@@ -8,6 +8,8 @@ export default function ClientStack() {
    <StatusBar style='auto' />
     <Stack initialRouteName="(tabs)" screenOptions={{ headerShown: true }}>
 
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+
       <Stack.Screen name="account/index" options={{ headerTitle: 'Conta' }} />
       <Stack.Screen name="account/my-informations" options={{ headerTitle: 'Minhas Informações' }} />
       <Stack.Screen name="account/change-name" options={{ headerTitle: 'Alterar Nome' }} />

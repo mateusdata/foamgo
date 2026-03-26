@@ -2,7 +2,7 @@ import { StyleSheet, TouchableOpacity, RefreshControl, useColorScheme, View, Ima
 import React, { useEffect, useState, useCallback } from 'react'
 import { Colors } from '@/constants/theme'
 import { api } from '@/config/api'
-import { router } from 'expo-router'
+import { router, useFocusEffect } from 'expo-router'
 import { Ionicons } from '@expo/vector-icons'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import NotificationScreen from '@/components/notification/notification'
@@ -241,6 +241,7 @@ export default function HomeScreen() {
       </ThemedView>
     )
   }
+
 
   return (
     <ThemedView style={styles.container}>

@@ -19,6 +19,7 @@ export default function Bookings() {
         }, [selectedStatus])
     );
 
+
     const fetchBookings = useCallback(async () => {
         const companyId = user?.activeCompanyId || user?.company?.id;
         if (!companyId) return;

@@ -19,11 +19,11 @@ export default function AvatarUser() {
     const openSheet = () => {
         sheet.current?.present();
     };
- 
+
 
     const handleUploadImage = async (selectedImageUri: string) => {
-        
-       
+
+
         try {
             setLoading(true);
 
@@ -53,9 +53,9 @@ export default function AvatarUser() {
                 allowsEditing: true,
                 aspect: [4, 3],
                 quality: 0.3,
-            });            
+            });
             if (!result.canceled && result.assets?.[0]?.uri) {
-               
+
                 await handleUploadImage(result.assets[0].uri);
             }
         } catch (error: any) {
@@ -80,7 +80,7 @@ export default function AvatarUser() {
                 allowsEditing: true,
                 aspect: [4, 3],
                 quality: 0.3,
-            });              
+            });
             if (!result.canceled && result.assets?.[0]?.uri) {
                 await handleUploadImage(result.assets[0].uri);
             }
@@ -91,7 +91,7 @@ export default function AvatarUser() {
 
     const removeImage = async () => {
         try {
-            setLoading(true);                
+            setLoading(true);
             await api.delete('/users/avatar');
             await refreshUser();
 
