@@ -1,6 +1,7 @@
-import { PrimaryButton } from '@/components/components/buttons/primary-button'
-import PaperInput from '@/components/components/inputs/paper-input'
-import { ThemedScrollView } from '@/components/components/themed-scroll-view'
+
+import { PrimaryButton } from '@/components/buttons/primary-button'
+import PaperInput from '@/components/inputs/paper-input'
+import { ThemedScrollView } from '@/components/themed-scroll-view'
 import { ThemedText } from '@/components/themed-text'
 import { ThemedView } from '@/components/themed-view'
 import { api } from '@/config/api'

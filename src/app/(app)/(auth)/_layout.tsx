@@ -1,5 +1,4 @@
 import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
 
 export default function _layout() {
   return (
@@ -12,9 +11,6 @@ export default function _layout() {
       <Stack.Screen name="reset-password" options={{ headerTitle: "", }} />
       <Stack.Screen name="verify-code" options={{ headerTitle: "", }} />
         
-
-  
-
     </Stack>
   );
 }

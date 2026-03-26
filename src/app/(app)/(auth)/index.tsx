@@ -1,4 +1,4 @@
-import { PrimaryButton } from '@/components/components/buttons/primary-button'
+import { PrimaryButton } from '@/components/buttons/primary-button'
 import { ThemedText } from '@/components/themed-text'
 import { ThemedView } from '@/components/themed-view'
 import { Colors } from '@/constants/theme'

@@ -1,6 +1,6 @@
 import { ScrollView, type ScrollViewProps } from 'react-native';
 
-import { useThemeColor } from '@/hooks/use-theme-color';
+import { useColorScheme } from '@/hooks/use-color-scheme';
 
 export type ThemedScrollViewProps = ScrollViewProps & {
   lightColor?: string;
@@ -8,7 +8,8 @@ export type ThemedScrollViewProps = ScrollViewProps & {
 };
 
 export function ThemedScrollView({ style, lightColor, darkColor, ...otherProps }: ThemedScrollViewProps) {
-  const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, 'background');
+  const theme = useColorScheme() ?? 'light';
+  const backgroundColor = theme === 'light' ? lightColor : darkColor;
 
   return <ScrollView style={[{ backgroundColor }, style]} {...otherProps} />;
 }

@@ -1,4 +1,4 @@
-import { useThemeColor } from '@/hooks/use-theme-color';
+import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Pressable, StyleSheet, type PressableProps } from 'react-native';
 
 export type ThemedPressableProps = PressableProps & {
@@ -14,7 +14,8 @@ export function ThemedPressable({
   type = 'default',
   ...rest
 }: ThemedPressableProps) {
-  const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, 'background');
+  const theme = useColorScheme() ?? 'light';
+  const backgroundColor = theme === 'light' ? lightColor : darkColor;
 
   return (
     <Pressable
