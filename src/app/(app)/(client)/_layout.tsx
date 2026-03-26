@@ -4,7 +4,7 @@ import React from 'react';
 
 export default function ClientStack() {
   return (
-    <Stack screenOptions={{headerShown: false}} />
+    <Stack initialRouteName="(tabs)" screenOptions={{headerShown: false}} />
   );
 }
 
