@@ -4,7 +4,7 @@ import React from 'react';
 
 export default function ClientStack() {
   return (
-    <Stack />
+    <Stack screenOptions={{headerShown: false}} />
   );
 }
 

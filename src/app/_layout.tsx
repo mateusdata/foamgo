@@ -29,14 +29,14 @@ function RootNavigation() {
 
   return (
     <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Protected guard={true}>
+      <Stack.Protected guard={false}>
         <Stack.Screen name="(client)" />
         <Stack.Screen name="(team)" />
         <Stack.Screen name="(partner)" />
       </Stack.Protected>
 
-      <Stack.Protected guard={false}>
-        <Stack.Screen name="(auth)" />
+      <Stack.Protected guard={true}>
+        <Stack.Screen name="(client)" />
       </Stack.Protected>
 
 
