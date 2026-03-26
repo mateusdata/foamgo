@@ -1,4 +1,5 @@
 import { ThemedScrollView } from '@/components/themed-scroll-view';
+import { PrimaryButton } from '@/components/buttons/primary-button';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Colors } from '@/constants/theme';
@@ -124,7 +125,18 @@ const PartnerCompanies = () => {
                         {user?.company?.name || 'Lava Jato'}
                     </ThemedText>
                 </ThemedView>
-                <NotificationScreen />
+                <ThemedView style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <PrimaryButton
+                        style={{ padding: 0, marginRight: 16 }}
+                        textColor='white'
+                        collapsable={true}
+                        compact={true}
+                        buttonColor={Colors.primary}
+                        name="Premium"
+                        onPress={() => router.push('/(app)/(partner)/store/subscription')} 
+                        />
+                    <NotificationScreen />
+                </ThemedView>
             </ThemedView>
 
             <ThemedView
