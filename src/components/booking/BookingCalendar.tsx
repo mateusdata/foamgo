@@ -156,7 +156,7 @@ export const BookingCalendar = ({
         );
     };
 
-    const theme = {
+    const theme = useMemo(() => ({
         backgroundColor: isDark ? '#000000' : '#FFFFFF',
         calendarBackground: isDark ? '#1C1C1E' : '#FFFFFF',
         textSectionTitleColor: isDark ? '#AAAAAA' : '#b6c1cd',
@@ -172,12 +172,11 @@ export const BookingCalendar = ({
         arrowColor: Colors.primary,
         disabledArrowColor: isDark ? '#444444' : '#d9e1e8',
         agendaKnobColor: isDark ? '#555555' : '#F2F2F7',
-    };
+    }), [isDark]);
 
     // ===== HEADER QUE ROLA JUNTO =====
-     const insets = useSafeAreaInsets();
-   const ListHeaderComponent = () => (
-    <SafeAreaView edges={['top']} >
+    const ListHeaderComponent = useCallback(() => (
+    <View style={{ paddingTop: 10 }}>
         {/* Filtros */}
         <View style={styles.filtersContainer}>
             <ScrollView 
@@ -209,8 +208,8 @@ export const BookingCalendar = ({
                 />
             )}
         />
-    </SafeAreaView>
-);
+    </View>
+    ), [selectedStatus, markedDates, theme, onStatusChange]);
 
     return (
         <ThemedView style={styles.container}>

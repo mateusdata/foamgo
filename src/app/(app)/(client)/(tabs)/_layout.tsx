@@ -14,17 +14,17 @@ export default function AppTabs() {
       indicatorColor={colors.backgroundElement}
       labelStyle={{ selected: { color: colors.text } }}>
       <NativeTabs.Trigger name="companies">
-        <NativeTabs.Trigger.Label>companies</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Label>LavaJato</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon sf="building.2" md='business' />
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="bookings">
-        <NativeTabs.Trigger.Label>bookings</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Label>Agendamentos</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon sf="calendar" md='event' />
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="profile">
-        <NativeTabs.Trigger.Label>Profile</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Label>Perfil</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon sf="person.fill" md='person' />
       </NativeTabs.Trigger>
     </NativeTabs>

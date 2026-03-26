@@ -110,7 +110,8 @@ const PartnerCompanies = () => {
     };
 
     return (
-        <ThemedScrollView
+        <ThemedView style={{ flex: 1 }} lightColor="#F8F8F8" darkColor="#121212">
+            <ThemedScrollView
             style={{ flex: 1 }}
             contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 40, flexGrow: 1 }}
             lightColor="#F8F8F8"
@@ -146,18 +147,18 @@ const PartnerCompanies = () => {
 
                 style={styles.mainStatsCard}
             >
-                <ThemedView style={styles.statsRow}>
-                    <ThemedView style={styles.statItem}>
+                <View style={styles.statsRow}>
+                    <View style={styles.statItem}>
                         <ThemedView style={[styles.statIconContainer, { backgroundColor: isDark ? '#2C2C2E' : '#F2F2F7' }]}>
                             <Ionicons name="calendar-outline" size={28} color="#007AFF" />
                         </ThemedView>
                         <ThemedText style={styles.statNumber}>{stats.todayBookings}</ThemedText>
                         <ThemedText style={styles.statLabel}>Agendamentos Hoje</ThemedText>
-                    </ThemedView>
+                    </View>
 
-                    <ThemedView style={styles.divider} />
+                    <View style={styles.divider} />
 
-                    <ThemedView style={styles.statItem}>
+                    <View style={styles.statItem}>
                         <ThemedView style={[styles.statIconContainer, { backgroundColor: isDark ? '#2C2C2E' : '#F2F2F7' }]}>
                             <Ionicons name="trending-up-outline" size={28} color="#007AFF" />
                         </ThemedView>
@@ -165,8 +166,8 @@ const PartnerCompanies = () => {
                             {formatCurrency(stats.monthlyRevenue)}
                         </ThemedText>
                         <ThemedText style={styles.statLabel}>Receita do Mês</ThemedText>
-                    </ThemedView>
-                </ThemedView>
+                    </View>
+                </View>
             </ThemedView>
 
             <ThemedView style={styles.section}>
@@ -283,6 +284,7 @@ const PartnerCompanies = () => {
 
             <ThemedView style={{ height: 40 }} />
         </ThemedScrollView>
+        </ThemedView>
     );
 };
 
