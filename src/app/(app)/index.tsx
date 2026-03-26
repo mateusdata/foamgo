@@ -19,19 +19,19 @@ export default function AppIndex() {
 
   // If user explicitly switched to a role in the app menu:
   if (activeRole === 'CLIENT' || activeRole === 'USER') {
-    return <Redirect href={"/(client)" as any} />;
+    return <Redirect href={"/(app)/(client)" as any} />;
   }
   
   if (activeRole === 'PARTNER') {
-    if (isPartner) return <Redirect href={"/(partner)" as any} />;
-    if (isTeamMember) return <Redirect href={"/(team)" as any} />;
-    return <Redirect href={"/(client)" as any} />;
+    if (isPartner) return <Redirect href={"/(app)/(partner)" as any} />;
+    if (isTeamMember) return <Redirect href={"/(app)/(team)" as any} />;
+    return <Redirect href={"/(app)/(client)" as any} />;
   }
 
   // Default routing based on highest privilege:
-  if (isPartner) return <Redirect href={"/(partner)" as any} />;
-  if (isTeamMember) return <Redirect href={"/(team)" as any} />;
+  if (isPartner) return <Redirect href={"/(app)/(partner)" as any} />;
+  if (isTeamMember) return <Redirect href={"/(app)/(team)" as any} />;
   
   // Default to client
-  return <Redirect href={"/(client)" as any} />;
+  return <Redirect href={"/(app)/(client)" as any} />;
 }

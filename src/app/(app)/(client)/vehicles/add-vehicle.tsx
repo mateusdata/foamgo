@@ -96,10 +96,10 @@ export default function AddVehicle() {
 
             if (editingVehicle) {
                 await api.patch(`/vehicles/${editingVehicle.id}`, payload)
-                router.push("/(client)/(tabs)/companies")
+                router.push("/(app)/(client)/(tabs)/companies")
             } else {
                 await api.post(`/vehicles`, payload)
-                router.push("/(client)/(tabs)/companies")
+                router.push("/(app)/(client)/(tabs)/companies")
 
             }
 

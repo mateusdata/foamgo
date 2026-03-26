@@ -12,7 +12,7 @@ export default function BookingSuccessScreen() {
 
 
     const handleFinish = () => {
-        router.push('/(client)/(tabs)/companies')
+        router.push('/(app)/(client)/(tabs)/companies')
     }
 
     return (

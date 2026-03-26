@@ -174,7 +174,7 @@ const MemberHome = () => {
                         styles.actionCard,
                         { backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF' }
                     ]}
-                    onPress={() => router.push('/agendamento')}
+                    onPress={() => router.push('/(app)/(client)/(tabs)/bookings')}
                     activeOpacity={0.7}
                 >
                     <ThemedView style={[styles.actionIconWrapper, { backgroundColor: isDark ? '#2C2C2E' : '#F2F2F7' }]}>

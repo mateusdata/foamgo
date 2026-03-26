@@ -1,4 +1,4 @@
-import { StyleSheet, View, TouchableOpacity, useColorScheme, LayoutAnimation, Linking, Animated } from 'react-native'
+import { StyleSheet, View, TouchableOpacity, useColorScheme, LayoutAnimation, Linking } from 'react-native'
 import React, { useState } from 'react'
 
 import { useForm } from "react-hook-form"
@@ -7,7 +7,7 @@ import { api } from '@/config/api'
 import { z } from 'zod'
 import { zodResolver } from "@hookform/resolvers/zod"
 import { router } from 'expo-router'
-import { Ionicons, MaterialIcons } from '@expo/vector-icons'
+import { Ionicons } from '@expo/vector-icons'
 import { Alert } from 'react-native'
 import { useAuth } from '@/contexts/auth-provider'
 import { ThemedView } from '@/components/themed-view'
@@ -15,7 +15,6 @@ import PaperInput from '@/components/inputs/paper-input'
 import { PrimaryButton } from '@/components/buttons/primary-button'
 import { ThemedScrollView } from '@/components/themed-scroll-view'
 import { ThemedText } from '@/components/themed-text'
-import { ThemedPressable } from '@/components/themed-pressable'
 
 
 

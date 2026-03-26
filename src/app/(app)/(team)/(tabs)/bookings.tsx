@@ -57,7 +57,7 @@ export default function Bookings() {
     }
 
     const onItemPress = (id: string) => {
-        router.push(`/(team)/bookings/${id}`);
+        router.push(`/(app)/(team)/bookings/${id}`);
     }
 
     return (

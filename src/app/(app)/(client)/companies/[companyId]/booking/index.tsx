@@ -86,7 +86,7 @@ export default function BookingServicesScreen() {
 
     const handleSelectService = (service: CarService) => {
         router.push({
-            pathname: '/(client)/companies/[companyId]/booking/team',
+            pathname: '/(app)/(client)/companies/[companyId]/booking/team',
             params: { companyId, serviceId: service.id }
         })
     }

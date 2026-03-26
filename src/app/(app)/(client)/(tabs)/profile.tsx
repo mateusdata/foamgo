@@ -38,7 +38,7 @@ const Profile = () => {
                         icon={<Ionicons name="person-outline" size={24} color={Colors.primary} />}
                         label="Conta"
                         description="Gerenciar informações pessoais"
-                        onPress={() => router.push("/(client)/account/my-informations")}
+                        onPress={() => router.push("/(app)/(client)/account/my-informations")}
                         showBorder={false}
                     />
                 </View>
@@ -66,7 +66,7 @@ const Profile = () => {
                         icon={<Ionicons name="help-circle-outline" size={24} color={Colors.primary} />}
                         label="Ajuda"
                         description="Central de ajuda e FAQ"
-                        onPress={() => router.push("/(client)/account/help")}
+                        onPress={() => router.push("/(app)/(client)/account/help")}
                         showBorder={false}
                     />
                 </View>

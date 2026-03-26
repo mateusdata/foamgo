@@ -58,7 +58,7 @@ const MyInformations = () => {
                         icon={<Ionicons name="person-outline" size={24} color={Colors.primary} />}
                         label="Nome de usuário"
                         description={user?.name || "Definir nome de usuário"}
-                        onPress={() => router.push("/(client)/account/change-name")}
+                        onPress={() => router.push("/(app)/(client)/account/change-name")}
                         showBorder={false}
                     />
                 </View>
@@ -68,7 +68,7 @@ const MyInformations = () => {
                         icon={<Ionicons name="mail-outline" size={24} color={Colors.primary} />}
                         label="Email"
                         description={user?.email || "Adicionar email"}
-                        onPress={() => router.push("/(client)/account/change-email")}
+                        onPress={() => router.push("/(app)/(client)/account/change-email")}
                         showBorder={false}
                     />
                 </View>
@@ -102,7 +102,7 @@ const MyInformations = () => {
                         icon={<Ionicons name="lock-closed-outline" size={24} color={Colors.primary} />}
                         label="Senha"
                         description="Alterar senha de acesso"
-                        onPress={() => router.push("/(client)/account/change-password")}
+                        onPress={() => router.push("/(app)/(client)/account/change-password")}
                         showBorder={false}
                     />
                 </View>

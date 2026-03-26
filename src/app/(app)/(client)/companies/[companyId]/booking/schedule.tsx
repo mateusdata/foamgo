@@ -199,7 +199,7 @@ export default function BookingScheduleScreen() {
             }
 
             if (success) {
-                router.push('/(client)/companies/[companyId]/booking/success')
+                router.push('/(app)/(client)/companies/[companyId]/booking/success')
             } else {
                 if (lastError?.response?.status === 409) {
                     const bookingsRes = await api.get(`/bookings?userId=${user.id}&companyId=${companyId}`)
@@ -218,7 +218,7 @@ export default function BookingScheduleScreen() {
                             teamId: teamForRecovery?.id,
                             status: 'CONFIRMED'
                         })
-                        router.push('/(client)/companies/[companyId]/booking/success')
+                        router.push('/(app)/(client)/companies/[companyId]/booking/success')
                         return
                     }
                 }

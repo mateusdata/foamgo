@@ -35,7 +35,7 @@ const PartnerHome = () => {
 
     const goToSubscription = () => {
         setTimeout(() => {
-            router.push('/store/subscription');
+            router.push('/(app)/(partner)/(tabs)/companies');
 
         }, 3000);
     }

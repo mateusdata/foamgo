@@ -59,7 +59,7 @@ export default function BookingTeamScreen() {
 
     const handleSelectTeam = (teamId: string) => {
         router.push({
-            pathname: '/(client)/companies/[companyId]/booking/schedule',
+            pathname: '/(app)/(client)/companies/[companyId]/booking/schedule',
             params: {
                 companyId,
                 serviceId,

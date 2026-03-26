@@ -35,7 +35,7 @@ const PartnerCompanies = () => {
 
     const goToSubscription = () => {
         setTimeout(() => {
-            router.push('/store/subscription');
+            router.push('/(app)/(partner)/(tabs)/companies');
 
         }, 3000);
     }
@@ -163,7 +163,7 @@ const PartnerCompanies = () => {
                         { backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF' }
                     ]}
                     onPress={() => router.push({
-                        pathname: '/(partner)/companies/[companyId]/teams',
+                        pathname: '/(app)/(partner)/companies/[companyId]/teams',
                         params: { companyId: user!!.company!!.id }
                     })}
                     activeOpacity={0.7}
@@ -190,7 +190,7 @@ const PartnerCompanies = () => {
                         { backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF' }
                     ]}
                     onPress={() => router.push({
-                        pathname: '/(partner)/companies/[companyId]/services',
+                        pathname: '/(app)/(partner)/companies/[companyId]/services',
                         params: { companyId: user!!.company!!.id }
                     })}
                     activeOpacity={0.7}
@@ -217,7 +217,7 @@ const PartnerCompanies = () => {
                         { backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF' }
                     ]}
                     onPress={() => router.push({
-                        pathname: '/(partner)/companies/[companyId]/manager',
+                        pathname: '/(app)/(partner)/companies/[companyId]/manager',
                         params: { companyId: user!!.company!!.id }
                     })}
                     activeOpacity={0.7}
@@ -244,7 +244,7 @@ const PartnerCompanies = () => {
                         { backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF' }
                     ]}
                     onPress={() => router.push({
-                        pathname: '/(partner)/companies/[companyId]/slots',
+                        pathname: '/(app)/(partner)/companies/[companyId]/slots',
                         params: { companyId: user!!.company!!.id }
                     })}
                     activeOpacity={0.7}

@@ -33,7 +33,7 @@ export default function CreateCompany() {
 
             if (authType === 'google' || authType === 'apple') {
                 await refreshUser();
-                router.replace('/home');
+                router.replace('/(app)/(partner)/(tabs)/companies');
             } else {
                 await login(email, password!);
             }

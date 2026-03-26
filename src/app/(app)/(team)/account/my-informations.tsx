@@ -58,7 +58,7 @@ const MyInformations = () => {
                         icon={<Ionicons name="person-outline" size={24} color={Colors.primary} />}
                         label="Nome de usuário"
                         description={user?.name || "Definir nome de usuário"}
-                        onPress={() => router.push("/(team)/account/change-name")}
+                        onPress={() => router.push("/(app)/(team)/account/change-name")}
                         showBorder={false}
                     />
                 </View>
@@ -68,7 +68,7 @@ const MyInformations = () => {
                         icon={<Ionicons name="mail-outline" size={24} color={Colors.primary} />}
                         label="Email"
                         description={user?.email || "Adicionar email"}
-                        onPress={() => router.push("/(team)/account/change-email")}
+                        onPress={() => router.push("/(app)/(team)/account/change-email")}
                         showBorder={false}
                     />
                 </View>
@@ -79,7 +79,7 @@ const MyInformations = () => {
                         icon={<Ionicons name="call-outline" size={24} color={Colors.primary} />}
                         label="Telefone"
                         description={parsePhoneNumberFromString(user?.phone ?? '', 'BR')?.formatNational() ?? "Adicionar telefone"}
-                        onPress={() => router.push("/(team)/account/change-phone")}
+                        onPress={() => router.push("/(app)/(team)/account/change-phone")}
                         showBorder={false}
                     />
                 </View>
@@ -89,7 +89,7 @@ const MyInformations = () => {
                         icon={<Ionicons name="business-outline" size={24} color={Colors.primary} />}
                         label="Lavajato Padrão"
                         description="Alterar lavajato ativo"
-                        onPress={() => router.push("/(team)/account/change-company")}
+                        onPress={() => router.push("/(app)/(team)/account/change-company")}
                         showBorder={false}
                     />
                 </View>
@@ -103,7 +103,7 @@ const MyInformations = () => {
                         icon={<Ionicons name="lock-closed-outline" size={24} color={Colors.primary} />}
                         label="Senha"
                         description="Alterar senha de acesso"
-                        onPress={() => router.push("/(team)/account/change-password")}
+                        onPress={() => router.push("/(app)/(team)/account/change-password")}
                         showBorder={false}
                     />
                 </View>
