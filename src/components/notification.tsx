@@ -25,15 +25,15 @@ export default function PushNotification() {
   );
 
   const createNotification = async (token: string) => {
+    if (!user?.id) return;
     const data = {
       token: token,
-      userId: user!!.id,
+      userId: user.id,
       platform: Platform.OS.toUpperCase(),
     }
     try {
-      const response = await api.post('/notifications', data);
+      await api.post('/notifications', data);
     } catch (error) {
-     // alert('Failed to ressgister for push notifications');
     }
   };
 
@@ -58,6 +58,12 @@ export default function PushNotification() {
       responseListener.remove();
     };
   }, []);
+
+  useEffect(() => {
+    if (user?.id && expoPushToken) {
+      createNotification(expoPushToken);
+    }
+  }, [user?.id, expoPushToken]);
 
   return null;
 
@@ -102,7 +108,6 @@ export default function PushNotification() {
             projectId,
           })
         ).data;
-        createNotification(token);
       } catch (e) {
         token = `${e}`;
       }
