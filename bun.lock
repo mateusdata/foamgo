@@ -26,6 +26,7 @@
         "expo-haptics": "~55.0.9",
         "expo-image": "~55.0.6",
         "expo-image-picker": "~55.0.13",
+        "expo-in-app-updates": "^0.9.0",
         "expo-linking": "~55.0.8",
         "expo-notifications": "~55.0.13",
         "expo-router": "^55.0.7",
@@ -36,6 +37,7 @@
         "expo-updates": "~55.0.15",
         "expo-web-browser": "~55.0.10",
         "i": "^0.3.7",
+        "install": "^0.13.0",
         "libphonenumber-js": "^1.12.40",
         "react": "19.2.0",
         "react-dom": "19.2.0",
@@ -708,6 +710,8 @@
 
     "expo-image-picker": ["expo-image-picker@55.0.13", "", { "dependencies": { "expo-image-loader": "~55.0.0" }, "peerDependencies": { "expo": "*" } }, ""],
 
+    "expo-in-app-updates": ["expo-in-app-updates@0.9.0", "", {}, "sha512-6iYZYtItKQFPoZFOexG3n8S7v0Z7xBjWOBb9Q/D0rJHPivxoDskKLBGB9hmWmZKe8uiNDkI84J7MUWyfc+sLxQ=="],
+
     "expo-json-utils": ["expo-json-utils@55.0.0", "", {}, ""],
 
     "expo-keep-awake": ["expo-keep-awake@55.0.4", "", { "peerDependencies": { "expo": "*", "react": "*" } }, ""],
@@ -839,6 +843,8 @@
     "inherits": ["inherits@2.0.4", "", {}, ""],
 
     "inline-style-prefixer": ["inline-style-prefixer@7.0.1", "", { "dependencies": { "css-in-js-utils": "^3.1.0" } }, ""],
+
+    "install": ["install@0.13.0", "", {}, "sha512-zDml/jzr2PKU9I8J/xyZBQn8rPCAY//UOYNmR01XwNwyfhEWObo2SWfSl1+0tm1u6PhxLwDnfsT/6jB7OUxqFA=="],
 
     "invariant": ["invariant@2.2.4", "", { "dependencies": { "loose-envify": "^1.0.0" } }, ""],
 

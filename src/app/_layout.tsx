@@ -1,3 +1,4 @@
+import InAppUpdates from '@/components/In-app-updates'
 import PushNotification from '@/components/notification'
 import { SplashScreenController } from '@/components/splash'
 import { useAuth } from '@/contexts/auth-provider'
@@ -18,6 +19,7 @@ export default function RootLayout() {
         <StatusBar style='auto' />
         <Providers>
           <SplashScreenController />
+            <InAppUpdates />
           <PushNotification />
           <RootNavigation />
         </Providers>
