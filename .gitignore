@@ -36,16 +36,15 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 
-app-example
-
-# generated native folders
-/ios
-/android
-*.aab
-*.apk
-*.ipa
-
 google-services.json
+app-example
+firebase.json
+*.apk
+*.keystore
+*.aab
+android/
+ios/
+backup/google-services.json
 GoogleService-Info.plist
-key.pem
+google-play-key.json
 key.json

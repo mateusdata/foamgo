@@ -44,3 +44,4 @@ app-example
 *.aab
 *.apk
 *.ipa
+google-play-key.json

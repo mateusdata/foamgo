@@ -84,3 +84,13 @@ eas deploy --prod
 gzip -c GoogleService-Info.plist | base64 -w 0 > ios_gzip_base64.txt
 
 gzip -c google-services.json | base64 -w 0 > android_gzip_base64.txt
+
+
+chmod +x deploy-android.sh
+
+# 1. Instala o Ruby (base do Fastlane)
+sudo apt update
+sudo apt install ruby-full build-essential -y
+
+# 2. Instala o Fastlane de verdade
+sudo gem install fastlane -v 2.212.1 # Versão estável
