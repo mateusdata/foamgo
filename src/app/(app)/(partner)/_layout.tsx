@@ -1,12 +1,16 @@
 import { useAuth } from '@/contexts/auth-provider'
-import { Redirect, Stack } from 'expo-router'
+import { Redirect, Stack, useSegments } from 'expo-router'
 import React from 'react'
 import { Platform } from 'react-native'
 
 export default function PartnerStack() {
-  const { user } = useAuth()
+  const { user, activeRole } = useAuth()
+  const segments = useSegments()
+  const currentSegments = segments as string[]
+  const isCreateCompanyRoute = currentSegments.includes('companies') && currentSegments.includes('create')
+  const allowPartnerOnboarding = activeRole === 'PARTNER' && isCreateCompanyRoute
 
-  if (user?.role !== 'PARTNER') {
+  if (user?.role !== 'PARTNER' && !allowPartnerOnboarding) {
     return <Redirect href={'/' as any} />
   }
 

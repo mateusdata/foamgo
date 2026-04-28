@@ -20,12 +20,13 @@ export default function SignUp() {
   
   // Pega a flag e normaliza para uppercase (CLIENT ou PARTNER)
   const { role } = useLocalSearchParams<{ role: string }>()
-  const userRole = role?.toUpperCase() || 'CLIENT'
+  const normalizedRole = Array.isArray(role) ? role[0]?.toUpperCase() : role?.toUpperCase()
+  const userRole = normalizedRole === 'PARTNER' ? 'PARTNER' : 'USER'
   const isPartner = userRole === 'PARTNER'
 
     const navigation = useNavigation();
     useEffect(() => {
-      const isPartner = role?.toUpperCase() === 'PARTNER';
+      const isPartner = normalizedRole === 'PARTNER';
       
       // Altera as opções do header dinamicamente
       navigation.setOptions({
@@ -72,7 +73,7 @@ export default function SignUp() {
       const response = await api.post('/users', userData)
 
       if (response?.status === 201) {
-        await login(data.email, data.password)
+        await login(data.email, data.password, userRole)
         // O _layout.tsx já vai interceptar o login e mandar pra aba certa baseada na role!
       }
 

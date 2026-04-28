@@ -1,13 +1,51 @@
 import { Redirect } from 'expo-router';
 import { useAuth } from '@/contexts/auth-provider';
+import React from 'react';
+import { Alert } from 'react-native';
 
 export default function AppIndex() {
-  const { user, activeRole } = useAuth();
-  
+  const { user, activeRole, logOut } = useAuth();
+  const [upgradeDecision, setUpgradeDecision] = React.useState<'idle' | 'accepted' | 'declined'>('idle');
+  const hasShownUpgradePrompt = React.useRef(false);
+
   if (!user) return null;
 
   const isPartner = user?.role === 'PARTNER';
   const isTeamMember = !!user?.activeCompanyId;
+  const shouldOfferPartnerUpgrade =
+    activeRole === 'PARTNER' &&
+    user?.role === 'USER' &&
+    !isPartner &&
+    !isTeamMember;
+
+  React.useEffect(() => {
+    if (!shouldOfferPartnerUpgrade || hasShownUpgradePrompt.current) return;
+
+    hasShownUpgradePrompt.current = true;
+
+    Alert.alert(
+      'Conta de Cliente',
+      'Sua conta atual é de cliente. Deseja criar seu Lava Jato agora para ativar o modo parceiro?',
+      [
+        {
+          text: 'Agora não',
+          style: 'cancel',
+          onPress: async () => {
+            await logOut();
+            setUpgradeDecision('declined');
+            hasShownUpgradePrompt.current = false;
+          },
+        },
+        {
+          text: 'Sim, criar',
+          onPress: () => {
+            setUpgradeDecision('accepted');
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  }, [logOut, shouldOfferPartnerUpgrade]);
 
   console.log('DISPATCHER DEBUG', {
     activeRole,
@@ -16,6 +54,12 @@ export default function AppIndex() {
     isTeamMember,
     activeCompanyId: user?.activeCompanyId,
   });
+
+  if (upgradeDecision === 'accepted') {
+    return <Redirect href={"/(app)/(partner)/companies/create" as any} />;
+  }
+
+  if (shouldOfferPartnerUpgrade) return null;
 
   // If user explicitly switched to a role in the app menu:
   if (activeRole === 'CLIENT' || activeRole === 'USER') {

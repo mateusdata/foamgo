@@ -62,7 +62,7 @@ export default function Services() {
     categoryId: string
   }
 
-  const { control, handleSubmit, reset, setValue, formState: { errors } } = useForm<FormValues>({
+  const { control, handleSubmit, reset, setValue, clearErrors, formState: { errors } } = useForm<FormValues>({
     defaultValues: {
       name: '',
       description: '',
@@ -72,6 +72,21 @@ export default function Services() {
     },
     resolver: zodResolver(schema),
   })
+
+  const syncCategorySelection = useCallback((categories: ServiceCategory[]) => {
+    if (categories.length === 0) return
+
+    const hasSelectedCategory = !!selectedCategory && categories.some((category) => category.id === selectedCategory)
+    const categoryToUse = hasSelectedCategory ? selectedCategory : categories[0].id
+
+    if (!hasSelectedCategory) {
+      setSelectedCategory(categoryToUse)
+    }
+
+    // Mantém o campo do formulário sincronizado com o chip ativo.
+    setValue('categoryId', categoryToUse, { shouldValidate: true, shouldDirty: true })
+    clearErrors('categoryId')
+  }, [clearErrors, selectedCategory, setValue])
 
 
   useFocusEffect(
@@ -88,12 +103,7 @@ export default function Services() {
       setServiceCategories(categoriesResponse.data)
       setServices(response.data)
 
-
-      if (categoriesResponse.data.length > 0 && !selectedCategory) {
-        const firstCategory = categoriesResponse.data[0]
-        setSelectedCategory(firstCategory.id)
-        setValue('categoryId', firstCategory.id)
-      }
+      syncCategorySelection(categoriesResponse.data)
     } catch (error) {
     }
   }
@@ -101,6 +111,13 @@ export default function Services() {
   const onSubmit = async (data: FormValues) => {
     try {
       setLoading(true)
+      const resolvedCategoryId =
+        data.categoryId || selectedCategory || serviceCategories[0]?.id || ''
+
+      if (!resolvedCategoryId) {
+        Alert.alert('Erro', 'Crie ou selecione uma categoria antes de continuar.')
+        return
+      }
 
       const serviceData = {
         name: data.name,
@@ -108,21 +125,28 @@ export default function Services() {
         durationMinutes: parseInt(data.durationMinutes),
         price: data.price ? parseFloat(data.price) : null,
         description: data.description,
-        categoryId: selectedCategory
+        categoryId: resolvedCategoryId
       }
 
       if (editingService) {
 
         await api.patch(`/services/${editingService.id}`, serviceData)
       } else {
-        console.log(JSON.stringify(serviceData, null))
         await api.post('/services', serviceData)
       }
 
       resetForm()
       fetchData(companyId)
-    } catch (error) {
-      Alert.alert('Erro', editingService ? 'Erro ao atualizar serviço' : 'Erro ao criar serviço')
+    } catch (error: any) {
+      const status = error?.response?.status
+      const backendMessage = error?.response?.data?.message
+
+      if (status === 409) {
+        Alert.alert('Erro', 'Já existe um serviço com esse nome para este lava-jato.')
+        return
+      }
+
+      Alert.alert('Erro', backendMessage || (editingService ? 'Erro ao atualizar serviço' : 'Erro ao criar serviço'))
     } finally {
       setLoading(false)
     }
@@ -182,6 +206,7 @@ export default function Services() {
       setEditingService(null)
       reset()
       setShowForm(true)
+      syncCategorySelection(serviceCategories)
     }
   }
 

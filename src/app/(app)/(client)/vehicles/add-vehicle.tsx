@@ -1,4 +1,4 @@
-import { StyleSheet, TouchableOpacity, View, ScrollView, Alert, Platform } from 'react-native'
+import { StyleSheet, TouchableOpacity, View, ScrollView, Alert, useColorScheme } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { api } from '@/config/api'
 import { useForm } from "react-hook-form"
@@ -7,8 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 
 import { Colors } from '@/constants/theme'
 import { Ionicons } from '@expo/vector-icons'
-import { useColorScheme } from 'react-native'
-import { router, Stack, useFocusEffect, useNavigation } from 'expo-router'
+import { router, Stack } from 'expo-router'
 import { useAuth } from '@/contexts/auth-provider'
 import { ThemedView } from '@/components/themed-view'
 import PaperInput from '@/components/inputs/paper-input'
@@ -148,21 +147,26 @@ export default function AddVehicle() {
     }
 
     const isDark = colorScheme === 'dark'
+    const isFirstVehicleRequired = !loadingVehicles && vehicles.length === 0 && !editingVehicle
 
 
     return (
         <ThemedView style={styles.container}>
-            <Stack.Screen options={{ headerShown: false, animation: "none" }} />
+            <Stack.Screen
+                options={{
+                    headerShown: true,
+                    animation: "none",
+                    headerTitle: editingVehicle ? 'Editar Veículo' : 'Adicionar Veículo',
+                    headerBackVisible: !isFirstVehicleRequired,
+                    gestureEnabled: !isFirstVehicleRequired,
+                }}
+            />
             <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-                <View style={styles.customHeader}>
-                    <TouchableOpacity onPress={() => router.back()} style={{ padding: 4 }}>
-                        <Ionicons name="close" size={28} color={isDark ? '#fff' : '#000'} />
-                    </TouchableOpacity>
-                    <ThemedText style={{ fontSize: 20, fontWeight: 'bold' }}>
-                        {editingVehicle ? 'Editar Veículo' : 'Adicionar Veículo'}
+                {isFirstVehicleRequired && (
+                    <ThemedText style={styles.requiredHint}>
+                        Cadastre seu primeiro veículo para continuar.
                     </ThemedText>
-                    <View style={{ width: 28 }} />
-                </View>
+                )}
 
                 <ThemedView style={styles.formContainer}>
 
@@ -275,7 +279,7 @@ export default function AddVehicle() {
 const styles = StyleSheet.create({
     container: { flex: 1, padding: 0 },
     scrollView: { flex: 1 },
-    customHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: Platform.OS === 'ios' ? 50 : 30, paddingBottom: 10 },
+    requiredHint: { textAlign: 'center', opacity: 0.8, fontSize: 14, paddingHorizontal: 20, marginBottom: 8 },
     formContainer: { paddingHorizontal: 20, paddingTop: 10 },
     title: { fontSize: 24, fontWeight: 'bold', marginBottom: 20 },
     cancelButton: { alignItems: 'center', marginTop: 10, marginBottom: 10 },
