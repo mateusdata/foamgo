@@ -60,7 +60,7 @@ export default function WelcomeScreen() {
             </View>
           </View>
 
-          <ThemedText style={styles.appName}>
+          <ThemedText type='title' style={styles.appName}>
             Foam GO
           </ThemedText>
 
