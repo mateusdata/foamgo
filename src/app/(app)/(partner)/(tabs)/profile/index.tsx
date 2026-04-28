@@ -1,105 +1,87 @@
-import AvatarCompany from '@/components/avatar-company';
+import AvatarUser from '@/components/avatar-user';
 import { ThemedPressable } from '@/components/themed-pressable';
 import { ThemedScrollView } from '@/components/themed-scroll-view';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Colors } from '@/constants/theme';
 import { useAuth } from '@/contexts/auth-provider';
-import { Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
-import { router, useFocusEffect } from 'expo-router';
-import React, { useCallback } from 'react';
-import { StyleSheet, View, useColorScheme, Alert, Linking } from 'react-native';
+import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { router } from 'expo-router';
+import React from 'react';
+import { StyleSheet, View, useColorScheme, Linking } from 'react-native';
 
 const Profile = () => {
     const { logOut } = useAuth();
     const colorScheme = useColorScheme() || 'light';
-
+    const isDark = colorScheme === 'dark';
 
     return (
-        <ThemedScrollView
-            showsVerticalScrollIndicator={false}
-            contentInsetAdjustmentBehavior="automatic"
-            lightColor="#F8F8F8"
-            darkColor="#121212"
-            style={styles.container}
+        <ThemedView style={styles.container} lightColor="#F4F5F7" darkColor="#121212">
+            <ThemedScrollView
+                showsVerticalScrollIndicator={false}
+                contentInsetAdjustmentBehavior="automatic"
+                lightColor="#F4F5F7"
+                darkColor="#121212"
+                style={styles.container}
+                contentContainerStyle={styles.scrollContent}
+            >
 
-        >
+                <View style={styles.headerContainer}>
+                    <AvatarUser />
+                </View>
 
-            <ThemedView style={styles.headerContainer}>
-                <AvatarCompany />
-
-            </ThemedView>
-
-
-            <View style={styles.sectionContainer}>
-                <ThemedText style={styles.sectionTitle}>Perfil</ThemedText>
-                <View style={styles.menuGroup}>
+                <View style={styles.sectionContainer}>
+                    <ThemedText style={styles.sectionTitle}>Perfil</ThemedText>
+                    
                     <MenuItem
                         icon={<Ionicons name="person-outline" size={24} color={Colors.primary} />}
                         label="Conta"
                         description="Gerenciar informações pessoais"
-                        onPress={() => router.push("/(app)/(partner)/account/my-informations")}
-                        showBorder={false}
+                        onPress={() => router.push("/account/my-informations")}
                     />
-                </View>
 
-                {
-                    false && <View style={styles.menuGroup}>
+                    {false && (
                         <MenuItem
                             icon={<Ionicons name="settings-outline" size={24} color={Colors.primary} />}
                             label="Configurações"
                             description="Abrir configurações do dispositivo"
-                            onPress={() => {
-                                Linking.openSettings();
-                            }}
-                            showBorder={false}
+                            onPress={() => Linking.openSettings()}
                         />
-                    </View>
-                }
-            </View>
+                    )}
+                </View>
 
-
-            <View style={styles.sectionContainer}>
-                <ThemedText style={styles.sectionTitle}>Suporte</ThemedText>
-                <View style={styles.menuGroup}>
+                <View style={styles.sectionContainer}>
+                    <ThemedText style={styles.sectionTitle}>Suporte</ThemedText>
+                    
                     <MenuItem
                         icon={<Ionicons name="help-circle-outline" size={24} color={Colors.primary} />}
                         label="Ajuda"
                         description="Central de ajuda e FAQ"
-                        onPress={() => router.push("/(app)/(partner)/account/help")}
-                        showBorder={false}
+                        onPress={() => router.push("/account/help")}
                     />
-                </View>
 
-                {
-                    false && <View style={styles.menuGroup}>
+                    {false && (
                         <MenuItem
                             icon={<Ionicons name="star-outline" size={24} color={Colors.primary} />}
                             label="Avaliação"
                             description="Avaliar o aplicativo"
                             onPress={() => alert('Funcionalidade em desenvolvimento')}
-                            showBorder={false}
                         />
-                    </View>
-                }
-            </View>
+                    )}
+                </View>
 
-
-            <View style={[styles.sectionContainer, { marginBottom: 100 }]}>
-                <View style={styles.menuGroup}>
+                <View style={styles.logoutContainer}>
                     <MenuItem
-                        icon={<Ionicons name="log-out-outline" size={24} color="#FF4757" />}
+                        icon={<Ionicons name="log-out-outline" size={24} color="#FF3B30" />}
                         label="Sair da conta"
                         description="Desconectar do aplicativo"
                         onPress={logOut}
-                        showBorder={false}
                         isDestructive={true}
                     />
                 </View>
-            </View>
 
-            <View style={styles.bottomSpacer} />
-        </ThemedScrollView>
+            </ThemedScrollView>
+        </ThemedView>
     );
 };
 
@@ -108,7 +90,6 @@ type MenuItemProps = {
     label: string;
     description?: string;
     onPress: () => void;
-    showBorder?: boolean;
     isDestructive?: boolean;
 };
 
@@ -117,32 +98,36 @@ const MenuItem = ({
     label,
     description,
     onPress,
-    showBorder = false,
     isDestructive = false
 }: MenuItemProps) => {
     const colorScheme = useColorScheme() || 'light';
+    const isDark = colorScheme === 'dark';
+
+    // Fundo do ícone dinâmico: vermelho claro se for botão de sair, ou cinza padrão se for normal
+    const iconBg = isDestructive
+        ? (isDark ? 'rgba(255, 59, 48, 0.15)' : '#FFEBEB')
+        : (isDark ? '#2C2C2E' : '#F3F4F6');
 
     return (
         <ThemedPressable
             style={[
                 styles.menuItem,
                 {
-                    backgroundColor: colorScheme === 'light' ? '#FFFFFF' : '#1E1E1E',
-                    borderBottomWidth: showBorder ? 1 : 0,
-                    borderBottomColor: colorScheme === 'light' ? '#F0F0F0' : '#2A2A2A',
+                    backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF',
+                    borderColor: isDark ? '#2C2C2E' : '#E5E7EB',
                 },
             ]}
             onPress={onPress}
         >
             <View style={styles.menuContent}>
-                <View style={styles.menuIconContainer}>
+                <View style={[styles.menuIconContainer, { backgroundColor: iconBg }]}>
                     {icon}
                 </View>
                 <View style={styles.menuTextContainer}>
                     <ThemedText
                         style={[
                             styles.menuLabel,
-                            isDestructive && { color: '#FF4757' }
+                            isDestructive && { color: '#FF3B30' }
                         ]}
                     >
                         {label}
@@ -157,7 +142,7 @@ const MenuItem = ({
             <MaterialIcons
                 name="arrow-forward-ios"
                 size={16}
-                color={colorScheme === 'light' ? '#C0C0C0' : '#666666'}
+                color={isDark ? '#8E8E93' : '#D1D5DB'}
             />
         </ThemedPressable>
     );
@@ -166,53 +151,41 @@ const MenuItem = ({
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+    },
+    scrollContent: {
         paddingHorizontal: 20,
+        paddingTop: 16,
+        paddingBottom: 40,
+        flexGrow: 1,
     },
     headerContainer: {
         alignItems: 'center',
-
-        marginBottom: 8,
-    },
-    userName: {
-        fontSize: 24,
-        fontWeight: '700',
-        marginTop: 16,
-        textAlign: 'center',
-    },
-    userEmail: {
-        fontSize: 16,
-        opacity: 0.7,
-        marginTop: 4,
-        textAlign: 'center',
+        marginBottom: 24,
     },
     sectionContainer: {
-        marginBottom: 22,
-        gap: 12,
+        marginBottom: 5, // Espaçamento curto entre categorias
+    },
+    logoutContainer: {
+        marginTop: 4, // Botão de sair mais próximo da seção acima
+        marginBottom: 24,
     },
     sectionTitle: {
-        fontSize: 18,
-        fontWeight: '600',
-        marginBottom: 2,
+        fontSize: 16,
+        fontWeight: '700',
+        marginBottom: 12,
         marginLeft: 4,
-    },
-    menuGroup: {
-        borderRadius: 16,
-        overflow: 'hidden',
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.05,
-        shadowRadius: 8,
-        elevation: 2,
+        letterSpacing: -0.3,
+        color: '#8E8E93'
     },
     menuItem: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        paddingVertical: 16,
-        paddingHorizontal: 20,
+        paddingVertical: 14,
+        paddingHorizontal: 16,
+        borderRadius: 20,
+        borderWidth: 1,
+        marginBottom: 8,
     },
     menuContent: {
         flexDirection: 'row',
@@ -220,28 +193,26 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     menuIconContainer: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
-        backgroundColor: 'rgba(74, 144, 226, 0.1)',
+        width: 44,
+        height: 44,
+        borderRadius: 14,
         justifyContent: 'center',
         alignItems: 'center',
-        marginRight: 16,
+        marginRight: 14,
     },
     menuTextContainer: {
         flex: 1,
+        justifyContent: 'center',
     },
     menuLabel: {
         fontSize: 16,
-        fontWeight: '500',
+        fontWeight: '600',
         marginBottom: 2,
+        letterSpacing: -0.2
     },
     menuDescription: {
-        fontSize: 14,
-        opacity: 0.6,
-    },
-    bottomSpacer: {
-        height: 40,
+        fontSize: 13,
+        color: '#8E8E93',
     },
 });
 

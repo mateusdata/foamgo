@@ -1,5 +1,6 @@
-import React, { useEffect, useState, useCallback } from 'react'
-import { StyleSheet, View, Alert, RefreshControl } from 'react-native'
+import React, { useState, useCallback } from 'react'
+import { StyleSheet, Platform } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useFocusEffect, router } from 'expo-router'
 import { ThemedView } from '@/components/themed-view'
 import { api } from '@/config/api'
@@ -12,13 +13,13 @@ export default function Bookings() {
     const [loading, setLoading] = useState(false)
     const [refreshing, setRefreshing] = useState(false)
     const [selectedStatus, setSelectedStatus] = useState<'CONFIRMED' | 'COMPLETED' | 'CANCELLED' | 'ALL'>('CONFIRMED')
+    const insets = useSafeAreaInsets()
 
     useFocusEffect(
         useCallback(() => {
             fetchBookings();
         }, [selectedStatus])
     );
-
 
     const fetchBookings = useCallback(async () => {
         const companyId = user?.activeCompanyId || user?.company?.id;
@@ -62,8 +63,7 @@ export default function Bookings() {
     }
 
     return (
-        <ThemedView style={styles.container}>
-            
+        <ThemedView style={[styles.container, { paddingTop: Platform.OS === 'ios' ? insets.top + 80 : 0 }]}>
             <BookingCalendar
                 bookings={bookings}
                 onItemPress={onItemPress}

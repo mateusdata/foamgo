@@ -38,15 +38,15 @@ const Subscription = () => {
 
                 } else {
                     const iosIds = ['foam.go.partner.month', 'foam.go.partner.year'];
-                    const androidIds = ['com.m2.blippartner:foamgopartnermonth', 'com.m2.blippartner:foamgoparteryear'];
+                    const androidIds = ['com.m2.foamgo:foam-go-partner-month', 'com.m2.foamgo.anual:foam-go-partner-year'];
 
                     const idsToFetch = Platform.OS === 'ios' ? iosIds : androidIds;
 
                     const products = await Purchases.getProducts(idsToFetch);
 
                     if (products.length > 0) {
-                        const monthlyProd = products.find(p => p.identifier === (Platform.OS === 'ios' ? 'foam.go.partner.month' : 'com.m2.blippartner:foamgopartnermonth'));
-                        const annualProd = products.find(p => p.identifier === (Platform.OS === 'ios' ? 'foam.go.partner.year' : 'com.m2.blippartner:foamgoparteryear'));
+                        const monthlyProd = products.find(p => p.identifier === (Platform.OS === 'ios' ? 'foam.go.partner.month' : 'com.m2.foamgo:foam-go-partner-month'));
+                        const annualProd = products.find(p => p.identifier === (Platform.OS === 'ios' ? 'foam.go.partner.year' : 'com.m2.foamgo.anual:foam-go-partner-year'));
 
                         if (monthlyProd) setMonthlyPackage({ product: monthlyProd } as any);
                         if (annualProd) setAnnualPackage({ product: annualProd } as any);
@@ -89,9 +89,15 @@ const Subscription = () => {
                         hasPlan: true,
                     });
                     console.log('User updated on server:', updateUser.data);
+
+                    Alert.alert(
+                        "Sucesso",
+                        "Assinatura realizada com sucesso!",
+                        [{ text: "OK", onPress: () => router.back() }]
+                    );
                 } catch (error: any) {
                     console.log('Error updating user on server:', error?.response?.data || error.response || error.message);
-                    alert('Erro ao atualizar plano no servidor. Entre em contato com o suporte.');
+                    Alert.alert('Erro', 'Erro ao atualizar plano no servidor. Entre em contato com o suporte.');
                 }
             }
         } catch (e: any) {
@@ -108,7 +114,11 @@ const Subscription = () => {
         try {
             const customerInfo = await Purchases.restorePurchases();
             if (customerInfo.entitlements.active["Foam go Partner Pro"] !== undefined) {
-                Alert.alert("Sucesso", "Compras restauradas com sucesso!");
+                Alert.alert(
+                    "Sucesso",
+                    "Compras restauradas com sucesso!",
+                    [{ text: "OK", onPress: () => router.back() }]
+                );
             } else {
                 Alert.alert("Aviso", "Nenhuma assinatura ativa encontrada.");
             }
@@ -200,13 +210,13 @@ const Subscription = () => {
                     </>
                 )}
 
-                <View style={styles.features}>
-                    <Feature text="Lava jato ativo no aplicativo" />
-                    <Feature text="Agendamentos ilimitados" />
-                    <Feature text="Times ilimitados" />
-                    <Feature text="Criação de horários e disponibilidade" />
-                    <Feature text="Gestão completa de times" />
-                </View>
+             <View style={styles.features}>
+    <Feature text="Gerencie seu lava jato fácil" />
+    <Feature text="Clientes agendam pelo app" />
+    <Feature text="Organize seus times" />
+    <Feature text="Controle horários" />
+    <Feature text="Tudo em um só lugar" />
+</View>
 
                 <PrimaryButton
                     name={isPurchasing ? "Processando..." : "Assinar Agora"}
@@ -218,11 +228,10 @@ const Subscription = () => {
                     <ThemedText style={styles.restoreText}>Restaurar Compras</ThemedText>
                 </TouchableOpacity>
 
-                {/* ✅ Footer atualizado para aprovação Apple Guideline 3.1.2(c) */}
                 <View style={styles.footerLinks}>
                     <ThemedText style={styles.disclaimer}>
-                    Assinatura com renovação automática {selectedPlan === 'monthly' ? 'mensal' : 'anual'} por {getPriceString(selectedPlan)}/{selectedPlan === 'monthly' ? 'mês' : 'ano'}.{' '}
-                    Ao assinar, você concorda com nossos:
+                        Assinatura com renovação automática {selectedPlan === 'monthly' ? 'mensal' : 'anual'} por {getPriceString(selectedPlan)}/{selectedPlan === 'monthly' ? 'mês' : 'ano'}.{' '}
+                        Ao assinar, você concorda com nossos:
                     </ThemedText>
                     <View style={styles.footerLinksRow}>
                         <TouchableOpacity onPress={() => Linking.openURL('https://blip2m.vercel.app/terms-of-use')}>
@@ -349,7 +358,7 @@ const styles = StyleSheet.create({
         borderBottomColor: '#e0e0e0',
     },
     price: {
-        fontSize: 48,
+        fontSize: 22,
         fontWeight: 'bold',
     },
     period: {

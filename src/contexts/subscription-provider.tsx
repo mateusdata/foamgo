@@ -19,7 +19,7 @@ export default function SubscriptionProvider({ children }: React.PropsWithChildr
     if (Platform.OS === 'ios') {
       Purchases.configure({ apiKey: "appl_QobGaASIscPCCWEGrzakxibbdgS" });
     } else if (Platform.OS === 'android') {
-      Purchases.configure({ apiKey: "goog_JSCcpuHcYrzPoiAizHsaSEJimLy" });
+      Purchases.configure({ apiKey: "goog_domcvZyyCkZBbwIBnDkzUHRRyiw" });
     }
   }, []);
 

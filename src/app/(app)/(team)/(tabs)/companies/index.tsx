@@ -4,7 +4,7 @@ import { ThemedView } from '@/components/themed-view';
 import { Colors } from '@/constants/theme';
 import { useAuth } from '@/contexts/auth-provider';
 import { Ionicons } from '@expo/vector-icons';
-import { router, Stack, useFocusEffect } from 'expo-router';
+import { router } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
 import { RefreshControl, StyleSheet, TouchableOpacity, useColorScheme, View } from 'react-native';
 import dayjs from 'dayjs';
@@ -21,7 +21,7 @@ const TeamCompanies = () => {
     const { user, refreshUser } = useAuth();
     const colorScheme = useColorScheme() || 'light';
     const [refreshing, setRefreshing] = React.useState(false);
-    const [stats, setStats] = useState({
+    const [stats, setStats] = useState<DashboardStats>({
         todayBookings: 0,
         monthlyRevenue: 0
     });
@@ -114,94 +114,117 @@ const TeamCompanies = () => {
     const companyName = activeMembership?.team?.company?.name || user?.company?.name || 'Lava Jato';
     const teamName = activeMembership?.team?.name;
 
+    // Cores dinâmicas para o Card Principal (Hero Card)
+    const statsBgColor = isDark ? '#1C1C1E' : Colors.primary;
+    const statsTextColor = '#FFFFFF';
+    const statsSubTextColor = isDark ? '#8E8E93' : 'rgba(255,255,255,0.8)';
+    const statsIconBg = isDark ? '#2C2C2E' : 'rgba(255,255,255,0.2)';
+    const statsDivider = isDark ? '#38383A' : 'rgba(255,255,255,0.2)';
 
     return (
-        <ThemedView style={{ flex: 1 }} lightColor="#F8F8F8" darkColor="#121212">
+        <ThemedView style={styles.container} lightColor="#F4F5F7" darkColor="#121212">
             <ThemedScrollView
-            contentInsetAdjustmentBehavior="automatic"
-            style={{ flex: 1 }}
-            contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 40, flexGrow: 1 }}
-            lightColor="#F8F8F8"
-            darkColor="#121212"
-            refreshControl={
-                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
-        >
-            <ThemedView style={styles.header}>
-                <ThemedView>
-                    <ThemedText style={styles.greeting}>
-                        Olá, {user?.name?.split(' ')[0] || 'Membro'}
-                    </ThemedText>
-                    <ThemedText style={styles.companyName}>
-                        {companyName}
-                    </ThemedText>
-                    {teamName && (
-                        <ThemedText style={styles.teamName}>
-                            {teamName}
-                        </ThemedText>
-                    )}
-                </ThemedView>
-                <NotificationScreen />
-            </ThemedView>
-
-            <ThemedView
-                darkColor='#1C1C1E'
-                lightColor='#FFFFFF'
-                style={styles.mainStatsCard}
+                contentInsetAdjustmentBehavior="automatic"
+                style={styles.container}
+                contentContainerStyle={styles.scrollContent}
+                lightColor="#F4F5F7"
+                darkColor="#121212"
+                refreshControl={
+                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                }
             >
-                <View style={styles.statsRow}>
-                    <View style={styles.statItem}>
-                        <ThemedView style={[styles.statIconContainer, { backgroundColor: isDark ? '#2C2C2E' : '#F2F2F7' }]}>
-                            <Ionicons name="calendar-outline" size={28} color="#007AFF" />
-                        </ThemedView>
-                        <ThemedText style={styles.statNumber}>{stats.todayBookings}</ThemedText>
-                        <ThemedText style={styles.statLabel}>Agendamentos Hoje</ThemedText>
-                    </View>
-
-                    <View style={styles.divider} />
-
-                    <View style={styles.statItem}>
-                        <ThemedView style={[styles.statIconContainer, { backgroundColor: isDark ? '#2C2C2E' : '#F2F2F7' }]}>
-                            <Ionicons name="trending-up-outline" size={28} color="#007AFF" />
-                        </ThemedView>
-                        <ThemedText style={styles.statNumber}>
-                            {formatCurrency(stats.monthlyRevenue)}
+                {/* CABEÇALHO */}
+                <View style={styles.header}>
+                    <View>
+                        <ThemedText style={styles.greeting}>
+                            Olá, {user?.name?.split(' ')[0] || 'Membro'}
                         </ThemedText>
-                        <ThemedText style={styles.statLabel}>Receita do Mês</ThemedText>
+                        <ThemedText style={styles.companyName}>
+                            {companyName}
+                        </ThemedText>
+                        {teamName && (
+                            <ThemedText style={styles.teamName}>
+                                {teamName}
+                            </ThemedText>
+                        )}
+                    </View>
+                    <View style={styles.headerActions}>
+                        <NotificationScreen />
                     </View>
                 </View>
-            </ThemedView>
 
-            <ThemedView style={styles.section}>
-                <ThemedText style={styles.sectionTitle}>Acesso Rápido</ThemedText>
+                {/* CARD PRINCIPAL (HERO CARD) */}
+                <View style={[styles.mainStatsCard, { backgroundColor: statsBgColor }]}>
+                    <View style={styles.statsRow}>
+                        <View style={styles.statItem}>
+                            <View style={[styles.statIconContainer, { backgroundColor: statsIconBg }]}>
+                                <Ionicons name="calendar-outline" size={26} color={statsTextColor} />
+                            </View>
+                            <ThemedText style={[styles.statNumber, { color: statsTextColor }]}>
+                                {stats.todayBookings}
+                            </ThemedText>
+                            <ThemedText style={[styles.statLabel, { color: statsSubTextColor }]}>
+                                Agendamentos Hoje
+                            </ThemedText>
+                        </View>
 
-                <TouchableOpacity
-                    style={[
-                        styles.actionCard,
-                        { backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF' }
-                    ]}
-                    onPress={() => router.push('/(app)/(team)/(tabs)/bookings')}
-                    activeOpacity={0.7}
-                >
-                    <ThemedView style={[styles.actionIconWrapper, { backgroundColor: isDark ? '#2C2C2E' : '#F2F2F7' }]}>
-                        <Ionicons name="calendar-outline" size={28} color="#007AFF" />
-                    </ThemedView>
-                    <View style={styles.actionContent}>
-                        <ThemedText style={styles.actionTitle}>Ver Agendamentos</ThemedText>
-                        <ThemedText style={styles.actionSubtitle}>
-                            Consultar todos os agendamentos
-                        </ThemedText>
+                        <View style={[styles.divider, { backgroundColor: statsDivider }]} />
+
+                        <View style={styles.statItem}>
+                            <View style={[styles.statIconContainer, { backgroundColor: statsIconBg }]}>
+                                <Ionicons name="trending-up-outline" size={26} color={statsTextColor} />
+                            </View>
+                            <ThemedText style={[styles.statNumber, { color: statsTextColor }]}>
+                                {formatCurrency(stats.monthlyRevenue)}
+                            </ThemedText>
+                            <ThemedText style={[styles.statLabel, { color: statsSubTextColor }]}>
+                                Receita do Mês
+                            </ThemedText>
+                        </View>
                     </View>
-                    <Ionicons
-                        name="chevron-forward"
-                        size={20}
-                        color={isDark ? '#8E8E93' : '#C7C7CC'}
-                    />
-                </TouchableOpacity>
-            </ThemedView>
+                </View>
 
-            <ThemedView style={{ height: 40 }} />
-        </ThemedScrollView>
+                {/* ACESSO RÁPIDO */}
+                <View style={styles.section}>
+                    <ThemedText style={styles.sectionTitle}>Acesso Rápido</ThemedText>
+
+                    {[
+                        {
+                            title: 'Ver Agendamentos',
+                            subtitle: 'Consultar todos os agendamentos',
+                            icon: 'calendar-outline',
+                            route: '/(app)/(team)/(tabs)/bookings'
+                        }
+                    ].map((item, index) => (
+                        <TouchableOpacity
+                            key={index}
+                            style={[
+                                styles.actionCard,
+                                {
+                                    backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF',
+                                    borderColor: isDark ? '#2C2C2E' : '#E5E7EB'
+                                }
+                            ]}
+                            onPress={() => router.push(item.route as any)}
+                            activeOpacity={0.7}
+                        >
+                            <View style={[styles.actionIconWrapper, { backgroundColor: isDark ? '#2C2C2E' : '#F3F4F6' }]}>
+                                <Ionicons name={item.icon as any} size={24} color={Colors.primary} />
+                            </View>
+                            <View style={styles.actionContent}>
+                                <ThemedText style={styles.actionTitle}>{item.title}</ThemedText>
+                                <ThemedText style={styles.actionSubtitle}>{item.subtitle}</ThemedText>
+                            </View>
+                            <Ionicons
+                                name="chevron-forward"
+                                size={20}
+                                color={isDark ? '#8E8E93' : '#D1D5DB'}
+                            />
+                        </TouchableOpacity>
+                    ))}
+                </View>
+
+            </ThemedScrollView>
         </ThemedView>
     );
 };
@@ -210,101 +233,100 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
+    scrollContent: {
+        paddingHorizontal: 16,
+        paddingBottom: 40,
+        flexGrow: 1,
+    },
     header: {
-        paddingTop: 12,
-        paddingBottom: 16,
+        paddingTop: 16,
+        paddingBottom: 24,
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'flex-start'
+        alignItems: 'center' // Alinha a notificação com o nome
     },
     greeting: {
-        fontSize: 14,
+        fontSize: 15,
         color: '#8E8E93',
         fontWeight: '500',
-        marginBottom: 2
+        marginBottom: 4
     },
     companyName: {
-        fontSize: 24,
-        fontWeight: '700',
+        fontSize: 26,
+        fontWeight: '800',
         letterSpacing: -0.5
     },
     teamName: {
-        fontSize: 13,
-        color: '#007AFF',
-        marginTop: 2,
+        fontSize: 14,
+        color: Colors.primary,
+        marginTop: 4,
         fontWeight: '600'
     },
+    headerActions: {
+        flexDirection: 'row',
+        alignItems: 'center'
+    },
     mainStatsCard: {
-        borderRadius: 16,
-        margin: 16,
-        top: 10,
-        marginBottom: 20,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.06,
-        shadowRadius: 8,
-        elevation: 3
+        borderRadius: 24,
+        paddingVertical: 24,
+        paddingHorizontal: 16,
+        marginBottom: 32,
     },
     statsRow: {
         flexDirection: 'row',
-        alignItems: 'center'
+        alignItems: 'center',
+        justifyContent: 'space-between'
     },
     statItem: {
         flex: 1,
         alignItems: 'center'
     },
     statIconContainer: {
-        width: 48,
-        height: 48,
-        borderRadius: 12,
+        width: 52,
+        height: 52,
+        borderRadius: 16,
         justifyContent: 'center',
         alignItems: 'center',
-        marginBottom: 8
+        marginBottom: 12
     },
     statNumber: {
-        fontSize: 20,
-        fontWeight: '700',
-        marginBottom: 2,
+        fontSize: 22,
+        fontWeight: '800',
+        marginBottom: 4,
         letterSpacing: -0.5
     },
     statLabel: {
-        fontSize: 12,
-        color: '#8E8E93',
+        fontSize: 13,
         fontWeight: '500',
         textAlign: 'center'
     },
     divider: {
         width: 1,
-        height: 50,
-        backgroundColor: '#E5E5EA',
-        marginHorizontal: 12
+        height: 60,
+        marginHorizontal: 16,
+        borderRadius: 1
     },
     section: {
         marginBottom: 24,
-        top: 22
     },
     sectionTitle: {
         fontSize: 20,
         fontWeight: '700',
-        marginBottom: 16,
+        marginBottom: 20,
         letterSpacing: -0.3
     },
     actionCard: {
         flexDirection: 'row',
         alignItems: 'center',
         padding: 16,
-        borderRadius: 16,
+        borderRadius: 20,
         marginBottom: 12,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.06,
-        shadowRadius: 8,
-        elevation: 2
+        borderWidth: 1,
     },
     actionIconWrapper: {
         width: 48,
         height: 48,
-        borderRadius: 12,
+        borderRadius: 14,
         justifyContent: 'center',
         alignItems: 'center',
         marginRight: 16
@@ -315,7 +337,7 @@ const styles = StyleSheet.create({
     actionTitle: {
         fontSize: 16,
         fontWeight: '600',
-        marginBottom: 2
+        marginBottom: 4
     },
     actionSubtitle: {
         fontSize: 13,
