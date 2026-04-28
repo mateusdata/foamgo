@@ -1,5 +1,4 @@
 import { ThemedScrollView } from '@/components/themed-scroll-view';
-import { PrimaryButton } from '@/components/buttons/primary-button';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Colors } from '@/constants/theme';
@@ -126,15 +125,6 @@ const PartnerCompanies = () => {
                         </ThemedText>
                     </View>
                     <View style={styles.headerActions}>
-                        <PrimaryButton
-                            style={styles.premiumButton}
-                            textColor='white'
-                            collapsable={true}
-                            compact={true}
-                            buttonColor={Colors.primary}
-                            name="Premium"
-                            onPress={() => router.push('/(app)/(partner)/store/subscription')}
-                        />
                         <NotificationScreen />
                     </View>
                 </View>
@@ -266,10 +256,6 @@ const styles = StyleSheet.create({
     headerActions: {
         flexDirection: 'row',
         alignItems: 'center'
-    },
-    premiumButton: {
-        padding: 0,
-        marginRight: 16
     },
     mainStatsCard: {
         borderRadius: 24, // Bordas mais arredondadas (moderno)
