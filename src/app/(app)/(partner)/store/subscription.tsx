@@ -89,15 +89,12 @@ const Subscription = () => {
                         hasPlan: true,
                     });
                     console.log('User updated on server:', updateUser.data);
-                   // Alert.alert("Sucesso", "Assinatura realizada com sucesso!");
-
                 } catch (error: any) {
                     console.log('Error updating user on server:', error?.response?.data || error.response || error.message);
                     alert('Erro ao atualizar plano no servidor. Entre em contato com o suporte.');
                 }
             }
         } catch (e: any) {
-
             if (!e.userCancelled) {
                 Alert.alert('Erro na compra', e.message);
             }
@@ -221,17 +218,23 @@ const Subscription = () => {
                     <ThemedText style={styles.restoreText}>Restaurar Compras</ThemedText>
                 </TouchableOpacity>
 
+                {/* ✅ Footer atualizado para aprovação Apple Guideline 3.1.2(c) */}
                 <View style={styles.footerLinks}>
                     <ThemedText style={styles.disclaimer}>
-                        Ao continuar, você concorda com nossos termo e politica
+                        Assinatura com renovação automática {selectedPlan === 'monthly' ? 'mensal' : 'anual'} por {getPriceString(selectedPlan)}/{selectedPlan === 'monthly' ? 'mês' : 'ano'}.{' '}
+                        Ao assinar, você concorda com nossos:
                     </ThemedText>
-                    <TouchableOpacity onPress={() => Linking.openURL('https://blip2m.vercel.app/terms-of-use')}>
-                        <ThemedText style={styles.footerLink}>Termos de Uso</ThemedText>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => Linking.openURL('https://blip2m.vercel.app/policy')}>
-                        <ThemedText style={styles.footerLink}>Política de Privacidade</ThemedText>
-                    </TouchableOpacity>
+                    <View style={styles.footerLinksRow}>
+                        <TouchableOpacity onPress={() => Linking.openURL('https://blip2m.vercel.app/terms-of-use')}>
+                            <ThemedText style={styles.footerLink}>Termos de Uso</ThemedText>
+                        </TouchableOpacity>
+                        <ThemedText style={styles.disclaimer}> e </ThemedText>
+                        <TouchableOpacity onPress={() => Linking.openURL('https://blip2m.vercel.app/policy')}>
+                            <ThemedText style={styles.footerLink}>Política de Privacidade</ThemedText>
+                        </TouchableOpacity>
+                    </View>
                 </View>
+
             </ThemedScrollView>
             {Platform.OS === 'android' && (
                 <TouchableOpacity
@@ -399,18 +402,23 @@ const styles = StyleSheet.create({
         color: '#888',
         textAlign: 'center',
         marginTop: 12,
-        marginBottom: 16,
+        marginBottom: 4,
     },
     footerLinks: {
+        alignItems: 'center',
+        marginTop: 8,
+    },
+    footerLinksRow: {
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
         flexWrap: 'wrap',
+        marginTop: 4,
     },
     footerLink: {
         fontSize: 13,
         color: Colors.primary || '#4285F4',
         fontWeight: '600',
-        paddingHorizontal: 6,
+        paddingHorizontal: 2,
     },
 })
