@@ -1,10 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 const PROD_URL = "https://blip-api.fly.dev/api";
-const DEV_URL = "http://192.168.25.10:3333/api";
+const DEV_URL = "http://192.168.25.10:3000/api";
 
 const api = axios.create({
-  baseURL: false ? DEV_URL : PROD_URL,
+  baseURL: __DEV__ ? DEV_URL : PROD_URL,
 });
 
 let logoutCallback: Function | null = null;

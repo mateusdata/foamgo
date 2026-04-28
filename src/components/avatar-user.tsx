@@ -1,4 +1,4 @@
-import { Alert, Pressable, StyleSheet, View, ActivityIndicator, useColorScheme } from 'react-native';
+import { Alert, Pressable, StyleSheet, View, ActivityIndicator } from 'react-native';
 import React, { useRef, useState } from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Avatar } from 'react-native-paper';
@@ -9,6 +9,22 @@ import { Haptics } from '@/utils/Haptics';
 import { useAuth } from '@/contexts/auth-provider';
 import { AvatarPickerSheet } from './sheets/avatar-picker-sheet';
 import { ThemedText } from './themed-text';
+
+const getAvatarFileFromAsset = (asset: ImagePicker.ImagePickerAsset) => {
+    const extensionFromMime = asset.mimeType?.split('/')[1] ?? 'jpg';
+    return {
+        uri: asset.uri,
+        name: asset.fileName ?? `avatar.${extensionFromMime}`,
+        type: asset.mimeType ?? 'image/jpeg',
+    };
+};
+
+const getApiErrorMessage = (error: any, fallback: string) => {
+    const message = error?.response?.data?.message;
+    if (Array.isArray(message)) return message.join('\n');
+    if (typeof message === 'string' && message.trim().length > 0) return message;
+    return fallback;
+};
 
 export default function AvatarUser() {
     const { user, refreshUser } = useAuth();
@@ -21,26 +37,28 @@ export default function AvatarUser() {
     };
 
 
-    const handleUploadImage = async (selectedImageUri: string) => {
-
-
+    const handleUploadImage = async (asset: ImagePicker.ImagePickerAsset) => {
         try {
             setLoading(true);
-
+            const avatarFile = getAvatarFileFromAsset(asset);
             const formData: any = new FormData();
-            formData.append('avatar', {
-                uri: selectedImageUri,
-                name: 'avatar.jpg',
-                type: 'image/jpeg',
-            });
+            formData.append('avatar', avatarFile as any);
 
-            await api.put(`/users/avatar`, formData);
+            await api.put('/users/avatar', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' },
+            });
 
             await refreshUser();
             Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         } catch (error: any) {
+            console.log('[AvatarUser] upload failed', {
+                status: error?.response?.status,
+                url: error?.config?.url,
+                data: error?.response?.data,
+                message: error?.message,
+            });
             Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-            Alert.alert('Erro', 'Não foi possível enviar a imagem. Tente novamente.');
+            Alert.alert('Erro', getApiErrorMessage(error, 'Não foi possível enviar a imagem. Tente novamente.'));
         } finally {
             setLoading(false);
         }
@@ -48,15 +66,20 @@ export default function AvatarUser() {
 
     const pickImage = async () => {
         try {
+            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+            if (status !== 'granted') {
+                Alert.alert('Permissão necessária', 'Habilite o acesso à galeria nas configurações do dispositivo.');
+                return;
+            }
+
             const result = await ImagePicker.launchImageLibraryAsync({
                 mediaTypes: ["images"],
                 allowsEditing: true,
                 aspect: [4, 3],
                 quality: 0.3,
             });
-            if (!result.canceled && result.assets?.[0]?.uri) {
-
-                await handleUploadImage(result.assets[0].uri);
+            if (!result.canceled && result.assets?.[0]) {
+                await handleUploadImage(result.assets[0]);
             }
         } catch (error: any) {
             Alert.alert('Erro', 'Não foi possível selecionar a imagem. Tente novamente.');
@@ -81,8 +104,8 @@ export default function AvatarUser() {
                 aspect: [4, 3],
                 quality: 0.3,
             });
-            if (!result.canceled && result.assets?.[0]?.uri) {
-                await handleUploadImage(result.assets[0].uri);
+            if (!result.canceled && result.assets?.[0]) {
+                await handleUploadImage(result.assets[0]);
             }
         } catch (error: any) {
             Alert.alert('Erro', 'Não foi possível abrir a câmera. Tente novamente.');
