@@ -221,8 +221,8 @@ const Subscription = () => {
                 {/* ✅ Footer atualizado para aprovação Apple Guideline 3.1.2(c) */}
                 <View style={styles.footerLinks}>
                     <ThemedText style={styles.disclaimer}>
-                        Assinatura com renovação automática {selectedPlan === 'monthly' ? 'mensal' : 'anual'} por {getPriceString(selectedPlan)}/{selectedPlan === 'monthly' ? 'mês' : 'ano'}.{' '}
-                        Ao assinar, você concorda com nossos:
+                    Assinatura com renovação automática {selectedPlan === 'monthly' ? 'mensal' : 'anual'} por {getPriceString(selectedPlan)}/{selectedPlan === 'monthly' ? 'mês' : 'ano'}.{' '}
+                    Ao assinar, você concorda com nossos:
                     </ThemedText>
                     <View style={styles.footerLinksRow}>
                         <TouchableOpacity onPress={() => Linking.openURL('https://blip2m.vercel.app/terms-of-use')}>
