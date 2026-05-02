@@ -35,7 +35,7 @@ fastlane supply \
   --package_name "$ANDROID_PACKAGE_NAME" \
   --aab "$LATEST_AAB" \
   --json_key "$GOOGLE_PLAY_JSON_KEY_PATH" \
-  --track "alpha" \
+  --track "production" \
   --release_status "completed" \
   --skip_upload_images true \
   --skip_upload_screenshots true \
