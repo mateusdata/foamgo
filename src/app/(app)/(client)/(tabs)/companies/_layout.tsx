@@ -11,7 +11,7 @@ export default function Layout() {
         headerShadowVisible: true,
       }}
     >
-      <Stack.Screen name="index" options={{ title: 'LavaJato' }} />
+      <Stack.Screen name="index" options={{ title: 'Lava Jatos' }} />
     </Stack>
   );
 }

@@ -18,7 +18,7 @@ export default function Layout() {
       <Stack.Screen
         name="index"
         options={{
-          title: 'LavaJato',
+          title: 'Foamgo',
           headerRight: () => (
             <Pressable
               onPress={() => router.push('/(app)/(partner)/store/subscription' as any)}
