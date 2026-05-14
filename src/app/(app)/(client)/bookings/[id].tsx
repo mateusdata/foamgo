@@ -20,7 +20,8 @@ type Booking = {
     carWash?: { name: string; avatar: string; addresses?: { street: string; city: string } }
     company?: { name: string; avatar: string; addresses?: { street: string; city: string } }
     totalPrice?: number | string
-    vehicle?: { model: string; year: number; plate?: string }
+    carName?: string
+    vehicle?: { model?: string; make?: string; year?: number | string; plate?: string }
     team?: { name: string; avatar?: string }
     notes?: string
 }
@@ -118,6 +119,9 @@ export default function BookingDetailsScreen() {
     const hasAvatar = company?.avatar && company.avatar.length > 0;
     const serviceName = booking.service?.name || booking.carService?.name || 'Serviço';
     const price = booking.totalPrice || booking.service?.price || booking.carService?.price;
+    const vehicleName = [booking.vehicle?.model, booking.vehicle?.make, booking.vehicle?.year?.toString()]
+        .filter(Boolean)
+        .join(' - ') || booking.carName;
 
     return (
         <ThemedView style={styles.container}>
@@ -159,9 +163,9 @@ export default function BookingDetailsScreen() {
                         <View style={styles.detailContent}>
                             <ThemedText style={styles.detailLabel}>Serviço</ThemedText>
                             <ThemedText style={styles.detailValue}>{serviceName}</ThemedText>
-                            {booking.vehicle && (
+                            {!!vehicleName && (
                                 <ThemedText style={styles.detailSubtext}>
-                                    {booking.vehicle.model}{booking.vehicle.plate ? ` - ${booking.vehicle.plate}` : ''}
+                                    {vehicleName}
                                 </ThemedText>
                             )}
                         </View>

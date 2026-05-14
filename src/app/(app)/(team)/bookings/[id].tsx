@@ -109,6 +109,9 @@ export default function BookingDetails() {
     const customerName = booking.user?.name || booking.company?.name || 'Cliente';
     const serviceName = booking.carService?.name || booking.service?.name;
     const price = booking.carService?.price || booking.service?.price || '0,00';
+    const vehicleName = [booking.vehicle?.model, booking.vehicle?.make, booking.vehicle?.year?.toString()]
+        .filter(Boolean)
+        .join(' - ') || booking.carName;
     const formattedPrice = !price || price === 0 || price === '0,00' || price === '0'
         ? 'A combinar'
         : typeof price === 'number'
@@ -153,6 +156,11 @@ export default function BookingDetails() {
                         <View style={styles.detailContent}>
                             <ThemedText style={styles.detailLabel}>Serviço</ThemedText>
                             <ThemedText style={styles.detailValue}>{serviceName}</ThemedText>
+                            {!!vehicleName && (
+                                <ThemedText style={styles.detailSubtext}>
+                                    {vehicleName}
+                                </ThemedText>
+                            )}
                         </View>
                     </View>
 
@@ -273,6 +281,7 @@ const styles = StyleSheet.create({
     detailContent: { flex: 1 },
     detailLabel: { fontSize: 12, opacity: 0.6, marginBottom: 2 },
     detailValue: { fontSize: 15, fontWeight: '500' },
+    detailSubtext: { fontSize: 13, opacity: 0.5, marginTop: 2 },
 
     footerActions: {
         flexDirection: 'row',

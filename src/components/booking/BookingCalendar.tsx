@@ -38,6 +38,8 @@ export type Booking = {
     company?: { name: string }
     user?: { name: string, avatar?: string }
     team?: { name: string, id?: string }
+    carName?: string
+    vehicle?: { model?: string, make?: string, year?: number | string }
 }
 
 type BookingCalendarProps = {
