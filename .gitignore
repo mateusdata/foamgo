@@ -48,3 +48,4 @@ backup/google-services.json
 GoogleService-Info.plist
 google-play-key.json
 key.json
+.playwright-mcp

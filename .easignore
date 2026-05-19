@@ -45,3 +45,4 @@ app-example
 *.apk
 *.ipa
 google-play-key.json
+.playwright-mcp
