@@ -19,6 +19,8 @@ export default function PartnerStack() {
 
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 
+      <Stack.Screen name="contacts/index" options={{ headerTitle: 'Agenda de Contatos' }} />
+
       <Stack.Screen name="account/my-informations" options={{ headerTitle: 'Minhas Informações' }} />
       <Stack.Screen name="account/change-company" options={{ headerTitle: 'Dados da Empresa' }} />
       <Stack.Screen name="account/change-name" options={{ headerTitle: 'Alterar Nome' }} />

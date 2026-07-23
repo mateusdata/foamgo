@@ -1,14 +1,18 @@
-import React, { useState, useCallback } from 'react'
-import { StyleSheet, Platform } from 'react-native'
+import { Ionicons } from '@expo/vector-icons'
+import { router, useFocusEffect } from 'expo-router'
+import React, { useCallback, useState } from 'react'
+import { Platform, StyleSheet, Text, TouchableOpacity } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { useFocusEffect, router } from 'expo-router'
+
+import { Booking, BookingCalendar } from '@/components/booking'
 import { ThemedView } from '@/components/themed-view'
 import { api } from '@/config/api'
 import { useAuth } from '@/contexts/auth-provider'
-import { BookingCalendar, Booking } from '@/components/booking'
+import { useTheme } from '@/hooks/use-theme'
 
 export default function Bookings() {
     const { user, refreshUser } = useAuth()
+    const theme = useTheme()
     const [bookings, setBookings] = useState<Booking[]>([])
     const [loading, setLoading] = useState(false)
     const [refreshing, setRefreshing] = useState(false)
@@ -62,6 +66,10 @@ export default function Bookings() {
         router.push(`/(app)/(team)/bookings/${id}`);
     }
 
+    const handleNewBooking = () => {
+        router.push('/(app)/(team)/contacts');
+    }
+
     return (
         <ThemedView style={[styles.container, { paddingTop: Platform.OS === 'ios' ? insets.top + 80 : 0 }]}>
             <BookingCalendar
@@ -73,10 +81,38 @@ export default function Bookings() {
                 refreshing={refreshing}
                 onRefresh={onRefresh}
             />
+
+            <TouchableOpacity
+                style={[styles.fab, { backgroundColor: theme.tint, bottom: insets.bottom + 20 }]}
+                activeOpacity={0.85}
+                onPress={handleNewBooking}
+            >
+                <Ionicons name="add" size={24} color="#fff" style={{ marginRight: 6 }} />
+                <Text style={styles.fabText}>Novo Agendamento</Text>
+            </TouchableOpacity>
         </ThemedView>
     )
 }
 
 const styles = StyleSheet.create({
     container: { flex: 1 },
+    fab: {
+        position: 'absolute',
+        right: 20,
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingVertical: 12,
+        paddingHorizontal: 20,
+        borderRadius: 30,
+        elevation: 5,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+    },
+    fabText: {
+        color: '#fff',
+        fontWeight: '700',
+        fontSize: 15,
+    },
 })

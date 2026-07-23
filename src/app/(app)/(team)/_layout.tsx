@@ -14,6 +14,8 @@ export default function TeamStack() {
 
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 
+      <Stack.Screen name="contacts/index" options={{ headerTitle: 'Agenda de Contatos' }} />
+
       <Stack.Screen name="account/my-informations" options={{ headerTitle: 'Minhas Informações' }} />
       <Stack.Screen name="account/change-company" options={{ headerTitle: 'Meu Lava Jato' }} />
       <Stack.Screen name="account/change-name" options={{ headerTitle: 'Alterar Nome' }} />
