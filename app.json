@@ -8,7 +8,6 @@
     "scheme": "foamgo",
     "userInterfaceStyle": "automatic",
     "ios": {
-      //"icon": "./assets/expo.icon",
       "icon": "./assets/images/icon.png",
       "bundleIdentifier": "com.m2.blippartner",
       "googleServicesFile": "./GoogleService-Info.plist",
