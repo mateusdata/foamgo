@@ -24,6 +24,12 @@ type Vehicle = {
 }
 
 const schema = z.object({
+    phone: z.string()
+        .min(10, { message: "Telefone é obrigatório" })
+        .refine((val) => {
+            const digits = val.replace(/\D/g, '');
+            return digits.length === 10 || digits.length === 11;
+        }, { message: "Telefone inválido. Digite o DDD e o número correto." }),
     make: z.string()
         .min(1, { message: "Marca é obrigatória" })
         .max(50, { message: "Marca deve ter no máximo 50 caracteres" }),
@@ -38,8 +44,6 @@ const schema = z.object({
             const yearNum = parseInt(val)
             return yearNum >= 1900 && yearNum <= 2026
         }, { message: "Ano deve estar entre 1900 e 2026" }),
-   
-    
 })
 
 type FormData = z.infer<typeof schema>
@@ -53,6 +57,7 @@ export default function AddVehicle() {
     const [loadingVehicles, setLoadingVehicles] = useState(true)
 
     const defaultValues = {
+        phone: user?.phone || '',
         make: '',
         model: '',
         year: '',
@@ -93,13 +98,16 @@ export default function AddVehicle() {
                 userId: user?.id
             }
 
+            if (data.phone !== user?.phone) {
+                await api.patch(`/users`, { phone: data.phone })
+            }
+
             if (editingVehicle) {
                 await api.patch(`/vehicles/${editingVehicle.id}`, payload)
                 router.push("/(app)/(client)/(tabs)/companies")
             } else {
                 await api.post(`/vehicles`, payload)
                 router.push("/(app)/(client)/(tabs)/companies")
-
             }
 
             reset()
@@ -114,6 +122,7 @@ export default function AddVehicle() {
 
     const handleEdit = (vehicle: Vehicle) => {
         setEditingVehicle(vehicle)
+        setValue('phone', user?.phone || '')
         setValue('make', vehicle.make)
         setValue('model', vehicle.model)
         setValue('year', vehicle.year.toString())
@@ -169,6 +178,15 @@ export default function AddVehicle() {
                 )}
 
                 <ThemedView style={styles.formContainer}>
+
+                    <PaperInput
+                        name="phone"
+                        control={control}
+                        label="Telefone (Obrigatório)"
+                        error={errors?.phone?.message}
+                        placeholder="Ex: 11999999999"
+                        keyboardType="phone-pad"
+                    />
 
 
                     <PaperInput

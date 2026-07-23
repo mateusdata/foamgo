@@ -49,6 +49,9 @@ export default function AuthProvider({ children }: React.PropsWithChildren<{}>) 
   // ─── Salva token + user no storage e atualiza o estado ───────────────────
   const loadUser = async (data: any) => {
     await AsyncStorage.setItem('token', JSON.stringify(data.token));
+    if (data.refreshToken) {
+      await AsyncStorage.setItem('refreshToken', data.refreshToken);
+    }
     await AsyncStorage.setItem('user', JSON.stringify(data));
     setUser(data);
   };

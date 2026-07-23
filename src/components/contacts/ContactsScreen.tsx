@@ -2,6 +2,7 @@ import { TrueSheet } from '@lodev09/react-native-true-sheet';
 import * as DeviceContacts from 'expo-contacts/legacy';
 import { Stack, useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useForm, useWatch } from 'react-hook-form';
 import {
   ActivityIndicator,
   FlatList,
@@ -22,6 +23,8 @@ import { useTheme } from '@/hooks/use-theme';
 import { useAuth } from '@/contexts/auth-provider';
 import { api } from '@/config/api';
 import { Ionicons } from '@expo/vector-icons';
+import PaperInput from '@/components/inputs/paper-input';
+import { PrimaryButton } from '@/components/buttons/primary-button';
 
 type Contact = {
   id: string;
@@ -38,34 +41,69 @@ export default function ContactsScreen() {
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
-  const [search, setSearch] = useState('');
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
-  
-  const [carName, setCarName] = useState('');
-  const [newName, setNewName] = useState('');
-  const [newPhone, setNewPhone] = useState('');
+
+  const { control: searchControl, watch: watchSearch } = useForm({
+    defaultValues: { search: '' }
+  });
+  const searchValue = watchSearch('search') || '';
+
+  const { control: contactControl, handleSubmit: handleContactSubmit, reset: resetContact } = useForm({
+    defaultValues: { name: '', phone: '' }
+  });
+
+  const { control: scheduleControl, handleSubmit: handleScheduleSubmit, reset: resetSchedule } = useForm({
+    defaultValues: { carName: '' }
+  });
 
   const sheetRef = useRef<TrueSheet>(null);
   const newContactSheetRef = useRef<TrueSheet>(null);
 
   const companyId = user?.activeCompanyId || user?.company?.id;
 
-  const loadContacts = useCallback(async () => {
+  const loadContactsAndSync = useCallback(async () => {
     if (!companyId) return;
     setLoading(true);
     try {
+      // 1. Tenta carregar do backend primeiro para ter algo na tela rápido
       const response = await api.get(`/contacts?companyId=${companyId}`);
       setContacts(response.data);
+
+      // 2. Pede permissão da agenda automaticamente
+      const { status } = await DeviceContacts.requestPermissionsAsync();
+      
+      // 3. Se deu permissão, faz o sync invisível
+      if (status === DeviceContacts.PermissionStatus.GRANTED) {
+        const { data } = await DeviceContacts.getContactsAsync({
+          fields: [DeviceContacts.Fields.PhoneNumbers, DeviceContacts.Fields.Emails],
+        });
+
+        const cleaned = data
+          .filter((c) => c.name && c.name.trim().length > 0)
+          .map(c => ({
+            name: c.name,
+            phone: c.phoneNumbers?.[0]?.number,
+            email: c.emails?.[0]?.email
+          }));
+
+        if (cleaned.length > 0) {
+          const syncResponse = await api.post('/contacts/sync', {
+            companyId,
+            contacts: cleaned
+          });
+          setContacts(syncResponse.data);
+        }
+      }
     } catch (err) {
-      console.error('Erro ao carregar contatos:', err);
+      console.error('Erro ao carregar/sincronizar contatos:', err);
     } finally {
       setLoading(false);
     }
   }, [companyId]);
 
   useEffect(() => {
-    loadContacts();
-  }, [loadContacts]);
+    loadContactsAndSync();
+  }, [loadContactsAndSync]);
 
   const handleSyncAgenda = async () => {
     if (!companyId) return;
@@ -109,8 +147,8 @@ export default function ContactsScreen() {
     }
   };
 
-  const handleCreateContact = async () => {
-    if (!companyId || !newName.trim()) {
+  const handleCreateContact = async (data: { name: string, phone: string }) => {
+    if (!companyId || !data.name.trim()) {
       Alert.alert('Atenção', 'O nome é obrigatório.');
       return;
     }
@@ -118,8 +156,8 @@ export default function ContactsScreen() {
       // 1. Salvar no Backend
       await api.post('/contacts', {
         companyId,
-        name: newName,
-        phone: newPhone
+        name: data.name,
+        phone: data.phone
       });
       
       // 2. Tentar salvar na agenda do celular
@@ -135,10 +173,10 @@ export default function ContactsScreen() {
         if (finalStatus === DeviceContacts.PermissionStatus.GRANTED) {
           const newNativeContact: any = {
             contactType: DeviceContacts.ContactTypes.Person,
-            name: newName,
+            name: data.name,
           };
-          if (newPhone) {
-            newNativeContact.phoneNumbers = [{ label: 'mobile', number: newPhone }];
+          if (data.phone) {
+            newNativeContact.phoneNumbers = [{ label: 'mobile', number: data.phone }];
           }
           await DeviceContacts.addContactAsync(newNativeContact);
         }
@@ -147,37 +185,36 @@ export default function ContactsScreen() {
         // Não falhamos a criação no backend por causa disso
       }
 
-      setNewName('');
-      setNewPhone('');
+      resetContact();
       await newContactSheetRef.current?.dismiss();
-      loadContacts();
+      loadContactsAndSync();
     } catch (err: any) {
        Alert.alert('Erro', err.response?.data?.message || 'Erro ao criar contato');
     }
   };
 
   const filteredContacts = useMemo(() => {
-    if (!search.trim()) return contacts;
-    const query = search.toLowerCase();
+    if (!searchValue.trim()) return contacts;
+    const query = searchValue.toLowerCase();
     return contacts.filter((c) => {
       const nameMatch = c.name?.toLowerCase().includes(query);
       const phoneMatch = c.phone?.replace(/\D/g, '').includes(query.replace(/\D/g, ''));
       return nameMatch || phoneMatch;
     });
-  }, [search, contacts]);
+  }, [searchValue, contacts]);
 
   const handleSelectContact = async (contact: Contact) => {
     setSelectedContact(contact);
-    setCarName('');
+    resetSchedule();
     await sheetRef.current?.present();
   };
 
-  const handleAgendar = () => {
+  const handleAgendar = (data: { carName: string }) => {
     if (!companyId || !selectedContact) return;
     sheetRef.current?.dismiss();
     router.push({
       pathname: '/(app)/(client)/companies/[companyId]/booking',
-      params: { companyId, contactId: selectedContact.id, carName }
+      params: { companyId, contactId: selectedContact.id, carName: data.carName }
     });
   };
 
@@ -219,19 +256,13 @@ export default function ContactsScreen() {
             </TouchableOpacity>
         </View>
 
-        <TextInput
-          style={[
-            styles.searchInput,
-            {
-              backgroundColor: theme.backgroundElement,
-              color: theme.text,
-            },
-          ]}
-          placeholder="Buscar por nome ou telefone"
-          placeholderTextColor={theme.placeholder}
-          value={search}
-          onChangeText={setSearch}
-        />
+        <View style={{ marginHorizontal: 16, marginBottom: 12 }}>
+          <PaperInput
+            name="search"
+            control={searchControl}
+            label="Buscar por nome ou telefone"
+          />
+        </View>
 
         <FlatList
           data={filteredContacts}
@@ -285,28 +316,26 @@ export default function ContactsScreen() {
                 <ThemedText style={[styles.modalName, { marginTop: 12, marginBottom: 20 }]}>Adicionar Contato Manual</ThemedText>
                 
                 <View style={{ paddingHorizontal: 20 }}>
-                    <TextInput
-                        style={[styles.input, { backgroundColor: theme.backgroundElement, color: theme.text }]}
-                        placeholder="Nome do cliente"
-                        placeholderTextColor={theme.placeholder}
-                        value={newName}
-                        onChangeText={setNewName}
+                    <PaperInput
+                        name="name"
+                        control={contactControl}
+                        label="Nome do cliente"
                     />
-                    <TextInput
-                        style={[styles.input, { backgroundColor: theme.backgroundElement, color: theme.text, marginTop: 12 }]}
-                        placeholder="Telefone (Opcional)"
-                        placeholderTextColor={theme.placeholder}
-                        keyboardType="phone-pad"
-                        value={newPhone}
-                        onChangeText={setNewPhone}
-                    />
+                    <View style={{ marginTop: 12 }}>
+                        <PaperInput
+                            name="phone"
+                            control={contactControl}
+                            label="Telefone (Opcional)"
+                            keyboardType="phone-pad"
+                        />
+                    </View>
                     
-                    <TouchableOpacity
-                        style={[styles.agendarButton, { backgroundColor: theme.tint, marginTop: 24 }]}
-                        onPress={handleCreateContact}
-                    >
-                        <Text style={styles.agendarButtonText}>Salvar Contato</Text>
-                    </TouchableOpacity>
+                    <View style={{ marginTop: 24 }}>
+                        <PrimaryButton 
+                            name="Salvar Contato"
+                            onPress={handleContactSubmit(handleCreateContact)}
+                        />
+                    </View>
                 </View>
             </ThemedView>
         </TrueSheet>
@@ -346,26 +375,20 @@ export default function ContactsScreen() {
                     Novo Agendamento
                   </ThemedText>
                   
-                  <TextInput
-                    style={[
-                        styles.input,
-                        {
-                        backgroundColor: theme.backgroundElement,
-                        color: theme.text,
-                        }
-                    ]}
-                    placeholder="Nome ou Modelo do Carro (Opcional)"
-                    placeholderTextColor={theme.placeholder}
-                    value={carName}
-                    onChangeText={setCarName}
+                  <PaperInput
+                    name="carName"
+                    control={scheduleControl}
+                    label="Nome ou Modelo do Carro (Opcional)"
                    />
                 </View>
 
-                <View
-                  style={[styles.agendarButton, { backgroundColor: theme.tint }]}
-                  onTouchStart={handleAgendar}
-                >
-                  <Text style={styles.agendarButtonText}>Continuar Agendamento</Text>
+                <View style={{ width: '100%', marginTop: 24 }} onTouchStart={handleScheduleSubmit(handleAgendar)}>
+                  <PrimaryButton 
+                    name="Continuar Agendamento"
+                    onPress={() => {}}
+                    disabled={true}
+                    style={{ backgroundColor: theme.tint }}
+                  />
                 </View>
               </ScrollView>
             )}
