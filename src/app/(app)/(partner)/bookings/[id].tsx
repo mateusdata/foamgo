@@ -106,7 +106,7 @@ export default function BookingDetails() {
     const hasAvatar = booking.user?.avatar && booking.user.avatar.length > 0;
     const avatarUrl = booking.user?.avatar;
 
-    const customerName = booking.user?.name || booking.company?.name || 'Cliente';
+    const customerName = booking.user?.name || booking.contact?.name || booking.company?.name || 'Cliente';
     const serviceName = booking.carService?.name || booking.service?.name;
     const price = booking.carService?.price || booking.service?.price || '0,00';
     const vehicleName = [booking.vehicle?.model, booking.vehicle?.make, booking.vehicle?.year?.toString()]

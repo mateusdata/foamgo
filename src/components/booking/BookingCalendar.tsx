@@ -128,7 +128,7 @@ export const BookingCalendar = ({
 
     const renderItem = (item: Booking) => {
         const serviceName = item.service?.name || item.carService?.name || 'Serviço';
-        const titleName = item.user?.name || item.company?.name || item.carWash?.name || 'Cliente/Empresa';
+        const titleName = item.user?.name || item.contact?.name || item.company?.name || item.carWash?.name || 'Cliente/Empresa';
         const time = dayjs(item.scheduledAt).format('HH:mm');
         const teamName = item.team?.name || 'Equipe';
 
