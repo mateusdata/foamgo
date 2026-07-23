@@ -61,10 +61,31 @@ export default function BookingDetailsScreen() {
                     onPress: async () => {
                         try {
                             await api.patch(`/bookings/${id}`, { status: 'CANCELLED' });
-                            // Alert.alert('Sucesso', 'Agendamento cancelado com sucesso.');
                             fetchBooking();
                         } catch (error) {
                             Alert.alert('Erro', 'Não foi possível cancelar o agendamento.');
+                        }
+                    }
+                }
+            ]
+        );
+    };
+
+    const handleConfirmBooking = () => {
+        Alert.alert(
+            'Confirmar Agendamento',
+            'Deseja confirmar este agendamento?',
+            [
+                { text: 'Não', style: 'cancel' },
+                {
+                    text: 'Sim, Confirmar',
+                    style: 'default',
+                    onPress: async () => {
+                        try {
+                            await api.patch(`/bookings/${id}`, { status: 'CONFIRMED' });
+                            fetchBooking();
+                        } catch (error) {
+                            Alert.alert('Erro', 'Não foi possível confirmar o agendamento.');
                         }
                     }
                 }
@@ -220,6 +241,18 @@ export default function BookingDetailsScreen() {
                 </View>
 
                 {/* Action Button */}
+                {booking.status === 'SCHEDULED' && (
+                    <View style={styles.footerActions}>
+                        <TouchableOpacity
+                            style={[styles.cancelButton, { backgroundColor: '#66BB6A', marginBottom: 12 }]}
+                            onPress={handleConfirmBooking}
+                            activeOpacity={0.8}
+                        >
+                            <ThemedText style={[styles.cancelButtonText, { color: '#FFF' }]}>Confirmar Agendamento</ThemedText>
+                        </TouchableOpacity>
+                    </View>
+                )}
+
                 {(booking.status === 'CONFIRMED' || booking.status === 'SCHEDULED') && (
                     <View style={styles.footerActions}>
                         <TouchableOpacity

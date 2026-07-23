@@ -91,7 +91,7 @@ export default function MyBookingsScreen() {
   const [refreshing, setRefreshing] = useState(false)
   const colorScheme = useColorScheme() || 'light'
   const isDark = colorScheme === 'dark'
-  const [selectedStatus, setSelectedStatus] = useState<BookingStatus | 'ALL'>('CONFIRMED')
+  const [selectedStatus, setSelectedStatus] = useState<BookingStatus | 'ALL'>('ALL')
 
   const fetchBookings = useCallback(async (initialLoad = false) => {
     if (!user?.id) return
