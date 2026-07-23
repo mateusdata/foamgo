@@ -45,7 +45,7 @@ interface CarService {
 
 
 export default function BookingScheduleScreen() {
-    const { companyId, serviceId, teamId } = useLocalSearchParams<{ companyId: string, serviceId: string, teamId?: string }>()
+    const { companyId, serviceId, teamId, contactId, carName } = useLocalSearchParams<{ companyId: string, serviceId: string, teamId?: string, contactId?: string, carName?: string }>()
     const { user } = useAuth()
     const router = useRouter()
     const colorScheme = useColorScheme()
@@ -146,6 +146,8 @@ export default function BookingScheduleScreen() {
             scheduledAt: finalDate.toISOString(),
             time: selectedTime,
             totalPrice: price || 0,
+            contactId,
+            carName
         }
 
         if (user.vehicles && user.vehicles.length > 0) {

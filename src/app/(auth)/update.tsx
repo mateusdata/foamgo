@@ -68,7 +68,7 @@ export default function UpdatesListener() {
           <Row label="Updates Ativos?" value={Updates.isEnabled ? 'SIM ✅' : 'NÃO ❌'} />
           <Row label="Canal (Channel)" value={Updates.channel ?? 'VAZIO (⚠️ Perigo)'} />
           <Row label="Runtime Version" value={Updates.runtimeVersion ?? 'VAZIO (⚠️ Perigo)'} />
-          <Row label="URL do Update" value={Updates.updateUrl ?? 'VAZIO'} />
+          <Row label="URL do Update" value={(Updates as any).updateUrl ?? 'VAZIO'} />
         </Section>
 
         <Section title="O QUE ESTÁ RODANDO AGORA?">

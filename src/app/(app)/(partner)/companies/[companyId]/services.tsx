@@ -9,7 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useLocalSearchParams, router, useFocusEffect } from 'expo-router'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useForm } from "react-hook-form"
-import { StyleSheet, View, TouchableOpacity, Alert, useColorScheme, ScrollView } from 'react-native'
+import { StyleSheet, View, TouchableOpacity, Alert, useColorScheme, ScrollView, Switch } from 'react-native'
 import { z } from 'zod'
 import { Ionicons } from '@expo/vector-icons'
 import { FilterButton } from '@/components/filter-button'
@@ -21,6 +21,8 @@ type Service = {
   price: number
   description: string
   categoryId: string
+  vehicleCategory?: string
+  hasVariablePricing?: boolean
 }
 
 type ServiceCategory = {
@@ -52,6 +54,8 @@ export default function Services() {
     }, { message: "Preço deve ser um número válido" }),
     durationMinutes: z.string().min(1, { message: "Duração é obrigatória" }),
     categoryId: z.string().min(1, { message: "Crie uma categoria" }),
+    vehicleCategory: z.string().optional(),
+    hasVariablePricing: z.boolean().optional(),
   })
 
   type FormValues = {
@@ -60,6 +64,8 @@ export default function Services() {
     price?: string
     durationMinutes: string
     categoryId: string
+    vehicleCategory?: string
+    hasVariablePricing?: boolean
   }
 
   const { control, handleSubmit, reset, setValue, clearErrors, formState: { errors } } = useForm<FormValues>({
@@ -69,6 +75,8 @@ export default function Services() {
       price: '',
       durationMinutes: '60',
       categoryId: '',
+      vehicleCategory: '',
+      hasVariablePricing: false,
     },
     resolver: zodResolver(schema),
   })
@@ -125,7 +133,9 @@ export default function Services() {
         durationMinutes: parseInt(data.durationMinutes),
         price: data.price ? parseFloat(data.price) : null,
         description: data.description,
-        categoryId: resolvedCategoryId
+        categoryId: resolvedCategoryId,
+        vehicleCategory: data.vehicleCategory,
+        hasVariablePricing: data.hasVariablePricing
       }
 
       if (editingService) {
@@ -170,6 +180,8 @@ export default function Services() {
     setValue('price', service.price ? service.price.toString() : '')
     setValue('durationMinutes', service.durationMinutes?.toString())
     setValue('categoryId', service.categoryId)
+    setValue('vehicleCategory', service.vehicleCategory || '')
+    setValue('hasVariablePricing', service.hasVariablePricing || false)
   }
 
   const handleDeleteService = (service: Service) => {
@@ -272,6 +284,23 @@ export default function Services() {
             stringOfLines={3}
             error={errors?.description?.message}
           />
+
+          <PaperInput
+            name="vehicleCategory"
+            control={control}
+            label="Categoria de Veículo (Opcional)"
+            placeholder="Ex: HATCH, SEDAN, SUV"
+            error={errors?.vehicleCategory?.message}
+          />
+
+          <View style={[styles.row, { alignItems: 'center', marginVertical: 12, paddingHorizontal: 4 }]}>
+            <ThemedText style={{ flex: 1, fontSize: 16 }}>Preço Variável?</ThemedText>
+            <Switch
+              value={control._formValues.hasVariablePricing}
+              onValueChange={(val) => setValue('hasVariablePricing', val)}
+              trackColor={{ false: '#767577', true: Colors.primary }}
+            />
+          </View>
 
           <View style={styles.row}>
             <View style={styles.halfWidth}>

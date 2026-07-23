@@ -1,6 +1,6 @@
 import { TrueSheet } from '@lodev09/react-native-true-sheet';
-import * as Contacts from 'expo-contacts/legacy';
-import { Stack } from 'expo-router';
+import * as DeviceContacts from 'expo-contacts/legacy';
+import { Stack, useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
@@ -13,90 +13,178 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  Alert
 } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { useTheme } from '@/hooks/use-theme';
+import { useAuth } from '@/contexts/auth-provider';
+import { api } from '@/config/api';
+import { Ionicons } from '@expo/vector-icons';
 
-type Contact = Contacts.Contact;
+type Contact = {
+  id: string;
+  name: string;
+  phone?: string;
+  email?: string;
+};
 
 export default function ContactsScreen() {
   const theme = useTheme();
-  const [permissionStatus, setPermissionStatus] = useState<Contacts.PermissionStatus | null>(null);
+  const { user } = useAuth();
+  const router = useRouter();
+  
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [loading, setLoading] = useState(true);
+  const [syncing, setSyncing] = useState(false);
   const [search, setSearch] = useState('');
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
+  
+  const [carName, setCarName] = useState('');
+  const [newName, setNewName] = useState('');
+  const [newPhone, setNewPhone] = useState('');
 
   const sheetRef = useRef<TrueSheet>(null);
+  const newContactSheetRef = useRef<TrueSheet>(null);
+
+  const companyId = user?.activeCompanyId || user?.company?.id;
 
   const loadContacts = useCallback(async () => {
+    if (!companyId) return;
     setLoading(true);
     try {
-      const { status } = await Contacts.requestPermissionsAsync();
-      setPermissionStatus(status);
-
-      if (status !== Contacts.PermissionStatus.GRANTED) {
-        setLoading(false);
-        return;
-      }
-
-      const { data } = await Contacts.getContactsAsync({
-        fields: [
-          Contacts.Fields.PhoneNumbers,
-          Contacts.Fields.Emails,
-          Contacts.Fields.Image,
-        ],
-        sort: Contacts.SortTypes.FirstName,
-      });
-
-      const cleaned = data.filter((c) => c.name && c.name.trim().length > 0);
-      setContacts(cleaned);
+      const response = await api.get(`/contacts?companyId=${companyId}`);
+      setContacts(response.data);
     } catch (err) {
       console.error('Erro ao carregar contatos:', err);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [companyId]);
 
   useEffect(() => {
     loadContacts();
   }, [loadContacts]);
+
+  const handleSyncAgenda = async () => {
+    if (!companyId) return;
+    setSyncing(true);
+    try {
+      const { status } = await DeviceContacts.requestPermissionsAsync();
+      
+      if (status !== DeviceContacts.PermissionStatus.GRANTED) {
+        Alert.alert('Permissão Negada', 'Ative a permissão de contatos nas configurações do aplicativo.');
+        setSyncing(false);
+        return;
+      }
+
+      const { data } = await DeviceContacts.getContactsAsync({
+        fields: [
+          DeviceContacts.Fields.PhoneNumbers,
+          DeviceContacts.Fields.Emails,
+        ],
+      });
+
+      const cleaned = data
+        .filter((c) => c.name && c.name.trim().length > 0)
+        .map(c => ({
+          name: c.name,
+          phone: c.phoneNumbers?.[0]?.number,
+          email: c.emails?.[0]?.email
+        }));
+
+      const response = await api.post('/contacts/sync', {
+        companyId,
+        contacts: cleaned
+      });
+      
+      setContacts(response.data);
+      Alert.alert('Sucesso', 'Contatos sincronizados com sucesso!');
+    } catch (err) {
+      console.error('Erro ao sincronizar contatos:', err);
+      Alert.alert('Erro', 'Ocorreu um erro ao sincronizar os contatos.');
+    } finally {
+      setSyncing(false);
+    }
+  };
+
+  const handleCreateContact = async () => {
+    if (!companyId || !newName.trim()) {
+      Alert.alert('Atenção', 'O nome é obrigatório.');
+      return;
+    }
+    try {
+      // 1. Salvar no Backend
+      await api.post('/contacts', {
+        companyId,
+        name: newName,
+        phone: newPhone
+      });
+      
+      // 2. Tentar salvar na agenda do celular
+      try {
+        const { status } = await DeviceContacts.getPermissionsAsync();
+        let finalStatus = status;
+        
+        if (status !== DeviceContacts.PermissionStatus.GRANTED) {
+           const { status: newStatus } = await DeviceContacts.requestPermissionsAsync();
+           finalStatus = newStatus;
+        }
+
+        if (finalStatus === DeviceContacts.PermissionStatus.GRANTED) {
+          const newNativeContact: any = {
+            contactType: DeviceContacts.ContactTypes.Person,
+            name: newName,
+          };
+          if (newPhone) {
+            newNativeContact.phoneNumbers = [{ label: 'mobile', number: newPhone }];
+          }
+          await DeviceContacts.addContactAsync(newNativeContact);
+        }
+      } catch (nativeErr) {
+        console.warn('Erro ao salvar na agenda do celular:', nativeErr);
+        // Não falhamos a criação no backend por causa disso
+      }
+
+      setNewName('');
+      setNewPhone('');
+      await newContactSheetRef.current?.dismiss();
+      loadContacts();
+    } catch (err: any) {
+       Alert.alert('Erro', err.response?.data?.message || 'Erro ao criar contato');
+    }
+  };
 
   const filteredContacts = useMemo(() => {
     if (!search.trim()) return contacts;
     const query = search.toLowerCase();
     return contacts.filter((c) => {
       const nameMatch = c.name?.toLowerCase().includes(query);
-      const phoneMatch = c.phoneNumbers?.some((p) =>
-        p.number?.replace(/\D/g, '').includes(query.replace(/\D/g, ''))
-      );
+      const phoneMatch = c.phone?.replace(/\D/g, '').includes(query.replace(/\D/g, ''));
       return nameMatch || phoneMatch;
     });
   }, [search, contacts]);
 
   const handleSelectContact = async (contact: Contact) => {
     setSelectedContact(contact);
+    setCarName('');
     await sheetRef.current?.present();
   };
 
-  const handleCloseSheet = async () => {
-    await sheetRef.current?.dismiss();
+  const handleAgendar = () => {
+    if (!companyId || !selectedContact) return;
+    sheetRef.current?.dismiss();
+    router.push({
+      pathname: '/(app)/(client)/companies/[companyId]/booking',
+      params: { companyId, contactId: selectedContact.id, carName }
+    });
   };
 
-  const openSettings = () => {
-    if (Platform.OS === 'ios') {
-      Linking.openURL('app-settings:');
-    } else {
-      Linking.openSettings();
-    }
-  };
-
-  if (loading) {
+  if (loading && contacts.length === 0) {
     return (
       <>
-        <Stack.Screen options={{ title: 'Contatos', headerShown: true }} />
+        <Stack.Screen options={{ title: 'Agenda de Contatos', headerShown: true }} />
         <ThemedView style={styles.centered}>
           <ActivityIndicator size="large" color={theme.tint} />
           <ThemedText style={styles.loadingText} themeColor="textSecondary">
@@ -107,37 +195,30 @@ export default function ContactsScreen() {
     );
   }
 
-  if (permissionStatus !== Contacts.PermissionStatus.GRANTED) {
-    return (
-      <>
-        <Stack.Screen options={{ title: 'Contatos', headerShown: true }} />
-        <ThemedView style={styles.centered}>
-          <ThemedText style={styles.permissionTitle} type="medium">
-            Precisamos acessar seus contatos
-          </ThemedText>
-          <ThemedText style={styles.permissionText} themeColor="textSecondary">
-            Ative a permissão de contatos nas configurações do app para continuar.
-          </ThemedText>
-          <TouchableOpacity
-            style={[styles.button, { backgroundColor: theme.tint }]}
-            onPress={openSettings}
-          >
-            <Text style={styles.buttonText}>Abrir configurações</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={loadContacts} style={{ marginTop: 12 }}>
-            <ThemedText style={styles.retryText} themeColor="textSecondary">
-              Tentar novamente
-            </ThemedText>
-          </TouchableOpacity>
-        </ThemedView>
-      </>
-    );
-  }
-
   return (
     <>
-      <Stack.Screen options={{ title: 'Contatos', headerShown: true }} />
+      <Stack.Screen options={{ title: 'Agenda de Contatos', headerShown: true }} />
       <ThemedView style={styles.container}>
+        
+        <View style={styles.actionsContainer}>
+            <TouchableOpacity 
+                style={[styles.actionBtn, { backgroundColor: theme.backgroundElement }]} 
+                onPress={() => newContactSheetRef.current?.present()}
+            >
+                <Ionicons name="person-add" size={20} color={theme.text} />
+                <ThemedText style={styles.actionBtnText}>Novo Contato</ThemedText>
+            </TouchableOpacity>
+            
+            <TouchableOpacity 
+                style={[styles.actionBtn, { backgroundColor: theme.tint }]} 
+                onPress={handleSyncAgenda}
+                disabled={syncing}
+            >
+                {syncing ? <ActivityIndicator size="small" color="#fff" /> : <Ionicons name="sync" size={20} color="#fff" />}
+                <Text style={styles.actionBtnTextWhite}>Sincronizar da Agenda</Text>
+            </TouchableOpacity>
+        </View>
+
         <TextInput
           style={[
             styles.searchInput,
@@ -154,7 +235,7 @@ export default function ContactsScreen() {
 
         <FlatList
           data={filteredContacts}
-          keyExtractor={(item, index) => (item as any).id ?? index.toString()}
+          keyExtractor={(item) => item.id}
           contentContainerStyle={{ paddingBottom: 24 }}
           ListEmptyComponent={
             <ThemedView style={styles.centered}>
@@ -178,14 +259,14 @@ export default function ContactsScreen() {
               </ThemedView>
               <View style={styles.contactInfo}>
                 <ThemedText style={styles.contactName}>{item.name}</ThemedText>
-                {item.phoneNumbers && item.phoneNumbers.length > 0 && (
+                {item.phone && (
                   <ThemedText style={styles.contactDetail} themeColor="textSecondary">
-                    {item.phoneNumbers[0].number}
+                    {item.phone}
                   </ThemedText>
                 )}
-                {item.emails && item.emails.length > 0 && (
+                {item.email && (
                   <ThemedText style={styles.contactDetail} themeColor="textSecondary">
-                    {item.emails[0].email}
+                    {item.email}
                   </ThemedText>
                 )}
               </View>
@@ -194,8 +275,45 @@ export default function ContactsScreen() {
         />
 
         <TrueSheet
+          ref={newContactSheetRef}
+          detents={['auto']}
+          cornerRadius={24}
+          backgroundColor={theme.cardBackground}
+        >
+            <ThemedView style={styles.modalSheet}>
+                <View style={[styles.modalHandle, { backgroundColor: theme.cardBorder }]} />
+                <ThemedText style={[styles.modalName, { marginTop: 12, marginBottom: 20 }]}>Adicionar Contato Manual</ThemedText>
+                
+                <View style={{ paddingHorizontal: 20 }}>
+                    <TextInput
+                        style={[styles.input, { backgroundColor: theme.backgroundElement, color: theme.text }]}
+                        placeholder="Nome do cliente"
+                        placeholderTextColor={theme.placeholder}
+                        value={newName}
+                        onChangeText={setNewName}
+                    />
+                    <TextInput
+                        style={[styles.input, { backgroundColor: theme.backgroundElement, color: theme.text, marginTop: 12 }]}
+                        placeholder="Telefone (Opcional)"
+                        placeholderTextColor={theme.placeholder}
+                        keyboardType="phone-pad"
+                        value={newPhone}
+                        onChangeText={setNewPhone}
+                    />
+                    
+                    <TouchableOpacity
+                        style={[styles.agendarButton, { backgroundColor: theme.tint, marginTop: 24 }]}
+                        onPress={handleCreateContact}
+                    >
+                        <Text style={styles.agendarButtonText}>Salvar Contato</Text>
+                    </TouchableOpacity>
+                </View>
+            </ThemedView>
+        </TrueSheet>
+
+        <TrueSheet
           ref={sheetRef}
-          detents={['auto', 0.8]}
+          detents={['auto']}
           cornerRadius={24}
           backgroundColor={theme.cardBackground}
           onDidDismiss={() => setSelectedContact(null)}
@@ -217,81 +335,40 @@ export default function ContactsScreen() {
                 </ThemedView>
 
                 <ThemedText style={styles.modalName}>{selectedContact.name}</ThemedText>
-                {selectedContact.company && (
+                {selectedContact.phone && (
                   <ThemedText style={styles.modalSubtitle} themeColor="textSecondary">
-                    {selectedContact.company}
+                    {selectedContact.phone}
                   </ThemedText>
                 )}
 
-                {selectedContact.phoneNumbers &&
-                  selectedContact.phoneNumbers.length > 0 && (
-                    <View style={styles.modalSection}>
-                      <ThemedText style={styles.modalSectionTitle} themeColor="textSecondary">
-                        Telefones
-                      </ThemedText>
-                      {selectedContact.phoneNumbers.map((phone, index) => (
-                        <TouchableOpacity
-                          key={(phone as any).id ?? index}
-                          style={[styles.modalRow, { borderBottomColor: theme.cardBorder }]}
-                          onPress={() =>
-                            phone.number &&
-                            Linking.openURL(`tel:${phone.number}`)
-                          }
-                        >
-                          <ThemedText style={styles.modalRowLabel} themeColor="textSecondary">
-                            {phone.label ?? 'outro'}
-                          </ThemedText>
-                          <ThemedText style={styles.modalRowValue}>
-                            {phone.number}
-                          </ThemedText>
-                        </TouchableOpacity>
-                      ))}
-                    </View>
-                  )}
+                <View style={styles.modalSection}>
+                  <ThemedText style={styles.modalSectionTitle} themeColor="textSecondary">
+                    Novo Agendamento
+                  </ThemedText>
+                  
+                  <TextInput
+                    style={[
+                        styles.input,
+                        {
+                        backgroundColor: theme.backgroundElement,
+                        color: theme.text,
+                        }
+                    ]}
+                    placeholder="Nome ou Modelo do Carro (Opcional)"
+                    placeholderTextColor={theme.placeholder}
+                    value={carName}
+                    onChangeText={setCarName}
+                   />
+                </View>
 
-                {selectedContact.emails &&
-                  selectedContact.emails.length > 0 && (
-                    <View style={styles.modalSection}>
-                      <ThemedText style={styles.modalSectionTitle} themeColor="textSecondary">
-                        E-mails
-                      </ThemedText>
-                      {selectedContact.emails.map((email, index) => (
-                        <TouchableOpacity
-                          key={(email as any).id ?? index}
-                          style={[styles.modalRow, { borderBottomColor: theme.cardBorder }]}
-                          onPress={() =>
-                            email.email &&
-                            Linking.openURL(`mailto:${email.email}`)
-                          }
-                        >
-                          <ThemedText style={styles.modalRowLabel} themeColor="textSecondary">
-                            {email.label ?? 'outro'}
-                          </ThemedText>
-                          <ThemedText style={styles.modalRowValue}>
-                            {email.email}
-                          </ThemedText>
-                        </TouchableOpacity>
-                      ))}
-                    </View>
-                  )}
-
-                {(!selectedContact.phoneNumbers ||
-                  selectedContact.phoneNumbers.length === 0) &&
-                  (!selectedContact.emails ||
-                    selectedContact.emails.length === 0) && (
-                    <ThemedText style={styles.modalEmptyText} themeColor="textSecondary">
-                      Nenhuma informação adicional encontrada.
-                    </ThemedText>
-                  )}
+                <View
+                  style={[styles.agendarButton, { backgroundColor: theme.tint }]}
+                  onTouchStart={handleAgendar}
+                >
+                  <Text style={styles.agendarButtonText}>Continuar Agendamento</Text>
+                </View>
               </ScrollView>
             )}
-
-            <TouchableOpacity
-              style={[styles.closeButton, { backgroundColor: theme.tint }]}
-              onPress={handleCloseSheet}
-            >
-              <Text style={styles.closeButtonText}>Fechar</Text>
-            </TouchableOpacity>
           </ThemedView>
         </TrueSheet>
       </ThemedView>
@@ -304,6 +381,31 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 12,
   },
+  actionsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    marginBottom: 16,
+    gap: 12
+  },
+  actionBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    borderRadius: 10,
+    gap: 8
+  },
+  actionBtnText: {
+    fontWeight: '600',
+    fontSize: 14,
+  },
+  actionBtnTextWhite: {
+    color: '#fff',
+    fontWeight: '600',
+    fontSize: 14,
+  },
   centered: {
     flex: 1,
     justifyContent: 'center',
@@ -314,31 +416,6 @@ const styles = StyleSheet.create({
     marginTop: 12,
     fontSize: 14,
   },
-  permissionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    textAlign: 'center',
-    marginBottom: 8,
-  },
-  permissionText: {
-    fontSize: 14,
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  button: {
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 8,
-  },
-  buttonText: {
-    color: '#fff',
-    fontWeight: '600',
-    fontSize: 14,
-  },
-  retryText: {
-    fontSize: 14,
-    textDecorationLine: 'underline',
-  },
   searchInput: {
     marginHorizontal: 16,
     marginBottom: 12,
@@ -346,6 +423,13 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 10,
     fontSize: 15,
+  },
+  input: {
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    borderRadius: 10,
+    fontSize: 15,
+    width: '100%',
   },
   emptyText: {
     fontSize: 14,
@@ -423,37 +507,20 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   modalSectionTitle: {
-    fontSize: 12,
-    fontWeight: '600',
-    textTransform: 'uppercase',
-    marginBottom: 8,
-  },
-  modalRow: {
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-  },
-  modalRowLabel: {
-    fontSize: 12,
-    textTransform: 'capitalize',
-  },
-  modalRowValue: {
-    fontSize: 15,
-    marginTop: 2,
-  },
-  modalEmptyText: {
     fontSize: 14,
-    marginTop: 24,
+    fontWeight: '600',
+    marginBottom: 12,
   },
-  closeButton: {
-    marginTop: 16,
-    marginHorizontal: 20,
-    paddingVertical: 12,
+  agendarButton: {
+    marginTop: 24,
+    width: '100%',
+    paddingVertical: 14,
     borderRadius: 10,
     alignItems: 'center',
   },
-  closeButtonText: {
+  agendarButtonText: {
     color: '#fff',
-    fontWeight: '600',
-    fontSize: 14,
-  },
+    fontWeight: '700',
+    fontSize: 16,
+  }
 });
