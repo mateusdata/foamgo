@@ -1,4 +1,4 @@
-import AvatarCompany from '@/components/avatar-company';
+import AvatarUser from '@/components/avatar-user';
 import { ThemedPressable } from '@/components/themed-pressable';
 import { ThemedScrollView } from '@/components/themed-scroll-view';
 import { ThemedText } from '@/components/themed-text';
@@ -27,7 +27,7 @@ const Profile = () => {
             >
 
                 <View style={styles.headerContainer}>
-                    <AvatarCompany />
+                    <AvatarUser />
                 </View>
 
                 <View style={styles.sectionContainer}>

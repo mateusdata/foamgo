@@ -11,6 +11,7 @@ import { useForm } from "react-hook-form"
 import { StyleSheet, ScrollView, View, TouchableOpacity, Alert, KeyboardAvoidingView, Platform } from 'react-native'
 import { z } from 'zod'
 import { Colors } from '@/constants/theme'
+import AvatarCompany from '@/components/avatar-company'
 
 export default function Manager() {
   const { user, refreshUser } = useAuth()
@@ -77,6 +78,10 @@ export default function Manager() {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+
+          <ThemedView style={{ alignItems: 'center', marginBottom: 20 }}>
+            <AvatarCompany />
+          </ThemedView>
 
           <ThemedView style={styles.formContainer}>
             <PaperInput
