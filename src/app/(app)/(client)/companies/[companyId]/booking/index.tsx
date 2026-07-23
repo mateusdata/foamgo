@@ -35,7 +35,7 @@ interface Category {
 }
 
 export default function BookingServicesScreen() {
-    const { companyId } = useLocalSearchParams<{ companyId: string }>()
+    const { companyId, contactId, carName } = useLocalSearchParams<{ companyId: string, contactId?: string, carName?: string }>()
     const router = useRouter()
     const colorScheme = useColorScheme()
     const isDark = colorScheme === 'dark'
@@ -87,7 +87,7 @@ export default function BookingServicesScreen() {
     const handleSelectService = (service: CarService) => {
         router.push({
             pathname: '/(app)/(client)/companies/[companyId]/booking/team',
-            params: { companyId, serviceId: service.id }
+            params: { companyId, serviceId: service.id, contactId, carName }
         })
     }
 
