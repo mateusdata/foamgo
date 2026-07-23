@@ -5,7 +5,7 @@ import { ThemedView } from '@/components/themed-view'
 import { Colors } from '@/constants/theme'
 import { useAuth } from '@/contexts/auth-provider'
 import { zodResolver } from "@hookform/resolvers/zod"
-import { router, useLocalSearchParams, useNavigation } from 'expo-router'
+import { router, useLocalSearchParams, Stack } from 'expo-router'
 import React, { useEffect } from 'react'
 import { useForm } from "react-hook-form"
 import { Image, Platform, StyleSheet, TouchableOpacity, View, useColorScheme } from 'react-native'
@@ -18,18 +18,8 @@ GoogleSignin.configure(configGoogleSignin);
 
 export default function SignIn() {
   const { login, signInWithGoogle, signInWithApple } = useAuth()
-  const navigation = useNavigation();
-  // Pegando a flag da rota anterior (ex: ?role=client ou ?role=partner)
   const { role } = useLocalSearchParams<{ role: string }>()
-  
-  useEffect(() => {
-    const isPartner = role?.toUpperCase() === 'PARTNER';
-    
-    // Altera as opções do header dinamicamente
-    navigation.setOptions({
-      headerTitle: isPartner ? 'Conta do Parceiro' : 'Conta do Cliente'
-    });
-  }, [role, navigation]);
+  const isPartner = role?.toUpperCase() === 'PARTNER';
   
   const colorScheme = useColorScheme()
   const isDark = colorScheme === 'dark'
@@ -94,6 +84,8 @@ export default function SignIn() {
   }
 
   return (
+    <>
+    <Stack.Screen options={{ headerTitle: isPartner ? 'Conta do Parceiro' : 'Conta do Cliente' }} />
     <ThemedView style={styles.container}>
       <ThemedText style={styles.welcomeText}>
         Bem-vindo(a) de volta!
@@ -145,6 +137,7 @@ export default function SignIn() {
         </ThemedView>
       </ThemedView>
     </ThemedView>
+    </>
   )
 }
 

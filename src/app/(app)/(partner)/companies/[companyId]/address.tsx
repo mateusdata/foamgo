@@ -5,7 +5,7 @@ import { ThemedText } from '@/components/themed-text'
 import { api } from '@/config/api'
 import { useAuth } from '@/contexts/auth-provider'
 import { zodResolver } from "@hookform/resolvers/zod"
-import { router, useNavigation } from 'expo-router'
+import { router, Stack } from 'expo-router'
 import React, { useEffect } from 'react'
 import { useForm } from "react-hook-form"
 import { StyleSheet, ScrollView, Alert, View } from 'react-native'
@@ -14,14 +14,6 @@ import { z } from 'zod'
 export default function companyAddress() {
     const { user, refreshUser } = useAuth()
     const [loading, setLoading] = React.useState(false)
-    const navigation = useNavigation();
-
-    useEffect(() => {
-        navigation.setOptions({
-            title: user?.company?.addresses ? 'Editar Endereço' : 'Adicionar Endereço'
-        });
-    }, [navigation]);
-
     const company = user?.company
     const address = company?.addresses
 
@@ -70,6 +62,8 @@ export default function companyAddress() {
     }
 
     return (
+        <>
+        <Stack.Screen options={{ title: user?.company?.addresses ? 'Editar Endereço' : 'Adicionar Endereço' }} />
         <ThemedView style={styles.container}>
             <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
 
@@ -116,6 +110,7 @@ export default function companyAddress() {
                 </ThemedView>
             </ScrollView>
         </ThemedView>
+        </>
     )
 }
 

@@ -8,7 +8,7 @@ import { api } from '@/config/api'
 import { Colors } from '@/constants/theme'
 import { useAuth } from '@/contexts/auth-provider'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { router, useLocalSearchParams, useNavigation } from 'expo-router'
+import { router, useLocalSearchParams, Stack } from 'expo-router'
 import React, { useEffect } from 'react'
 import { useForm } from "react-hook-form"
 import { KeyboardAvoidingView, Platform, StyleSheet, TouchableOpacity, View } from 'react-native'
@@ -23,16 +23,6 @@ export default function SignUp() {
   const normalizedRole = Array.isArray(role) ? role[0]?.toUpperCase() : role?.toUpperCase()
   const userRole = normalizedRole === 'PARTNER' ? 'PARTNER' : 'USER'
   const isPartner = userRole === 'PARTNER'
-
-    const navigation = useNavigation();
-    useEffect(() => {
-      const isPartner = normalizedRole === 'PARTNER';
-      
-      // Altera as opções do header dinamicamente
-      navigation.setOptions({
-        headerTitle: isPartner ? 'Conta do Parceiro' : 'Conta do Cliente'
-      });
-    }, [role, navigation]);
 
   // Schema de validação dinâmico
   const schema = z.object({
@@ -89,11 +79,13 @@ export default function SignUp() {
   }
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
-    >
+    <>
+      <Stack.Screen options={{ headerTitle: isPartner ? 'Conta do Parceiro' : 'Conta do Cliente' }} />
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
+      >
       <ThemedScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingBottom: 60 }}>
         <ThemedView style={styles.formContainer}>
           <ThemedText style={styles.welcomeText}>
@@ -126,6 +118,7 @@ export default function SignUp() {
         </ThemedView>
       </ThemedScrollView>
     </KeyboardAvoidingView>
+    </>
   )
 }
 
