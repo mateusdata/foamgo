@@ -3,6 +3,8 @@ import * as DeviceContacts from 'expo-contacts/legacy';
 import { Stack, useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import {
   ActivityIndicator,
   FlatList,
@@ -58,8 +60,13 @@ export default function ContactsScreen() {
     defaultValues: { name: '', phone: '' }
   });
 
-  const { control: scheduleControl, handleSubmit: handleScheduleSubmit, reset: resetSchedule } = useForm({
-    defaultValues: { carName: '' }
+  const scheduleSchema = z.object({
+    carName: z.string().min(1, 'Nome do carro é obrigatório')
+  });
+
+  const { control: scheduleControl, handleSubmit: handleScheduleSubmit, reset: resetSchedule, formState: { errors: scheduleErrors } } = useForm({
+    defaultValues: { carName: '' },
+    resolver: zodResolver(scheduleSchema)
   });
 
   const sheetRef = useRef<TrueSheet>(null);
@@ -422,7 +429,8 @@ export default function ContactsScreen() {
                   <PaperInput
                     name="carName"
                     control={scheduleControl}
-                    label="Nome ou Modelo do Carro (Opcional)"
+                    label="Nome ou Modelo do Carro (Obrigatório)"
+                    error={scheduleErrors?.carName?.message}
                    />
                 </View>
 

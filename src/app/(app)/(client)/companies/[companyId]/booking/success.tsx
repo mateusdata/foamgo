@@ -1,4 +1,4 @@
-import { StyleSheet, View, useColorScheme } from 'react-native'
+import { StyleSheet, View, useColorScheme, BackHandler } from 'react-native'
 import React, { useEffect, useState } from 'react'
 
 import { Ionicons } from '@expo/vector-icons'
@@ -27,6 +27,15 @@ export default function BookingSuccessScreen() {
         }
     }, [companyId])
 
+    useEffect(() => {
+        const onBackPress = () => {
+            handleFinish();
+            return true;
+        };
+        const subscription = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+        return () => subscription.remove();
+    }, [])
+
     const handleFinish = () => {
         // Router.replace garante que a tela de sucesso e agendamento não fiquem no histórico
         router.replace('/(app)/(client)/(tabs)/companies')
@@ -40,8 +49,7 @@ export default function BookingSuccessScreen() {
             
             <View style={styles.content}>
                 <Ionicons name="checkmark-circle" size={100} color="#28a745" style={styles.icon} />
-                <ThemedText style={styles.title}>Sucesso!</ThemedText>
-                <ThemedText style={styles.message}>Seu agendamento foi confirmado.</ThemedText>
+                <ThemedText style={styles.title}>Seu agendamento foi confirmado</ThemedText>
                 
                 <View style={[styles.detailsCard, { 
                     backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF',
@@ -91,8 +99,7 @@ const styles = StyleSheet.create({
     container: { flex: 1, padding: 20 },
     content: { flex: 1, justifyContent: 'center', alignItems: 'center' },
     icon: { marginBottom: 20 },
-    title: { fontSize: 32, fontWeight: 'bold', marginBottom: 10 },
-    message: { fontSize: 18, textAlign: 'center', opacity: 0.7, marginBottom: 30 },
+    title: { fontSize: 32, fontWeight: 'bold', marginBottom: 30, textAlign: 'center' },
     detailsCard: {
         width: '100%',
         borderRadius: 20,
