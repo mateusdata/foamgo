@@ -49,7 +49,7 @@ export default function BookingSuccessScreen() {
             
             <View style={styles.content}>
                 <Ionicons name="checkmark-circle" size={100} color="#28a745" style={styles.icon} />
-                <ThemedText style={styles.title}>Seu agendamento foi confirmado</ThemedText>
+                <ThemedText style={styles.title}>Agendamento confirmado</ThemedText>
                 
                 <View style={[styles.detailsCard, { 
                     backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF',
@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
     container: { flex: 1, padding: 20 },
     content: { flex: 1, justifyContent: 'center', alignItems: 'center' },
     icon: { marginBottom: 20 },
-    title: { fontSize: 32, fontWeight: 'bold', marginBottom: 30, textAlign: 'center' },
+    title: { fontSize: 24, fontWeight: 'bold', marginBottom: 30, textAlign: 'center' },
     detailsCard: {
         width: '100%',
         borderRadius: 20,
