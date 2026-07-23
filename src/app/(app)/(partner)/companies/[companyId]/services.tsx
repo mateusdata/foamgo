@@ -68,7 +68,7 @@ export default function Services() {
     hasVariablePricing?: boolean
   }
 
-  const { control, handleSubmit, reset, setValue, clearErrors, formState: { errors } } = useForm<FormValues>({
+  const { control, handleSubmit, reset, setValue, watch, clearErrors, formState: { errors } } = useForm<FormValues>({
     defaultValues: {
       name: '',
       description: '',
@@ -277,6 +277,13 @@ export default function Services() {
           />
 
           <PaperInput
+            name="vehicleCategory"
+            control={control}
+            label="Categoria de Veículo (Ex: SUV, Sedan)"
+            error={errors?.vehicleCategory?.message}
+          />
+
+          <PaperInput
             name="description"
             control={control}
             label="Descrição"
@@ -285,19 +292,11 @@ export default function Services() {
             error={errors?.description?.message}
           />
 
-          <PaperInput
-            name="vehicleCategory"
-            control={control}
-            label="Categoria de Veículo (Opcional)"
-            placeholder="Ex: HATCH, SEDAN, SUV"
-            error={errors?.vehicleCategory?.message}
-          />
-
           <View style={[styles.row, { alignItems: 'center', marginVertical: 12, paddingHorizontal: 4 }]}>
             <ThemedText style={{ flex: 1, fontSize: 16 }}>Preço Variável?</ThemedText>
             <Switch
-              value={control._formValues.hasVariablePricing}
-              onValueChange={(val) => setValue('hasVariablePricing', val)}
+              value={watch('hasVariablePricing')}
+              onValueChange={(val) => setValue('hasVariablePricing', val, { shouldDirty: true, shouldValidate: true })}
               trackColor={{ false: '#767577', true: Colors.primary }}
             />
           </View>

@@ -33,17 +33,25 @@ export default function BookingDetails() {
         }
     };
 
-    const handleUpdateStatus = async (status: 'COMPLETED' | 'CANCELLED') => {
+    const handleUpdateStatus = async (status: 'CONFIRMED' | 'COMPLETED' | 'CANCELLED') => {
         try {
             await api.patch(`/bookings/${id}`, { status });
-            //Alert.alert('Sucesso', `Agendamento ${status === 'COMPLETED' ? 'concluído' : 'cancelado'} com sucesso.`);
-            router.back();
+            //Alert.alert('Sucesso', `Agendamento atualizado com sucesso.`);
+            if (status === 'CONFIRMED') {
+                fetchDetails(); // Reload to show new status
+            } else {
+                router.back();
+            }
         } catch (error) {
             Alert.alert('Erro', 'Não foi possível atualizar o status.');
         }
     };
 
-    const confirmAction = (status: 'COMPLETED' | 'CANCELLED') => {
+    const confirmAction = (status: 'CONFIRMED' | 'COMPLETED' | 'CANCELLED') => {
+        if (status === 'CONFIRMED') {
+            handleUpdateStatus('CONFIRMED');
+            return;
+        }
         Alert.alert(
             status === 'COMPLETED' ? 'Concluir Serviço' : 'Cancelar Agendamento',
             status === 'COMPLETED'
@@ -85,6 +93,12 @@ export default function BookingDetails() {
             color: isDark ? '#81C784' : '#2E7D32',
             backgroundColor: isDark ? 'rgba(102, 187, 106, 0.15)' : '#E8F5E8',
             icon: 'checkmark-circle'
+        },
+        SCHEDULED: {
+            label: 'Agendado',
+            color: '#FFB300',
+            backgroundColor: 'rgba(255, 179, 0, 0.15)',
+            icon: 'time'
         },
         COMPLETED: {
             label: 'Concluído',
@@ -216,6 +230,26 @@ export default function BookingDetails() {
                             activeOpacity={0.8}
                         >
                             <ThemedText style={[styles.actionButtonText, { color: '#FFF' }]}>Concluir</ThemedText>
+                        </TouchableOpacity>
+                    </View>
+                )}
+
+                {(booking.status === 'SCHEDULED' || booking.status === 'Scheduled') && (
+                    <View style={styles.footerActions}>
+                        <TouchableOpacity
+                            style={[styles.actionButton, styles.cancelButton]}
+                            onPress={() => confirmAction('CANCELLED')}
+                            activeOpacity={0.8}
+                        >
+                            <ThemedText style={[styles.actionButtonText, { color: '#EF5350' }]}>Recusar</ThemedText>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            style={[styles.actionButton, styles.completeButton, { backgroundColor: '#66BB6A' }]}
+                            onPress={() => confirmAction('CONFIRMED')}
+                            activeOpacity={0.8}
+                        >
+                            <ThemedText style={[styles.actionButtonText, { color: '#FFF' }]}>Confirmar Agendamento</ThemedText>
                         </TouchableOpacity>
                     </View>
                 )}

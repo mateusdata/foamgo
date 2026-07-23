@@ -27,6 +27,8 @@ interface CarService {
     price: string | number
     durationMinutes: number
     categoryId?: string
+    vehicleCategory?: string
+    hasVariablePricing?: boolean
 }
 
 interface Category {
@@ -85,10 +87,25 @@ export default function BookingServicesScreen() {
     }
 
     const handleSelectService = (service: CarService) => {
-        router.push({
-            pathname: '/(app)/(client)/companies/[companyId]/booking/team',
-            params: { companyId, serviceId: service.id, contactId, carName }
-        })
+        const navigateNext = () => {
+            router.push({
+                pathname: '/(app)/(client)/companies/[companyId]/booking/team',
+                params: { companyId, serviceId: service.id, contactId, carName }
+            })
+        }
+
+        if (service.hasVariablePricing) {
+            Alert.alert(
+                "Preço Variável",
+                "Este tipo de serviço tem preço variável. A depender do modelo do carro, esse preço pode sofrer alterações.",
+                [
+                    { text: "Cancelar", style: "cancel" },
+                    { text: "Continuar", onPress: navigateNext }
+                ]
+            )
+        } else {
+            navigateNext()
+        }
     }
 
     const renderCategoryItem = (item: Category | { id: string, name: string }) => {
@@ -133,10 +150,15 @@ export default function BookingServicesScreen() {
                         {item.name}
                     </ThemedText>
 
+                    {item.vehicleCategory && (
+                        <ThemedText style={{ fontSize: 12, color: Colors.primary, marginBottom: 4, fontWeight: 'bold' }}>
+                            Categoria: {item.vehicleCategory}
+                        </ThemedText>
+                    )}
+
                     {item.description && (
                         <ThemedText
                             style={styles.serviceDescription}
-                            numberOfLines={2}
                         >
                             {item.description}
                         </ThemedText>

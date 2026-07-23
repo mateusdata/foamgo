@@ -31,7 +31,7 @@ dayjs.locale('pt-br');
 export type Booking = {
     id: string
     scheduledAt: string
-    status: 'CONFIRMED' | 'COMPLETED' | 'CANCELLED' | string
+    status: 'SCHEDULED' | 'CONFIRMED' | 'COMPLETED' | 'CANCELLED' | string
     carService?: { name: string, price: string | number }
     service?: { name: string, price: string | number }
     carWash?: { name: string }
@@ -48,15 +48,17 @@ type BookingCalendarProps = {
     refreshing?: boolean;
     onRefresh?: () => void;
     onItemPress?: (id: string) => void;
-    filterStatus?: 'ALL' | 'CONFIRMED' | 'COMPLETED' | 'CANCELLED' | string;
-    selectedStatus: 'CONFIRMED' | 'COMPLETED' | 'CANCELLED' | 'ALL';
-    onStatusChange: (status: 'CONFIRMED' | 'COMPLETED' | 'CANCELLED' | 'ALL') => void;
+    filterStatus?: 'ALL' | 'SCHEDULED' | 'CONFIRMED' | 'COMPLETED' | 'CANCELLED' | string;
+    selectedStatus: 'SCHEDULED' | 'CONFIRMED' | 'COMPLETED' | 'CANCELLED' | 'ALL';
+    onStatusChange: (status: 'SCHEDULED' | 'CONFIRMED' | 'COMPLETED' | 'CANCELLED' | 'ALL') => void;
 };
 
-const STATUS_FILTERS: { label: string; value: 'CONFIRMED' | 'COMPLETED' | 'CANCELLED' | 'ALL' }[] = [
+const STATUS_FILTERS: { label: string; value: 'SCHEDULED' | 'CONFIRMED' | 'COMPLETED' | 'CANCELLED' | 'ALL' }[] = [
     { label: 'Confirmados', value: 'CONFIRMED' },
+    { label: 'Agendados', value: 'SCHEDULED' },
     { label: 'Concluídos', value: 'COMPLETED' },
     { label: 'Cancelados', value: 'CANCELLED' },
+    { label: 'Todos', value: 'ALL' },
 ];
 
 const CustomTodayButton = () => {
@@ -134,6 +136,7 @@ export const BookingCalendar = ({
         const teamName = item.team?.name || 'Equipe';
 
         const statusColor = item.status === 'CONFIRMED' ? '#66BB6A' :
+            item.status === 'SCHEDULED' ? '#FFA726' :
             item.status === 'COMPLETED' ? '#42A5F5' : '#EF5350';
 
         return (

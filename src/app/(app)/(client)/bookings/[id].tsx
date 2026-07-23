@@ -9,7 +9,7 @@ import dayjs from 'dayjs';
 import { ThemedView } from '@/components/themed-view';
 import { ThemedText } from '@/components/themed-text';
 
-type BookingStatus = 'COMPLETED' | 'CANCELLED' | 'CONFIRMED';
+type BookingStatus = 'SCHEDULED' | 'COMPLETED' | 'CANCELLED' | 'CONFIRMED';
 
 type Booking = {
     id: string
@@ -99,6 +99,12 @@ export default function BookingDetailsScreen() {
             color: isDark ? '#81C784' : '#2E7D32',
             backgroundColor: isDark ? 'rgba(102, 187, 106, 0.15)' : '#E8F5E8',
             icon: 'checkmark-circle'
+        },
+        SCHEDULED: {
+            label: 'Agendado',
+            color: '#FFB300',
+            backgroundColor: 'rgba(255, 179, 0, 0.15)',
+            icon: 'time'
         },
         COMPLETED: {
             label: 'Concluído',
@@ -214,7 +220,7 @@ export default function BookingDetailsScreen() {
                 </View>
 
                 {/* Action Button */}
-                {booking.status === 'CONFIRMED' && (
+                {(booking.status === 'CONFIRMED' || booking.status === 'SCHEDULED') && (
                     <View style={styles.footerActions}>
                         <TouchableOpacity
                             style={styles.cancelButton}

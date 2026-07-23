@@ -189,11 +189,13 @@ export default function BookingScheduleScreen() {
                 return
             }
 
+            let assignedTeamName = '';
             for (const team of teamsToTry) {
                 try {
                     const payload = { ...baseBookingData, teamId: team.id }
                     await api.post('/bookings', payload)
                     success = true
+                    assignedTeamName = team.name
                     break
                 } catch (error: any) {
                     lastError = error
@@ -201,7 +203,16 @@ export default function BookingScheduleScreen() {
             }
 
             if (success) {
-                router.push('/(app)/(client)/companies/[companyId]/booking/success')
+                router.push({
+                    pathname: '/(app)/(client)/companies/[companyId]/booking/success',
+                    params: {
+                        date: selectedDateIso,
+                        time: selectedTime,
+                        serviceName: service.name,
+                        companyId,
+                        teamName: assignedTeamName
+                    }
+                })
             } else {
                 if (lastError?.response?.status === 409) {
                     const bookingsRes = await api.get(`/bookings?userId=${user.id}&companyId=${companyId}`)
@@ -220,7 +231,16 @@ export default function BookingScheduleScreen() {
                             teamId: teamForRecovery?.id,
                             status: 'CONFIRMED'
                         })
-                        router.push('/(app)/(client)/companies/[companyId]/booking/success')
+                        router.push({
+                            pathname: '/(app)/(client)/companies/[companyId]/booking/success',
+                            params: {
+                                date: selectedDateIso,
+                                time: selectedTime,
+                                serviceName: service.name,
+                                companyId,
+                                teamName: teamForRecovery?.name
+                            }
+                        })
                         return
                     }
                 }

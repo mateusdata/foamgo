@@ -25,12 +25,17 @@ import { api } from '@/config/api';
 import { Ionicons } from '@expo/vector-icons';
 import PaperInput from '@/components/inputs/paper-input';
 import { PrimaryButton } from '@/components/buttons/primary-button';
+import { Avatar } from 'react-native-paper';
 
 type Contact = {
   id: string;
   name: string;
   phone?: string;
   email?: string;
+  isAppUser?: boolean;
+  lastBookingDate?: string;
+  lastCar?: string;
+  avatar?: string;
 };
 
 export default function ContactsScreen() {
@@ -42,6 +47,7 @@ export default function ContactsScreen() {
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
+  const [filterMode, setFilterMode] = useState<'all' | 'recent'>('all');
 
   const { control: searchControl, watch: watchSearch } = useForm({
     defaultValues: { search: '' }
@@ -194,14 +200,22 @@ export default function ContactsScreen() {
   };
 
   const filteredContacts = useMemo(() => {
-    if (!searchValue.trim()) return contacts;
-    const query = searchValue.toLowerCase();
-    return contacts.filter((c) => {
-      const nameMatch = c.name?.toLowerCase().includes(query);
-      const phoneMatch = c.phone?.replace(/\D/g, '').includes(query.replace(/\D/g, ''));
+    let result = contacts;
+
+    if (filterMode === 'recent') {
+      result = result
+        .filter(c => !!c.lastBookingDate)
+        .sort((a, b) => new Date(b.lastBookingDate!).getTime() - new Date(a.lastBookingDate!).getTime());
+    }
+
+    if (!searchValue.trim()) return result;
+
+    return result.filter((c) => {
+      const nameMatch = c.name?.toLowerCase().includes(searchValue.toLowerCase());
+      const phoneMatch = c.phone?.includes(searchValue);
       return nameMatch || phoneMatch;
     });
-  }, [searchValue, contacts]);
+  }, [searchValue, contacts, filterMode]);
 
   const handleSelectContact = async (contact: Contact) => {
     setSelectedContact(contact);
@@ -256,6 +270,21 @@ export default function ContactsScreen() {
             </TouchableOpacity>
         </View>
 
+        <View style={{ flexDirection: 'row', gap: 10, marginHorizontal: 16, marginBottom: 12 }}>
+          <TouchableOpacity 
+            onPress={() => setFilterMode('all')}
+            style={[{ paddingVertical: 8, paddingHorizontal: 16, borderRadius: 20 }, filterMode === 'all' ? { backgroundColor: theme.tint } : { backgroundColor: theme.backgroundElement }]}
+          >
+            <ThemedText style={filterMode === 'all' ? { color: '#fff' } : {}}>Todos</ThemedText>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            onPress={() => setFilterMode('recent')}
+            style={[{ paddingVertical: 8, paddingHorizontal: 16, borderRadius: 20 }, filterMode === 'recent' ? { backgroundColor: theme.tint } : { backgroundColor: theme.backgroundElement }]}
+          >
+            <ThemedText style={filterMode === 'recent' ? { color: '#fff' } : {}}>Recentes</ThemedText>
+          </TouchableOpacity>
+        </View>
+
         <View style={{ marginHorizontal: 16, marginBottom: 12 }}>
           <PaperInput
             name="search"
@@ -281,15 +310,21 @@ export default function ContactsScreen() {
               activeOpacity={0.6}
               onPress={() => handleSelectContact(item)}
             >
-              <ThemedView
-                style={[styles.avatar, { backgroundColor: theme.backgroundElement }]}
-              >
-                <ThemedText style={styles.avatarText} type="medium">
-                  {item.name?.charAt(0).toUpperCase() ?? '?'}
-                </ThemedText>
-              </ThemedView>
+              {item.avatar ? (
+                <Avatar.Image size={48} source={{ uri: item.avatar }} style={[styles.avatar, { backgroundColor: 'transparent' }]} />
+              ) : (
+                <ThemedView
+                  style={[styles.avatar, { backgroundColor: theme.backgroundElement }]}
+                >
+                  <ThemedText style={styles.avatarText} type="medium">
+                    {item.name?.charAt(0).toUpperCase() ?? '?'}
+                  </ThemedText>
+                </ThemedView>
+              )}
               <View style={styles.contactInfo}>
-                <ThemedText style={styles.contactName}>{item.name}</ThemedText>
+                <ThemedText style={styles.contactName}>
+                  {item.name} {item.isAppUser && <Ionicons name="phone-portrait-outline" size={14} color={theme.tint} />}
+                </ThemedText>
                 {item.phone && (
                   <ThemedText style={styles.contactDetail} themeColor="textSecondary">
                     {item.phone}
@@ -298,6 +333,11 @@ export default function ContactsScreen() {
                 {item.email && (
                   <ThemedText style={styles.contactDetail} themeColor="textSecondary">
                     {item.email}
+                  </ThemedText>
+                )}
+                {item.lastCar && (
+                  <ThemedText style={[styles.contactDetail, { color: theme.tint, marginTop: 2, fontSize: 12 }]} themeColor="textSecondary">
+                    <Ionicons name="car-outline" size={12} color={theme.tint} /> Último veículo: {item.lastCar}
                   </ThemedText>
                 )}
               </View>
@@ -355,13 +395,17 @@ export default function ContactsScreen() {
                 contentContainerStyle={styles.modalContent}
                 showsVerticalScrollIndicator={false}
               >
-                <ThemedView
-                  style={[styles.modalAvatar, { backgroundColor: theme.backgroundElement }]}
-                >
-                  <ThemedText style={styles.modalAvatarText}>
-                    {selectedContact.name?.charAt(0).toUpperCase() ?? '?'}
-                  </ThemedText>
-                </ThemedView>
+                {selectedContact.avatar ? (
+                  <Avatar.Image size={64} source={{ uri: selectedContact.avatar }} style={[styles.modalAvatar, { backgroundColor: 'transparent' }]} />
+                ) : (
+                  <ThemedView
+                    style={[styles.modalAvatar, { backgroundColor: theme.backgroundElement }]}
+                  >
+                    <ThemedText style={styles.modalAvatarText}>
+                      {selectedContact.name?.charAt(0).toUpperCase() ?? '?'}
+                    </ThemedText>
+                  </ThemedView>
+                )}
 
                 <ThemedText style={styles.modalName}>{selectedContact.name}</ThemedText>
                 {selectedContact.phone && (

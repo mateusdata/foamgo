@@ -47,7 +47,7 @@ export default function ClientStack() {
   return (
    <>
    <StatusBar style='auto' />
-    <Stack initialRouteName="(tabs)" screenOptions={{ headerShown: true }}>
+    <Stack initialRouteName="(tabs)" screenOptions={{ headerShown: true, headerTitleAlign: 'center' }}>
 
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 

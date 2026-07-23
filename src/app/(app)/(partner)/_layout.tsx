@@ -15,7 +15,7 @@ export default function PartnerStack() {
   }
 
   return (
-    <Stack initialRouteName="(tabs)" screenOptions={{ headerShown: true }}>
+    <Stack initialRouteName="(tabs)" screenOptions={{ headerShown: true, headerTitleAlign: 'center' }}>
 
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 
@@ -36,7 +36,7 @@ export default function PartnerStack() {
       <Stack.Screen name="companies/car/[id]" options={{ headerTitle: 'Detalhes do Veículo' }} />
       <Stack.Screen name="companies/[companyId]/address" options={{ headerTitle: 'Endereço' }} />
       <Stack.Screen name="companies/[companyId]/categories" options={{ headerTitle: 'Categorias' }} />
-      <Stack.Screen name="companies/[companyId]/manager" options={{ headerTitle: 'Gerenciador' }} />
+      <Stack.Screen name="companies/[companyId]/manager" options={{ headerTitle: 'Meu Lava-Jato' }} />
       <Stack.Screen name="companies/[companyId]/services" options={{ headerTitle: 'Serviços' }} />
       <Stack.Screen name="companies/[companyId]/slots" options={{ headerTitle: 'Horários de Atendimento' }} />
       <Stack.Screen name="companies/[companyId]/teams" options={{ headerTitle: 'Equipes' }} />

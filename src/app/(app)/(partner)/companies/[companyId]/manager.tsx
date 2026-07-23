@@ -7,8 +7,8 @@ import { useAuth } from '@/contexts/auth-provider'
 import { zodResolver } from "@hookform/resolvers/zod"
 import { router } from 'expo-router'
 import React from 'react'
-import { useForm } from "react-hook-form"
-import { StyleSheet, ScrollView, View, TouchableOpacity, Alert, KeyboardAvoidingView, Platform } from 'react-native'
+import { useForm, Controller } from "react-hook-form"
+import { StyleSheet, ScrollView, View, TouchableOpacity, Alert, KeyboardAvoidingView, Platform, Switch } from 'react-native'
 import { z } from 'zod'
 import { Colors } from '@/constants/theme'
 import AvatarCompany from '@/components/avatar-company'
@@ -25,6 +25,7 @@ export default function Manager() {
     description: company?.description || '',
     googleMapLink: company?.googleMapLink || '',
     pixKey: company?.pixKey || '',
+    requireBookingConfirmation: company?.requireBookingConfirmation || false,
   }
 
   const schema = z.object({
@@ -48,6 +49,7 @@ export default function Manager() {
       .max(100, { message: "Chave PIX muito longa" })
       .trim()
       .optional().or(z.literal("")),
+    requireBookingConfirmation: z.boolean().default(false),
   })
 
   const { control, handleSubmit, setError, formState: { errors } } = useForm({
@@ -123,6 +125,27 @@ export default function Manager() {
               error={errors?.pixKey?.message}
             />
 
+            <View style={styles.switchContainer}>
+              <View style={{ flex: 1, paddingRight: 10 }}>
+                <ThemedText style={{ fontWeight: '600' }}>Exigir Confirmação Manual</ThemedText>
+                <ThemedText style={{ fontSize: 13, color: '#8E8E93', marginTop: 4 }}>
+                  Os agendamentos entrarão como pendentes e você e seus usuários precisarão aprová-los manualmente após o agendamento.
+                </ThemedText>
+              </View>
+              <Controller
+                control={control}
+                name="requireBookingConfirmation"
+                render={({ field: { onChange, value } }) => (
+                  <Switch
+                    trackColor={{ false: '#767577', true: Colors.primary }}
+                    thumbColor={value ? '#f4f3f4' : '#f4f3f4'}
+                    onValueChange={onChange}
+                    value={value}
+                  />
+                )}
+              />
+            </View>
+
             <PrimaryButton
               loading={loading}
               name='Salvar'
@@ -187,4 +210,5 @@ const styles = StyleSheet.create({
   noAddressInfo: { padding: 16, borderRadius: 12, alignItems: 'center' },
   noAddressText: { fontSize: 14, color: '#666', fontStyle: 'italic' },
   addressText: { fontSize: 14, },
+  switchContainer: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 12, borderTopWidth: 1, borderBottomWidth: 1, borderColor: 'rgba(150,150,150,0.2)', marginVertical: 8 },
 });

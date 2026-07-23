@@ -182,7 +182,7 @@ export default function AddVehicle() {
                     <PaperInput
                         name="phone"
                         control={control}
-                        label="Telefone (Obrigatório)"
+                        label="Telefone"
                         error={errors?.phone?.message}
                         placeholder="Ex: 11999999999"
                         keyboardType="phone-pad"

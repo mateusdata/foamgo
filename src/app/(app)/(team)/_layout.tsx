@@ -10,7 +10,7 @@ export default function TeamStack() {
   }
 
   return (
-    <Stack initialRouteName="(tabs)" screenOptions={{ headerShown: true }}>
+    <Stack initialRouteName="(tabs)" screenOptions={{ headerShown: true, headerTitleAlign: 'center' }}>
 
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 

@@ -23,6 +23,7 @@ export interface Vehicle {
 export interface Company {
   id: string;
   name: string;
+  requireBookingConfirmation?: boolean;
   phone?: string;
   avatar?: string;
   description?: string;

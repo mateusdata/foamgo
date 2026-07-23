@@ -66,20 +66,22 @@ type Booking = {
   }
 }
 
-type BookingStatus = 'COMPLETED' | 'CANCELLED' | 'CONFIRMED'
+type BookingStatus = 'SCHEDULED' | 'COMPLETED' | 'CANCELLED' | 'CONFIRMED'
 
 // Status configuration for badges
 const statusConfig: Record<string, { label: string; color: string; backgroundColor: string; icon: string }> = {
   CONFIRMED: { label: 'Confirmado', color: '#66BB6A', backgroundColor: 'rgba(102, 187, 106, 0.1)', icon: 'time-outline' },
+  SCHEDULED: { label: 'Agendado', color: '#FFB300', backgroundColor: 'rgba(255, 179, 0, 0.1)', icon: 'calendar-outline' },
   COMPLETED: { label: 'Concluído', color: '#42A5F5', backgroundColor: 'rgba(66, 165, 245, 0.1)', icon: 'checkmark-done-outline' },
   CANCELLED: { label: 'Cancelado', color: '#EF5350', backgroundColor: 'rgba(239, 83, 80, 0.1)', icon: 'close-circle-outline' },
 }
 
 const STATUS_FILTERS: { label: string; value: BookingStatus | 'ALL' }[] = [
   { label: 'Confirmados', value: 'CONFIRMED' },
+  { label: 'Agendados', value: 'SCHEDULED' },
   { label: 'Concluídos', value: 'COMPLETED' },
   { label: 'Cancelados', value: 'CANCELLED' },
- // { label: 'Todos', value: 'ALL' },
+  { label: 'Todos', value: 'ALL' },
 ]
 
 export default function MyBookingsScreen() {
