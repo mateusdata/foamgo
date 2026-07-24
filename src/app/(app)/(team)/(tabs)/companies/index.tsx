@@ -120,7 +120,7 @@ const TeamCompanies = () => {
                     <View style={styles.statsRow}>
                         <View style={styles.statItem}>
                             <View style={[styles.statIconContainer, { backgroundColor: statsIconBg }]}>
-                                <Ionicons name="calendar-outline" size={26} color={statsTextColor} />
+                                <Ionicons name="cash-outline" size={20} color={statsTextColor} />
                             </View>
                             <ThemedText style={[styles.statNumber, { color: statsTextColor }]}>
                                 {stats.todayBookings}
@@ -229,10 +229,10 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     mainStatsCard: {
-        borderRadius: 24,
-        paddingVertical: 24,
+        borderRadius: 20,
+        paddingVertical: 16,
         paddingHorizontal: 16,
-        marginBottom: 32,
+        marginBottom: 24,
     },
     statsRow: {
         flexDirection: 'row',
@@ -244,27 +244,27 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     statIconContainer: {
-        width: 52,
-        height: 52,
-        borderRadius: 16,
+        width: 40,
+        height: 40,
+        borderRadius: 12,
         justifyContent: 'center',
         alignItems: 'center',
-        marginBottom: 12
+        marginBottom: 8
     },
     statNumber: {
-        fontSize: 22,
+        fontSize: 20,
         fontWeight: '800',
-        marginBottom: 4,
+        marginBottom: 2,
         letterSpacing: -0.5
     },
     statLabel: {
-        fontSize: 13,
+        fontSize: 12,
         fontWeight: '500',
         textAlign: 'center'
     },
     divider: {
         width: 1,
-        height: 60,
+        height: 40,
         marginHorizontal: 16,
         borderRadius: 1
     },

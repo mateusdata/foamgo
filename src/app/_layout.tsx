@@ -19,7 +19,7 @@ export default function RootLayout() {
         <StatusBar style='auto' />
         <Providers>
           <SplashScreenController />
-            <InAppUpdates />
+          <InAppUpdates />
           <PushNotification />
           <RootNavigation />
         </Providers>
