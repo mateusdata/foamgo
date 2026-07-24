@@ -87,7 +87,7 @@ const MyInformations = () => {
                     <MenuItem
                         icon={<Ionicons name="car-outline" size={24} color={Colors.primary} />}
                         label="Veículos"
-                        description={user?.vehicles?.find(v => v.isDefault) ? `${user?.vehicles?.find(v => v.isDefault)?.model} - ${user?.vehicles?.find(v => v.isDefault)?.plate}` : "Adicionar veículo"}
+                        description={user?.vehicles?.length ? `${user.vehicles[user.vehicles.length - 1].make} ${user.vehicles[user.vehicles.length - 1].model} - ${user.vehicles[user.vehicles.length - 1].year || 'N/A'}` : "Adicionar veículo"}
                         onPress={() => router.push("/(app)/(client)/vehicles/add-vehicle")}
                         showBorder={false}
                     />

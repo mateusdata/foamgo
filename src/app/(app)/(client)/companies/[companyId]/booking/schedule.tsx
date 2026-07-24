@@ -45,7 +45,7 @@ interface CarService {
 
 
 export default function BookingScheduleScreen() {
-    const { companyId, serviceId, teamId, contactId, carName } = useLocalSearchParams<{ companyId: string, serviceId: string, teamId?: string, contactId?: string, carName?: string }>()
+    const { companyId, serviceId, teamId, contactId, carName, vehicleId } = useLocalSearchParams<{ companyId: string, serviceId: string, teamId?: string, contactId?: string, carName?: string, vehicleId?: string }>()
     const { user } = useAuth()
     const router = useRouter()
     const colorScheme = useColorScheme()
@@ -151,10 +151,19 @@ export default function BookingScheduleScreen() {
         }
 
         if (!contactId && user.vehicles && user.vehicles.length > 0) {
-            const def = user.vehicles.find((v: any) => v.isDefault) || user.vehicles[0]
-            baseBookingData.vehicleId = def.id
-            baseBookingData.carName = `${def.model} - ${def.year}`
-            baseBookingData.vehiclePlate = def.plate
+            let def;
+            if (vehicleId) {
+                def = user.vehicles.find((v: any) => v.id === vehicleId)
+            }
+            if (!def) {
+                def = user.vehicles.find((v: any) => v.isDefault) || user.vehicles[user.vehicles.length - 1]
+            }
+            
+            if (def) {
+                baseBookingData.vehicleId = def.id
+                baseBookingData.carName = `${def.make} ${def.model} - ${def.year}`
+                baseBookingData.vehiclePlate = def.plate
+            }
         }
 
         let success = false
@@ -212,7 +221,8 @@ export default function BookingScheduleScreen() {
                         price: service.price,
                         hasVariablePricing: service.hasVariablePricing,
                         companyId,
-                        teamName: assignedTeamName
+                        teamName: assignedTeamName,
+                        carName: baseBookingData.carName
                     }
                 })
             } else {
@@ -242,7 +252,8 @@ export default function BookingScheduleScreen() {
                                 price: service.price,
                                 hasVariablePricing: service.hasVariablePricing,
                                 companyId,
-                                teamName: teamForRecovery?.name
+                                teamName: teamForRecovery?.name,
+                                carName: baseBookingData.carName
                             }
                         })
                         return

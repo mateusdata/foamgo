@@ -62,6 +62,7 @@ export default function ClientStack() {
       <Stack.Screen name="bookings/[id]" options={{ headerTitle: 'Detalhes do Agendamento' }} />
 
       <Stack.Screen name="companies/[companyId]/booking/index" options={{ headerTitle: 'Novo Agendamento' }} />
+      <Stack.Screen name="companies/[companyId]/booking/vehicle" options={{ headerTitle: 'Escolher Veículo' }} />
       <Stack.Screen name="companies/[companyId]/booking/schedule" options={{ headerTitle: 'Escolher Horário' }} />
       <Stack.Screen name="companies/[companyId]/booking/team" options={{ headerTitle: 'Escolher Equipe' }} />
       <Stack.Screen name="companies/[companyId]/booking/success" options={{ headerTitle: 'Agendamento Confirmado' }} />

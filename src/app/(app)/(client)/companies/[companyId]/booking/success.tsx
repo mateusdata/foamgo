@@ -11,7 +11,7 @@ import dayjs from 'dayjs'
 import { useTheme } from '@/hooks/use-theme'
 
 export default function BookingSuccessScreen() {
-    const { date, time, serviceName, companyId, teamName, price, hasVariablePricing } = useLocalSearchParams<{ date: string, time: string, serviceName: string, companyId: string, teamName?: string, price?: string, hasVariablePricing?: string }>()
+    const { date, time, serviceName, companyId, teamName, price, hasVariablePricing, carName } = useLocalSearchParams<{ date: string, time: string, serviceName: string, companyId: string, teamName?: string, price?: string, hasVariablePricing?: string, carName?: string }>()
     const [companyName, setCompanyName] = useState('')
     const theme = useTheme()
     const colorScheme = useColorScheme() || 'light'
@@ -60,10 +60,16 @@ export default function BookingSuccessScreen() {
                     ) : null}
                     
                     <View style={styles.row}>
-                        <Ionicons name="car-sport-outline" size={20} color={theme.tint} style={styles.rowIcon} />
+                        <Ionicons name="sparkles-outline" size={20} color={theme.tint} style={styles.rowIcon} />
                         <ThemedText style={styles.detailText}>{serviceName}</ThemedText>
                     </View>
-                    
+
+                    {carName ? (
+                        <View style={styles.row}>
+                            <Ionicons name="car-sport-outline" size={20} color={theme.tint} style={styles.rowIcon} />
+                            <ThemedText style={styles.detailText}>{carName}</ThemedText>
+                        </View>
+                    ) : null}
                     <View style={styles.row}>
                         <Ionicons name="calendar-outline" size={20} color={theme.tint} style={styles.rowIcon} />
                         <ThemedText style={styles.detailText}>{formattedDate} às {time}h</ThemedText>

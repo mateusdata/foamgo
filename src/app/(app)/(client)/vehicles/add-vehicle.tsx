@@ -24,12 +24,7 @@ type Vehicle = {
 }
 
 const schema = z.object({
-    phone: z.string()
-        .min(10, { message: "Telefone é obrigatório" })
-        .refine((val) => {
-            const digits = val.replace(/\D/g, '');
-            return digits.length === 10 || digits.length === 11;
-        }, { message: "Telefone inválido. Digite o DDD e o número correto." }),
+    phone: z.string().optional(),
     make: z.string()
         .min(1, { message: "Marca é obrigatória" })
         .max(50, { message: "Marca deve ter no máximo 50 caracteres" }),
@@ -49,7 +44,7 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>
 
 export default function AddVehicle() {
-    const { user, logOut } = useAuth()
+    const { user, logOut, refreshUser } = useAuth()
     const colorScheme = useColorScheme()
     const [loading, setLoading] = useState(false)
     const [vehicles, setVehicles] = useState<Vehicle[]>([])
@@ -88,6 +83,14 @@ export default function AddVehicle() {
     }, [])
 
     const onSubmit = async (data: FormData) => {
+        if (isFirstVehicleRequired) {
+            const digits = (data.phone || '').replace(/\D/g, '');
+            if (digits.length !== 10 && digits.length !== 11) {
+                setError('phone', { type: 'manual', message: 'Telefone inválido. Digite o DDD e o número correto.' });
+                return;
+            }
+        }
+
         try {
             setLoading(true)
 
@@ -104,15 +107,24 @@ export default function AddVehicle() {
 
             if (editingVehicle) {
                 await api.patch(`/vehicles/${editingVehicle.id}`, payload)
-                router.push("/(app)/(client)/(tabs)/companies")
             } else {
                 await api.post(`/vehicles`, payload)
-                router.push("/(app)/(client)/(tabs)/companies")
             }
 
             reset()
             setEditingVehicle(null)
             await fetchVehicles()
+            await refreshUser()
+
+            if (isFirstVehicleRequired) {
+                router.replace("/(app)/(client)/(tabs)/companies")
+            } else {
+                if (router.canGoBack()) {
+                    router.back()
+                } else {
+                    router.push("/(app)/(client)/(tabs)/companies")
+                }
+            }
         } catch (error: any) {
             if (error.response?.status === 409 && error.response?.data?.message?.toLowerCase().includes('telefone')) {
                 setError('phone', { type: 'manual', message: 'Este número de telefone já está em uso.' });
@@ -133,6 +145,11 @@ export default function AddVehicle() {
     }
 
     const handleDelete = (vehicleId: string) => {
+        if (vehicles.length <= 1) {
+            Alert.alert('Ação não permitida', 'Você não pode excluir o seu único veículo cadastrado.');
+            return;
+        }
+
         Alert.alert(
             'Excluir veículo',
             'Tem certeza que deseja excluir este veículo?',
@@ -183,17 +200,19 @@ export default function AddVehicle() {
 
                 <ThemedView style={styles.formContainer}>
 
+                    {isFirstVehicleRequired && (
                     <PaperInput
                         name="phone"
                         control={control}
-                        label="Telefone"
+                        label="Telefone (WhatsApp)"
                         error={errors?.phone?.message}
-                        placeholder="Ex: 11999999999"
+                        placeholder="(00) 00000-0000"
                         keyboardType="phone-pad"
+                        mask="phone"
                     />
-
-
-                    <PaperInput
+                )}
+                
+                <PaperInput
                         name="make"
                         control={control}
                         label="Marca"

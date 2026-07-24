@@ -88,10 +88,17 @@ export default function BookingServicesScreen() {
 
     const handleSelectService = (service: CarService) => {
         const navigateNext = () => {
-            router.push({
-                pathname: '/(app)/(client)/companies/[companyId]/booking/team',
-                params: { companyId, serviceId: service.id, contactId, carName }
-            })
+            if (contactId) {
+                router.push({
+                    pathname: '/(app)/(client)/companies/[companyId]/booking/team',
+                    params: { companyId, serviceId: service.id, contactId, carName }
+                })
+            } else {
+                router.push({
+                    pathname: '/(app)/(client)/companies/[companyId]/booking/vehicle',
+                    params: { companyId, serviceId: service.id }
+                })
+            }
         }
 
         if (service.hasVariablePricing) {
