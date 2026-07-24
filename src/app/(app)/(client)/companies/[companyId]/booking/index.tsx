@@ -159,8 +159,9 @@ export default function BookingServicesScreen() {
                     {item.description && (
                         <ThemedText
                             style={styles.serviceDescription}
+                            numberOfLines={2}
                         >
-                            {item.description}
+                            {item.description.replace(/Discrição:/gi, '').replace(/Descrição:/gi, '').replace(/\n+/g, ' ').trim()}
                         </ThemedText>
                     )}
 

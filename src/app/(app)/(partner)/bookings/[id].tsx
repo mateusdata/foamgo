@@ -200,7 +200,7 @@ export default function BookingDetails() {
                         </View>
                     </View>
 
-                    <View style={[styles.detailItem, { borderBottomWidth: 0 }]}>
+                    <View style={[styles.detailItem, { borderBottomWidth: (booking.service?.hasVariablePricing || booking.carService?.hasVariablePricing) ? 1 : 0 }]}>
                         <View style={[styles.iconBox, { backgroundColor: 'rgba(51, 112, 255, 0.1)' }]}>
                             <Ionicons name="wallet-outline" size={18} color={Colors.primary} />
                         </View>
@@ -211,6 +211,19 @@ export default function BookingDetails() {
                             </ThemedText>
                         </View>
                     </View>
+
+                    {(booking.service?.hasVariablePricing || booking.carService?.hasVariablePricing) && price && parseFloat(price.toString().replace(',', '.')) > 0 ? (
+                        <View style={[styles.detailItem, { borderBottomWidth: 0, marginTop: (booking.service?.hasVariablePricing || booking.carService?.hasVariablePricing) ? 16 : 0 }]}>
+                            <View style={[styles.iconBox, { backgroundColor: 'rgba(239, 68, 68, 0.1)' }]}>
+                                <Ionicons name="information-circle-outline" size={18} color="#ef4444" />
+                            </View>
+                            <View style={styles.detailContent}>
+                                <ThemedText style={{ color: '#ef4444', fontSize: 13, lineHeight: 18 }}>
+                                    A depender do modelo do carro para esse serviço, o valor pode sofrer alteração.
+                                </ThemedText>
+                            </View>
+                        </View>
+                    ) : null}
                 </View>
 
                 {/* Actions Footer */}

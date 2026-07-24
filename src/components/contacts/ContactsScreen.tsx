@@ -56,16 +56,23 @@ export default function ContactsScreen() {
   });
   const searchValue = watchSearch('search') || '';
 
-  const { control: contactControl, handleSubmit: handleContactSubmit, reset: resetContact } = useForm({
-    defaultValues: { name: '', phone: '' }
+  const contactSchema = z.object({
+    name: z.string().min(1, 'Nome é obrigatório'),
+    phone: z.string().min(1, 'Telefone é obrigatório')
+  });
+
+  const { control: contactControl, handleSubmit: handleContactSubmit, reset: resetContact, formState: { errors: contactErrors } } = useForm({
+    defaultValues: { name: '', phone: '' },
+    resolver: zodResolver(contactSchema)
   });
 
   const scheduleSchema = z.object({
-    carName: z.string().min(1, 'Nome do carro é obrigatório')
+    carName: z.string().min(1, 'Nome do carro é obrigatório'),
+    carModel: z.string().min(1, 'Modelo do carro é obrigatório')
   });
 
   const { control: scheduleControl, handleSubmit: handleScheduleSubmit, reset: resetSchedule, formState: { errors: scheduleErrors } } = useForm({
-    defaultValues: { carName: '' },
+    defaultValues: { carName: '', carModel: '' },
     resolver: zodResolver(scheduleSchema)
   });
 
@@ -230,12 +237,12 @@ export default function ContactsScreen() {
     await sheetRef.current?.present();
   };
 
-  const handleAgendar = (data: { carName: string }) => {
+  const handleAgendar = (data: { carName: string, carModel: string }) => {
     if (!companyId || !selectedContact) return;
     sheetRef.current?.dismiss();
     router.push({
       pathname: '/(app)/(client)/companies/[companyId]/booking',
-      params: { companyId, contactId: selectedContact.id, carName: data.carName }
+      params: { companyId, contactId: selectedContact.id, carName: `${data.carName} - ${data.carModel}` }
     });
   };
 
@@ -372,8 +379,9 @@ export default function ContactsScreen() {
                         <PaperInput
                             name="phone"
                             control={contactControl}
-                            label="Telefone (Opcional)"
+                            label="Telefone"
                             keyboardType="phone-pad"
+                            error={contactErrors?.phone?.message}
                         />
                     </View>
                     
@@ -429,9 +437,17 @@ export default function ContactsScreen() {
                   <PaperInput
                     name="carName"
                     control={scheduleControl}
-                    label="Nome ou Modelo do Carro (Obrigatório)"
+                    label="Nome do Carro (Obrigatório)"
                     error={scheduleErrors?.carName?.message}
                    />
+                  <View style={{ marginTop: 12 }}>
+                    <PaperInput
+                      name="carModel"
+                      control={scheduleControl}
+                      label="Modelo do Carro (Obrigatório)"
+                      error={scheduleErrors?.carModel?.message}
+                    />
+                  </View>
                 </View>
 
                 <View style={{ width: '100%', marginTop: 24 }} onTouchStart={handleScheduleSubmit(handleAgendar)}>

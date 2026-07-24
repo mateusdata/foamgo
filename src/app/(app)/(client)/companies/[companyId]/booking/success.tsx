@@ -11,7 +11,7 @@ import dayjs from 'dayjs'
 import { useTheme } from '@/hooks/use-theme'
 
 export default function BookingSuccessScreen() {
-    const { date, time, serviceName, companyId, teamName } = useLocalSearchParams<{ date: string, time: string, serviceName: string, companyId: string, teamName?: string }>()
+    const { date, time, serviceName, companyId, teamName, price, hasVariablePricing } = useLocalSearchParams<{ date: string, time: string, serviceName: string, companyId: string, teamName?: string, price?: string, hasVariablePricing?: string }>()
     const [companyName, setCompanyName] = useState('')
     const theme = useTheme()
     const colorScheme = useColorScheme() || 'light'
@@ -66,18 +66,31 @@ export default function BookingSuccessScreen() {
                     
                     <View style={styles.row}>
                         <Ionicons name="calendar-outline" size={20} color={theme.tint} style={styles.rowIcon} />
-                        <ThemedText style={styles.detailText}>{formattedDate}</ThemedText>
+                        <ThemedText style={styles.detailText}>{formattedDate} às {time}h</ThemedText>
                     </View>
                     
                     <View style={styles.row}>
-                        <Ionicons name="time-outline" size={20} color={theme.tint} style={styles.rowIcon} />
-                        <ThemedText style={styles.detailText}>{time}</ThemedText>
+                        <Ionicons name="cash-outline" size={20} color={theme.tint} style={styles.rowIcon} />
+                        <ThemedText style={styles.detailText}>
+                            {price && price !== 'null' && parseFloat(price) > 0 ? `R$ ${parseFloat(price).toFixed(2).replace('.', ',')}` : 'A consultar'}
+                        </ThemedText>
                     </View>
+                    
+
 
                     {teamName ? (
                         <View style={styles.row}>
                             <Ionicons name="people-outline" size={20} color={theme.tint} style={styles.rowIcon} />
                             <ThemedText style={styles.detailText}>{teamName}</ThemedText>
+                        </View>
+                    ) : null}
+
+                    {hasVariablePricing === 'true' && price && price !== 'null' && parseFloat(price) > 0 ? (
+                        <View style={[styles.row, { alignItems: 'flex-start', marginTop: 4 }]}>
+                            <Ionicons name="information-circle-outline" size={20} color="#ef4444" style={styles.rowIcon} />
+                            <ThemedText style={{ color: '#ef4444', fontSize: 13, flex: 1, lineHeight: 18 }}>
+                                A depender do modelo do carro para esse serviço, o preço pode ser variável.
+                            </ThemedText>
                         </View>
                     ) : null}
                 </View>

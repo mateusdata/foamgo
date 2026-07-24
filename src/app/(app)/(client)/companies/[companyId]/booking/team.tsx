@@ -98,9 +98,6 @@ export default function BookingTeamScreen() {
 
     return (
         <ThemedView style={styles.container}>
-            <View style={styles.header}>
-                <ThemedText style={styles.title}>Escolha um Time</ThemedText>
-            </View>
 
             <FlatList
                 data={teams}

@@ -214,8 +214,8 @@ export default function companyScreen() {
           {formatPrice(item.price)}
         </ThemedText>
       </View>
-      <ThemedText style={[styles.serviceDescription, { color: isDark ? '#CCCCCC' : '#666666' }]}>
-        {item.description}
+      <ThemedText style={[styles.serviceDescription, { color: isDark ? '#CCCCCC' : '#666666' }]} numberOfLines={2}>
+        {item.description?.replace(/Discrição:/gi, '')?.replace(/Descrição:/gi, '')?.replace(/\n+/g, ' ')?.trim()}
       </ThemedText>
       <View style={styles.serviceDuration}>
         <Ionicons name="time-outline" size={14} color={Colors.primary} />

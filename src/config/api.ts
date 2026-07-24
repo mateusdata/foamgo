@@ -4,7 +4,7 @@ const PROD_URL = "https://blip-api.fly.dev/api";
 const DEV_URL = "http://192.168.25.168:3000/api";
 
 const api = axios.create({
-  baseURL: __DEV__ ? DEV_URL : PROD_URL,
+  baseURL: false ? DEV_URL : PROD_URL,
 });
 
 let logoutCallback: Function | null = null;
@@ -43,7 +43,7 @@ api.interceptors.response.use(
 
       try {
         const refreshToken = await AsyncStorage.getItem('refreshToken');
-        
+
         if (refreshToken) {
           console.log('🔄 [Interceptor] Enviando refresh token para a API...');
           const response = await axios.post(`${api.defaults.baseURL}/auth/refresh-token`, {
@@ -56,13 +56,13 @@ api.interceptors.response.use(
           console.log('✅ [Interceptor] Sucesso! Novos tokens recebidos.');
           await AsyncStorage.setItem('token', JSON.stringify(newToken));
           await AsyncStorage.setItem('refreshToken', newRefreshToken);
-          
+
           const userStr = await AsyncStorage.getItem('user');
           if (userStr) {
-             const userObj = JSON.parse(userStr);
-             userObj.token = newToken;
-             userObj.refreshToken = newRefreshToken;
-             await AsyncStorage.setItem('user', JSON.stringify(userObj));
+            const userObj = JSON.parse(userStr);
+            userObj.token = newToken;
+            userObj.refreshToken = newRefreshToken;
+            await AsyncStorage.setItem('user', JSON.stringify(userObj));
           }
 
           originalRequest.headers.Authorization = `Bearer ${newToken}`;
@@ -79,7 +79,7 @@ api.interceptors.response.use(
 
         if (setUserCallback) setUserCallback(null);
         if (logoutCallback) logoutCallback();
-        
+
         return Promise.reject(refreshError);
       }
     }

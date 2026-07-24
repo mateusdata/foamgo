@@ -209,6 +209,8 @@ export default function BookingScheduleScreen() {
                         date: selectedDateIso,
                         time: selectedTime,
                         serviceName: service.name,
+                        price: service.price,
+                        hasVariablePricing: service.hasVariablePricing,
                         companyId,
                         teamName: assignedTeamName
                     }
@@ -237,6 +239,8 @@ export default function BookingScheduleScreen() {
                                 date: selectedDateIso,
                                 time: selectedTime,
                                 serviceName: service.name,
+                                price: service.price,
+                                hasVariablePricing: service.hasVariablePricing,
                                 companyId,
                                 teamName: teamForRecovery?.name
                             }
@@ -281,7 +285,7 @@ export default function BookingScheduleScreen() {
                 }
             >
                 <View style={styles.header}>
-                    <ThemedText style={styles.title}>Escolha o Horário</ThemedText>
+
                     {service && (
                         <View style={styles.serviceInfo}>
                             <Ionicons name="man-outline" size={16} color={Colors.primary} />
