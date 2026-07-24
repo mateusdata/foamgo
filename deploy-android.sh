@@ -25,7 +25,7 @@ fi
 echo "🚀 ENVIANDO PARA O GOOGLE PLAY: $ANDROID_PACKAGE_NAME"
 
 # --- GUIA RÁPIDO DE TRACKS (Mude o --track abaixo conforme a necessidade) ---
-# --track "internal"   -> Teste Interno (Lança na hora para seus testadores)
+# --track "production"   -> Teste Interno (Lança na hora para seus testadores)
 # --track "alpha"      -> Teste Fechado (O que você quer agora)
 # --track "beta"       -> Teste Aberto
 # --track "internal" -> Loja Oficial (Público)
@@ -35,7 +35,7 @@ fastlane supply \
   --package_name "$ANDROID_PACKAGE_NAME" \
   --aab "$LATEST_AAB" \
   --json_key "$GOOGLE_PLAY_JSON_KEY_PATH" \
-  --track "internal" \
+  --track "production" \
   --release_status "completed" \
   --skip_upload_images true \
   --skip_upload_screenshots true \

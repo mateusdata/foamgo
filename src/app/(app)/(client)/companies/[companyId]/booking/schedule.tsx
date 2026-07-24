@@ -331,14 +331,19 @@ export default function BookingScheduleScreen() {
                                 <View style={styles.grid}>
                                     {slots.map((slot: AvailableSlot) => {
                                         const isSelected = selectedDateIso === dateKey && selectedTime === slot.time
+                                        const isAvailable = (slot as any).hasAvailability !== false
+
                                         return (
                                             <TouchableOpacity
                                                 key={slot.time}
+                                                disabled={!isAvailable}
                                                 style={[
                                                     styles.timeButton,
                                                     {
-                                                        backgroundColor: isSelected ? Colors.primary : isDark ? '#1C1C1E' : '#FFF',
-                                                        borderColor: isSelected ? Colors.primary : isDark ? '#333' : '#E0E0E0'
+                                                        backgroundColor: !isAvailable ? (isDark ? '#2C2C2E' : '#F5F5F5') : (isSelected ? Colors.primary : isDark ? '#1C1C1E' : '#FFF'),
+                                                        borderColor: !isAvailable ? (isDark ? '#444' : '#B0B0B0') : (isSelected ? Colors.primary : isDark ? '#333' : '#E0E0E0'),
+                                                        borderStyle: !isAvailable ? 'dashed' : 'solid',
+                                                        opacity: !isAvailable ? 0.5 : 1
                                                     }
                                                 ]}
                                                 onPress={() => {
@@ -351,9 +356,13 @@ export default function BookingScheduleScreen() {
                                                     <Ionicons
                                                         name="time-outline"
                                                         size={14}
-                                                        color={isSelected ? '#FFF' : (isDark ? '#AAA' : '#666')}
+                                                        color={!isAvailable ? (isDark ? '#666' : '#999') : (isSelected ? '#FFF' : (isDark ? '#AAA' : '#666'))}
                                                     />
-                                                    <ThemedText style={[styles.timeText, isSelected && { color: '#FFF' }]}>
+                                                    <ThemedText style={[
+                                                        styles.timeText, 
+                                                        isSelected && { color: '#FFF' },
+                                                        !isAvailable && { color: isDark ? '#666' : '#999', textDecorationLine: 'line-through' }
+                                                    ]}>
                                                         {slot.time}
                                                     </ThemedText>
                                                 </View>
@@ -452,9 +461,9 @@ const styles = StyleSheet.create({
     },
     timeButton: {
         width: '23%',
-        minWidth: 70,
-        paddingVertical: 12,
-        paddingHorizontal: 8,
+        minWidth: 65,
+        paddingVertical: 10,
+        paddingHorizontal: 6,
         borderRadius: 8,
         borderWidth: 1,
         alignItems: 'center',
