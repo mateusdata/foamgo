@@ -64,12 +64,7 @@ export default function BookingSuccessScreen() {
                         <ThemedText style={styles.detailText}>{serviceName}</ThemedText>
                     </View>
 
-                    {carName ? (
-                        <View style={styles.row}>
-                            <Ionicons name="car-sport-outline" size={20} color={theme.tint} style={styles.rowIcon} />
-                            <ThemedText style={styles.detailText}>{carName}</ThemedText>
-                        </View>
-                    ) : null}
+
                     <View style={styles.row}>
                         <Ionicons name="calendar-outline" size={20} color={theme.tint} style={styles.rowIcon} />
                         <ThemedText style={styles.detailText}>{formattedDate} às {time}h</ThemedText>
@@ -88,6 +83,13 @@ export default function BookingSuccessScreen() {
                         <View style={styles.row}>
                             <Ionicons name="people-outline" size={20} color={theme.tint} style={styles.rowIcon} />
                             <ThemedText style={styles.detailText}>{teamName}</ThemedText>
+                        </View>
+                    ) : null}
+
+                    {carName ? (
+                        <View style={styles.row}>
+                            <Ionicons name="car-sport-outline" size={20} color={theme.tint} style={styles.rowIcon} />
+                            <ThemedText style={styles.detailText}>{carName}</ThemedText>
                         </View>
                     ) : null}
 

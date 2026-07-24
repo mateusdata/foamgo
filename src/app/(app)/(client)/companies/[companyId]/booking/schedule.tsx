@@ -262,7 +262,7 @@ export default function BookingScheduleScreen() {
                 throw lastError
             }
         } catch (error: any) {
-            Alert.alert('Erro', 'Não foi possível realizar o agendamento.')
+            Alert.alert('Erro', error?.response?.data?.message || 'Não foi possível realizar o agendamento.')
         } finally {
             setBookingLoading(false)
         }
