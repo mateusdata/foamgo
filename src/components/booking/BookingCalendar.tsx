@@ -54,11 +54,11 @@ type BookingCalendarProps = {
 };
 
 const STATUS_FILTERS: { label: string; value: 'SCHEDULED' | 'CONFIRMED' | 'COMPLETED' | 'CANCELLED' | 'ALL' }[] = [
-    { label: 'Confirmados', value: 'CONFIRMED' },
-    { label: 'Agendados', value: 'SCHEDULED' },
+    { label: 'Todos', value: 'ALL' },
+    // { label: 'Confirmados', value: 'CONFIRMED' },
+    // { label: 'Agendados', value: 'SCHEDULED' },
     { label: 'Concluídos', value: 'COMPLETED' },
     { label: 'Cancelados', value: 'CANCELLED' },
-    { label: 'Todos', value: 'ALL' },
 ];
 
 const CustomTodayButton = () => {

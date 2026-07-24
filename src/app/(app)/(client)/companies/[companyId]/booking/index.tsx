@@ -141,55 +141,60 @@ export default function BookingServicesScreen() {
             onPress={() => handleSelectService(item)}
             activeOpacity={0.7}
         >
-            <View style={styles.serviceContent}>
-                <View style={styles.serviceInfo}>
-                    <ThemedText
-                        style={styles.serviceName}
-                        numberOfLines={2}
-                    >
-                        {item.name}
-                    </ThemedText>
-
-                    {item.vehicleCategory && (
-                        <ThemedText style={{ fontSize: 12, color: Colors.primary, marginBottom: 4, fontWeight: 'bold' }}>
-                            Categoria: {item.vehicleCategory}
-                        </ThemedText>
-                    )}
-
-                    {item.description && (
+            <View style={[styles.serviceContent, { flexDirection: 'column', alignItems: 'stretch' }]}>
+                {/* Header Row: Title/Category + Price */}
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', width: '100%', gap: 12 }}>
+                    <View style={{ flex: 1 }}>
                         <ThemedText
-                            style={styles.serviceDescription}
+                            style={[styles.serviceName, { marginBottom: 2 }]}
                             numberOfLines={2}
                         >
-                            {item.description.replace(/Discrição:/gi, '').replace(/Descrição:/gi, '').replace(/\n+/g, ' ').trim()}
+                            {item.name}
                         </ThemedText>
-                    )}
 
-                    <View style={styles.metaContainer}>
-                        <Ionicons
-                            name="time-outline"
-                            size={16}
-                            color={isDark ? '#AAA' : '#666'}
-                        />
-                        <ThemedText style={styles.durationText}>
-                            {item.durationMinutes} min
+                        {item.vehicleCategory && (
+                            <ThemedText style={{ fontSize: 12, color: Colors.primary, marginBottom: 2, fontWeight: 'bold' }}>
+                                Categoria: {item.vehicleCategory}
+                            </ThemedText>
+                        )}
+                    </View>
+
+                    <View style={styles.priceContainer}>
+                        <ThemedText
+                            style={styles.priceText}
+                            numberOfLines={1}
+                            adjustsFontSizeToFit
+                        >
+                            {formatPrice(item.price)}
                         </ThemedText>
+                        <Ionicons
+                            name="chevron-forward"
+                            size={22}
+                            color={isDark ? '#666' : '#CCC'}
+                        />
                     </View>
                 </View>
 
-                <View style={styles.priceContainer}>
+                {/* Description: Full Width */}
+                {item.description && (
                     <ThemedText
-                        style={styles.priceText}
-                        numberOfLines={1}
-                        adjustsFontSizeToFit
+                        style={[styles.serviceDescription, { marginTop: 2, marginBottom: 0 }]}
+                        numberOfLines={7}
                     >
-                        {formatPrice(item.price)}
+                        {item.description.replace(/Discrição:/gi, '').replace(/Descrição:/gi, '').replace(/[\r\n]+/g, ' ').trim()}
                     </ThemedText>
+                )}
+
+                {/* Meta: Full Width */}
+                <View style={[styles.metaContainer, { marginTop: 4 }]}>
                     <Ionicons
-                        name="chevron-forward"
-                        size={22}
-                        color={isDark ? '#666' : '#CCC'}
+                        name="time-outline"
+                        size={16}
+                        color={isDark ? '#AAA' : '#666'}
                     />
+                    <ThemedText style={styles.durationText}>
+                        {item.durationMinutes} min
+                    </ThemedText>
                 </View>
             </View>
         </TouchableOpacity>

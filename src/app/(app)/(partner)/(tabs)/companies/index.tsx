@@ -166,10 +166,10 @@ const PartnerCompanies = () => {
 
                     {[
                         {
-                            title: 'Gerenciar Times',
-                            subtitle: 'Equipes e colaboradores',
-                            icon: 'people-outline',
-                            route: '/(app)/(partner)/companies/[companyId]/teams'
+                            title: 'Lava Jato',
+                            subtitle: 'Configurações do negócio',
+                            icon: 'business-outline',
+                            route: '/(app)/(partner)/companies/[companyId]/manager'
                         },
                         {
                             title: 'Serviços',
@@ -178,16 +178,16 @@ const PartnerCompanies = () => {
                             route: '/(app)/(partner)/companies/[companyId]/services'
                         },
                         {
-                            title: 'Lava Jato',
-                            subtitle: 'Configurações do negócio',
-                            icon: 'business-outline',
-                            route: '/(app)/(partner)/companies/[companyId]/manager'
-                        },
-                        {
                             title: 'Disponibilidade',
                             subtitle: 'Horários de atendimento',
                             icon: 'time-outline',
                             route: '/(app)/(partner)/companies/[companyId]/slots'
+                        },
+                        {
+                            title: 'Gerenciar Times',
+                            subtitle: 'Equipes e colaboradores',
+                            icon: 'people-outline',
+                            route: '/(app)/(partner)/companies/[companyId]/teams'
                         }
                     ].map((item, index) => (
                         <TouchableOpacity

@@ -77,11 +77,11 @@ const statusConfig: Record<string, { label: string; color: string; backgroundCol
 }
 
 const STATUS_FILTERS: { label: string; value: BookingStatus | 'ALL' }[] = [
-  { label: 'Confirmados', value: 'CONFIRMED' },
-  { label: 'Agendados', value: 'SCHEDULED' },
+  { label: 'Todos', value: 'ALL' },
+  // { label: 'Confirmados', value: 'CONFIRMED' },
+  // { label: 'Agendados', value: 'SCHEDULED' },
   { label: 'Concluídos', value: 'COMPLETED' },
   { label: 'Cancelados', value: 'CANCELLED' },
-  { label: 'Todos', value: 'ALL' },
 ]
 
 export default function MyBookingsScreen() {

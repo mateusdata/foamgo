@@ -54,11 +54,11 @@ const FeaturedCard = ({ item, onPress }: { item: CarWash, onPress: (id: string) 
       <Image source={{ uri: item.avatar }} style={styles.featuredImage} />
       <View style={styles.featuredInfo}>
         <ThemedText style={styles.featuredName} numberOfLines={1}>{item.name}</ThemedText>
-        <View style={styles.ratingContainer}>
+        {/* <View style={styles.ratingContainer}>
           <Ionicons name="star" size={14} color="#F59E0B" />
           <ThemedText style={styles.ratingText}>{item.rating.toFixed(1)}</ThemedText>
           <ThemedText style={styles.reviewsText}>({item.reviews})</ThemedText>
-        </View>
+        </View> */}
       </View>
     </TouchableOpacity>
   )
@@ -90,10 +90,10 @@ const CarWashListItem = ({ item, onPress }: { item: CarWash, onPress: (id: strin
         </View>
 
         <View style={styles.listItemFooter}>
-          <View style={styles.ratingContainer}>
+          {/* <View style={styles.ratingContainer}>
             <Ionicons name="star" size={14} color="#F59E0B" />
             <ThemedText style={styles.ratingText}>{item.rating.toFixed(1)}</ThemedText>
-          </View>
+          </View> */}
           <View style={styles.statusContainer}>
             <View style={[styles.statusDot, { backgroundColor: item.open ? '#34C759' : '#FF3B30' }]} />
             <ThemedText style={[styles.statusText, { color: item.open ? '#34C759' : '#FF3B30' }]}>
@@ -215,7 +215,7 @@ export default function HomeScreen() {
           <View style={styles.header}>
             <View>
               <ThemedText style={styles.greetingText}>Olá, {user?.name?.split(' ')[0]}</ThemedText>
-              <ThemedText style={styles.subGreetingText}>Encontre o melhor serviço</ThemedText>
+              <ThemedText style={styles.subGreetingText}>Encontre o melhor lava-jato</ThemedText>
             </View>
             <NotificationScreen />
           </View>
@@ -237,7 +237,7 @@ export default function HomeScreen() {
         <View style={styles.header}>
           <View>
             <ThemedText style={styles.greetingText}>Olá, {user?.name?.split(' ')[0]}</ThemedText>
-            <ThemedText style={styles.subGreetingText}>Encontre o melhor serviço</ThemedText>
+            <ThemedText style={styles.subGreetingText}>Encontre o melhor lava-jato</ThemedText>
           </View>
           <NotificationScreen />
         </View>
