@@ -35,40 +35,10 @@ const PartnerCompanies = () => {
         if (!user?.company?.id) return;
 
         try {
-            const startOfDay = dayjs().startOf('day').toISOString();
-            const endOfDay = dayjs().endOf('day').toISOString();
-            const startOfMonth = dayjs().startOf('month').toISOString();
-            const endOfMonth = dayjs().endOf('month').toISOString();
-
-            const todayResponse = await api.get(`/bookings`, {
-                params: {
-                    companyId: user.company.id,
-                    startDate: startOfDay,
-                    endDate: endOfDay
-                }
-            });
-
-            const monthResponse = await api.get(`/bookings`, {
-                params: {
-                    companyId: user.company.id,
-                    startDate: startOfMonth,
-                    endDate: endOfMonth,
-                    status: 'COMPLETED'
-                }
-            });
-
-            const monthCompletedBookings = monthResponse.data || [];
-            const monthlyRevenue = Array.isArray(monthCompletedBookings)
-                ? monthCompletedBookings.reduce((total: number, booking: any) => {
-                    const price = parseFloat(booking.carService?.price || '0');
-                    return total + price;
-                }, 0)
-                : 0;
-
-            const todayBookings = todayResponse.data || [];
+            const response = await api.get(`/companies/${user.company.id}/stats`);
             setStats({
-                todayBookings: Array.isArray(todayBookings) ? todayBookings.length : 0,
-                monthlyRevenue: monthlyRevenue
+                todayBookings: response.data.todayBookings || 0,
+                monthlyRevenue: response.data.monthlyRevenue || 0
             });
         } catch (error: any) {
             setStats({ todayBookings: 0, monthlyRevenue: 0 });
@@ -134,7 +104,7 @@ const PartnerCompanies = () => {
                     <View style={styles.statsRow}>
                         <View style={styles.statItem}>
                             <View style={[styles.statIconContainer, { backgroundColor: statsIconBg }]}>
-                                <Ionicons name="calendar-outline" size={26} color={statsTextColor} />
+                                <Ionicons name="cash-outline" size={20} color={statsTextColor} />
                             </View>
                             <ThemedText style={[styles.statNumber, { color: statsTextColor }]}>
                                 {stats.todayBookings}
@@ -258,10 +228,10 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     mainStatsCard: {
-        borderRadius: 24, // Bordas mais arredondadas (moderno)
-        paddingVertical: 24,
+        borderRadius: 20, 
+        paddingVertical: 16,
         paddingHorizontal: 16,
-        marginBottom: 32,
+        marginBottom: 24,
     },
     statsRow: {
         flexDirection: 'row',
@@ -273,27 +243,27 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     statIconContainer: {
-        width: 52,
-        height: 52,
-        borderRadius: 16,
+        width: 40,
+        height: 40,
+        borderRadius: 12,
         justifyContent: 'center',
         alignItems: 'center',
-        marginBottom: 12
+        marginBottom: 8
     },
     statNumber: {
-        fontSize: 22,
+        fontSize: 20,
         fontWeight: '800',
-        marginBottom: 4,
+        marginBottom: 2,
         letterSpacing: -0.5
     },
     statLabel: {
-        fontSize: 13,
+        fontSize: 12,
         fontWeight: '500',
         textAlign: 'center'
     },
     divider: {
         width: 1,
-        height: 60,
+        height: 40,
         marginHorizontal: 16,
         borderRadius: 1
     },

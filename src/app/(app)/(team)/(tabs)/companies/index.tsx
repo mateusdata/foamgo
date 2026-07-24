@@ -33,56 +33,18 @@ const TeamCompanies = () => {
         if (!user?.activeCompanyId || !user?.memberships) return;
 
         try {
-            const startOfDay = dayjs().startOf('day').toISOString();
-            const endOfDay = dayjs().endOf('day').toISOString();
-            const startOfMonth = dayjs().startOf('month').toISOString();
-            const endOfMonth = dayjs().endOf('month').toISOString();
-
-            const membership = user.memberships.find(m => m.team?.companyId === user.activeCompanyId);
+            const membership = user.memberships.find((m: any) => m.team?.companyId === user.activeCompanyId);
             const teamId = membership?.teamId;
-
-            const params: any = {
-                companyId: user.activeCompanyId,
-                startDate: startOfDay,
-                endDate: endOfDay
-            };
-
+            const params: any = {};
             if (teamId) {
                 params.teamId = teamId;
             }
 
-            const todayResponse = await api.get(`/bookings`, {
-                params: params
-            });
-
-            const monthParams: any = {
-                companyId: user.activeCompanyId,
-                startDate: startOfMonth,
-                endDate: endOfMonth,
-                status: 'COMPLETED'
-            };
-
-            if (teamId) {
-                monthParams.teamId = teamId;
-            }
-
-            const monthResponse = await api.get(`/bookings`, {
-                params: monthParams
-            });
-
-            const monthCompletedBookings = monthResponse.data || [];
-            const monthlyRevenue = Array.isArray(monthCompletedBookings)
-                ? monthCompletedBookings.reduce((total: number, booking: any) => {
-                    const price = parseFloat(booking.carService?.price || '0');
-                    return total + price;
-                }, 0)
-                : 0;
-
-            const todayBookings = todayResponse.data || [];
-
+            const response = await api.get(`/companies/${user.activeCompanyId}/stats`, { params });
+            
             setStats({
-                todayBookings: Array.isArray(todayBookings) ? todayBookings.length : 0,
-                monthlyRevenue: monthlyRevenue
+                todayBookings: response.data.todayBookings || 0,
+                monthlyRevenue: response.data.monthlyRevenue || 0
             });
         } catch (error: any) {
             console.log('Error fetching stats:', error);

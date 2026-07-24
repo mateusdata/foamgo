@@ -49,7 +49,7 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>
 
 export default function AddVehicle() {
-    const { user } = useAuth()
+    const { user, logOut } = useAuth()
     const colorScheme = useColorScheme()
     const [loading, setLoading] = useState(false)
     const [vehicles, setVehicles] = useState<Vehicle[]>([])
@@ -63,7 +63,7 @@ export default function AddVehicle() {
         year: '',
     }
 
-    const { control, handleSubmit, reset, setValue, formState: { errors } } = useForm<FormData>({
+    const { control, handleSubmit, reset, setValue, setError, formState: { errors } } = useForm<FormData>({
         defaultValues,
         resolver: zodResolver(schema),
     })
@@ -114,7 +114,11 @@ export default function AddVehicle() {
             setEditingVehicle(null)
             await fetchVehicles()
         } catch (error: any) {
-            Alert.alert('Erro', 'Ocorreu um erro. Tente novamente.')
+            if (error.response?.status === 409 && error.response?.data?.message?.toLowerCase().includes('telefone')) {
+                setError('phone', { type: 'manual', message: 'Este número de telefone já está em uso.' });
+            } else {
+                Alert.alert('Erro', error.response?.data?.message || 'Ocorreu um erro. Tente novamente.')
+            }
         } finally {
             setLoading(false)
         }
@@ -233,6 +237,12 @@ export default function AddVehicle() {
                         name={editingVehicle ? 'Salvar' : 'Adicionar veículo'}
                         onPress={handleSubmit(onSubmit)}
                     />
+
+                    {isFirstVehicleRequired && (
+                        <TouchableOpacity onPress={logOut} style={styles.cancelButton}>
+                             <ThemedText style={styles.cancelButtonText}>Sair da conta</ThemedText>
+                        </TouchableOpacity>
+                    )}
                 </ThemedView>
 
                 {vehicles.length > 0 && (
