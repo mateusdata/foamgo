@@ -233,7 +233,17 @@ export default function ContactsScreen() {
 
   const handleSelectContact = async (contact: Contact) => {
     setSelectedContact(contact);
-    resetSchedule();
+    
+    if (filterMode === 'recent' && contact.lastCar) {
+      const isDashed = contact.lastCar.includes(' - ');
+      const parts = contact.lastCar.split(isDashed ? ' - ' : ' ');
+      const namePart = parts[0] || '';
+      const modelPart = parts.slice(1).join(isDashed ? ' - ' : ' ') || '';
+      resetSchedule({ carName: namePart, carModel: modelPart });
+    } else {
+      resetSchedule({ carName: '', carModel: '' });
+    }
+    
     await sheetRef.current?.present();
   };
 
@@ -267,35 +277,41 @@ export default function ContactsScreen() {
         
         <View style={styles.actionsContainer}>
             <TouchableOpacity 
-                style={[styles.actionBtn, { backgroundColor: theme.backgroundElement }]} 
+                style={[styles.actionBtn, { backgroundColor: theme.tint }]} 
                 onPress={() => newContactSheetRef.current?.present()}
             >
-                <Ionicons name="person-add" size={20} color={theme.text} />
-                <ThemedText style={styles.actionBtnText}>Novo Contato</ThemedText>
+                <Ionicons name="person-add" size={20} color="#fff" />
+                <ThemedText style={[styles.actionBtnText, { color: '#fff' }]}>Novo Contato</ThemedText>
             </TouchableOpacity>
             
             <TouchableOpacity 
-                style={[styles.actionBtn, { backgroundColor: theme.tint }]} 
+                style={[styles.actionBtn, { backgroundColor: theme.backgroundElement }]} 
                 onPress={handleSyncAgenda}
                 disabled={syncing}
             >
-                {syncing ? <ActivityIndicator size="small" color="#fff" /> : <Ionicons name="sync" size={20} color="#fff" />}
-                <Text style={styles.actionBtnTextWhite}>Sincronizar da Agenda</Text>
+                {syncing ? (
+                    <ActivityIndicator size="small" color={theme.text} />
+                ) : (
+                    <>
+                        <Ionicons name="sync" size={20} color={theme.text} />
+                        <ThemedText style={[styles.actionBtnText, { color: theme.text }]}>Sincronizar Agenda</ThemedText>
+                    </>
+                )}
             </TouchableOpacity>
         </View>
 
         <View style={{ flexDirection: 'row', gap: 10, marginHorizontal: 16, marginBottom: 12 }}>
           <TouchableOpacity 
-            onPress={() => setFilterMode('all')}
-            style={[{ paddingVertical: 8, paddingHorizontal: 16, borderRadius: 20 }, filterMode === 'all' ? { backgroundColor: theme.tint } : { backgroundColor: theme.backgroundElement }]}
-          >
-            <ThemedText style={filterMode === 'all' ? { color: '#fff' } : {}}>Todos</ThemedText>
-          </TouchableOpacity>
-          <TouchableOpacity 
             onPress={() => setFilterMode('recent')}
             style={[{ paddingVertical: 8, paddingHorizontal: 16, borderRadius: 20 }, filterMode === 'recent' ? { backgroundColor: theme.tint } : { backgroundColor: theme.backgroundElement }]}
           >
             <ThemedText style={filterMode === 'recent' ? { color: '#fff' } : {}}>Recentes</ThemedText>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            onPress={() => setFilterMode('all')}
+            style={[{ paddingVertical: 8, paddingHorizontal: 16, borderRadius: 20 }, filterMode === 'all' ? { backgroundColor: theme.tint } : { backgroundColor: theme.backgroundElement }]}
+          >
+            <ThemedText style={filterMode === 'all' ? { color: '#fff' } : {}}>Contatos</ThemedText>
           </TouchableOpacity>
         </View>
 
@@ -437,14 +453,14 @@ export default function ContactsScreen() {
                   <PaperInput
                     name="carName"
                     control={scheduleControl}
-                    label="Nome do Carro (Obrigatório)"
+                    label="Nome do Carro"
                     error={scheduleErrors?.carName?.message}
                    />
                   <View style={{ marginTop: 12 }}>
                     <PaperInput
                       name="carModel"
                       control={scheduleControl}
-                      label="Modelo do Carro (Obrigatório)"
+                      label="Modelo do Carro"
                       error={scheduleErrors?.carModel?.message}
                     />
                   </View>
