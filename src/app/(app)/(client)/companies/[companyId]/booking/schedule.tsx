@@ -140,7 +140,7 @@ export default function BookingScheduleScreen() {
         const price = typeof service.price === 'string' ? parseFloat(service.price) : service.price
 
         const baseBookingData: any = {
-            userId: user.id,
+            userId: contactId ? undefined : user.id,
             companyId,
             serviceId,
             scheduledAt: finalDate.toISOString(),
@@ -150,7 +150,7 @@ export default function BookingScheduleScreen() {
             carName
         }
 
-        if (user.vehicles && user.vehicles.length > 0) {
+        if (!contactId && user.vehicles && user.vehicles.length > 0) {
             const def = user.vehicles.find((v: any) => v.isDefault) || user.vehicles[0]
             baseBookingData.vehicleId = def.id
             baseBookingData.carName = `${def.model} - ${def.year}`
