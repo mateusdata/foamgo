@@ -47,6 +47,15 @@ export default function BookingDetails() {
         }
     };
 
+    const handleRemindUser = async () => {
+        try {
+            await api.post(`/bookings/${id}/remind-confirmation`);
+            Alert.alert('Sucesso', 'Lembrete enviado ao cliente.');
+        } catch (error) {
+            Alert.alert('Erro', 'Não foi possível enviar o lembrete.');
+        }
+    };
+
     const confirmAction = (status: 'CONFIRMED' | 'COMPLETED' | 'CANCELLED') => {
         if (status === 'CONFIRMED') {
             handleUpdateStatus('CONFIRMED');
@@ -257,6 +266,7 @@ export default function BookingDetails() {
                             <ThemedText style={[styles.actionButtonText, { color: '#EF5350' }]}>Recusar</ThemedText>
                         </TouchableOpacity>
 
+                        {/* 
                         <TouchableOpacity
                             style={[styles.actionButton, styles.completeButton, { backgroundColor: '#66BB6A' }]}
                             onPress={() => confirmAction('CONFIRMED')}
@@ -264,6 +274,17 @@ export default function BookingDetails() {
                         >
                             <ThemedText style={[styles.actionButtonText, { color: '#FFF' }]}>Confirmar Agendamento</ThemedText>
                         </TouchableOpacity>
+                        */}
+
+                        {booking.company?.requireBookingConfirmation && (
+                            <TouchableOpacity
+                                style={[styles.actionButton, styles.completeButton, { backgroundColor: '#3370FF' }]}
+                                onPress={handleRemindUser}
+                                activeOpacity={0.8}
+                            >
+                                <ThemedText style={[styles.actionButtonText, { color: '#FFF' }]}>Lembrar Usuário</ThemedText>
+                            </TouchableOpacity>
+                        )}
                     </View>
                 )}
 

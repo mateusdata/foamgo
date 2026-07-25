@@ -43,6 +43,15 @@ export default function BookingDetails() {
         }
     };
 
+    const handleRemindUser = async () => {
+        try {
+            await api.post(`/bookings/${id}/remind-confirmation`);
+            Alert.alert('Sucesso', 'Lembrete enviado ao cliente.');
+        } catch (error) {
+            Alert.alert('Erro', 'Não foi possível enviar o lembrete.');
+        }
+    };
+
     const confirmAction = (status: 'COMPLETED' | 'CANCELLED') => {
         Alert.alert(
             status === 'COMPLETED' ? 'Concluir Serviço' : 'Cancelar Agendamento',
@@ -213,6 +222,18 @@ export default function BookingDetails() {
                 </View>
 
                 {/* Actions Footer */}
+                {(booking.status === 'SCHEDULED' || booking.status === 'Scheduled') && booking.company?.requireBookingConfirmation && (
+                    <View style={styles.footerActions}>
+                        <TouchableOpacity
+                            style={[styles.actionButton, styles.completeButton, { backgroundColor: '#3370FF' }]}
+                            onPress={handleRemindUser}
+                            activeOpacity={0.8}
+                        >
+                            <ThemedText style={[styles.actionButtonText, { color: '#FFF' }]}>Lembrar Usuário</ThemedText>
+                        </TouchableOpacity>
+                    </View>
+                )}
+
                 {(booking.status === 'CONFIRMED' || booking.status === 'Confirmed') && (
                     <View style={styles.footerActions}>
                         <TouchableOpacity

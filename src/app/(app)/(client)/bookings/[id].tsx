@@ -254,7 +254,7 @@ export default function BookingDetailsScreen() {
                 </View>
 
                 {/* Action Button */}
-                {booking.status === 'SCHEDULED' && (
+                {booking.status === 'SCHEDULED' && booking.company?.requireBookingConfirmation && (
                     <View style={styles.footerActions}>
                         <TouchableOpacity
                             style={[styles.cancelButton, { backgroundColor: '#66BB6A', marginBottom: 12 }]}
