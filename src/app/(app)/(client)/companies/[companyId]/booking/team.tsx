@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
     center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
     header: { paddingVertical: 16, paddingHorizontal: 16, alignItems: 'center' },
     title: { fontSize: 20, fontWeight: 'bold', textAlign: 'center' },
-    listContent: { paddingHorizontal: 16, paddingBottom: 40 },
+    listContent: { paddingHorizontal: 16, paddingTop: 16, paddingBottom: 40 },
     teamCard: {
         flexDirection: 'row',
         alignItems: 'center',

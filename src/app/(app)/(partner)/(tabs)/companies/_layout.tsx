@@ -5,8 +5,11 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { Colors } from '@/constants/theme';
 import { router } from 'expo-router';
+import { useAuth } from '@/contexts/auth-provider';
 
 export default function Layout() {
+  const { user } = useAuth();
+
   return (
     <Stack
       screenOptions={{
@@ -19,17 +22,21 @@ export default function Layout() {
         name="index"
         options={{
           title: 'Foamgo',
-          headerRight: () => (
-            <Pressable
-              onPress={() => router.push('/(app)/(partner)/store/subscription' as any)}
-              style={styles.upgradeButton}
-            >
-              <View style={styles.upgradeContent}>
-                <Ionicons name="star" size={16} color={Colors.primary} />
-                <Text style={styles.upgradeText}>Fazer Upgrade</Text>
-              </View>
-            </Pressable>
-          ),
+          headerRight: () => {
+            if (user?.hasPlan) return null;
+
+            return (
+              <Pressable
+                onPress={() => router.push('/(app)/(partner)/store/subscription' as any)}
+                style={styles.upgradeButton}
+              >
+                <View style={styles.upgradeContent}>
+                  <Ionicons name="star" size={16} color={Colors.primary} />
+                  <Text style={styles.upgradeText}>Fazer Upgrade</Text>
+                </View>
+              </Pressable>
+            );
+          },
         }}
       />
     </Stack>

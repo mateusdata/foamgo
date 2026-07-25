@@ -109,7 +109,7 @@ export default function BookingVehicleScreen() {
     return (
         <ThemedView style={styles.container}>
             <View style={styles.header}>
-                <ThemedText style={styles.title}>Qual veículo?</ThemedText>
+                <ThemedText type="subtitle" style={styles.title}>Qual veículo?</ThemedText>
                 <ThemedText style={styles.subtitle}>Escolha o carro para o serviço</ThemedText>
             </View>
 
@@ -154,8 +154,6 @@ const styles = StyleSheet.create({
         paddingBottom: 16,
     },
     title: {
-        fontSize: 28,
-        fontWeight: '700',
         marginBottom: 8,
     },
     subtitle: {

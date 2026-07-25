@@ -10,9 +10,11 @@ import {
     useColorScheme,
     Dimensions
 } from 'react-native'
-import React, { useEffect, useState, useMemo, useCallback } from 'react'
+import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react'
+import { TrueSheet } from '@lodev09/react-native-true-sheet'
 import { ThemedView } from '@/components/themed-view';
 import { ThemedText } from '@/components/themed-text';
+import { PrimaryButton } from '@/components/buttons/primary-button';
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { api } from '@/config/api'
 import { Colors } from '@/constants/theme'
@@ -47,6 +49,9 @@ export default function BookingServicesScreen() {
     const [services, setServices] = useState<CarService[]>([])
     const [categories, setCategories] = useState<Category[]>([])
     const [selectedCategory, setSelectedCategory] = useState<string>('ALL')
+
+    const sheetRef = useRef<TrueSheet>(null)
+    const [pendingService, setPendingService] = useState<CarService | null>(null)
 
     const fetchData = async (isRefreshing = false) => {
         if (!isRefreshing) setLoading(true)
@@ -87,31 +92,25 @@ export default function BookingServicesScreen() {
     }
 
     const handleSelectService = (service: CarService) => {
-        const navigateNext = () => {
+        const navigateNext = (svc: CarService) => {
             if (contactId) {
                 router.push({
                     pathname: '/(app)/(client)/companies/[companyId]/booking/team',
-                    params: { companyId, serviceId: service.id, contactId, carName }
+                    params: { companyId, serviceId: svc.id, contactId, carName }
                 })
             } else {
                 router.push({
                     pathname: '/(app)/(client)/companies/[companyId]/booking/vehicle',
-                    params: { companyId, serviceId: service.id }
+                    params: { companyId, serviceId: svc.id }
                 })
             }
         }
 
         if (service.hasVariablePricing) {
-            Alert.alert(
-                "Preço Variável",
-                "Este tipo de serviço tem preço variável. A depender do modelo do carro, esse preço pode sofrer alterações.",
-                [
-                    { text: "Cancelar", style: "cancel" },
-                    { text: "Continuar", onPress: navigateNext }
-                ]
-            )
+            setPendingService(service)
+            sheetRef.current?.present()
         } else {
-            navigateNext()
+            navigateNext(service)
         }
     }
 
@@ -249,6 +248,45 @@ export default function BookingServicesScreen() {
                     </ThemedView>
                 }
             />
+
+            <TrueSheet
+                ref={sheetRef}
+                sizes={['auto']}
+                cornerRadius={24}
+                backgroundColor={isDark ? '#1C1C1E' : '#FFF'}
+            >
+                <View style={[styles.sheetContent, { backgroundColor: isDark ? '#1C1C1E' : '#FFF' }]}>
+                    <View style={styles.sheetHeader}>
+                        <View style={[styles.iconContainer, { backgroundColor: isDark ? '#333' : '#F0F0F0' }]}>
+                            <Ionicons name="warning-outline" size={32} color={Colors.primary} />
+                        </View>
+                        <ThemedText style={styles.sheetTitle}>Preço Variável</ThemedText>
+                    </View>
+                    <ThemedText style={styles.sheetDescription}>
+                        Este tipo de serviço tem preço variável. A depender do modelo do carro, o valor no momento do atendimento pode sofrer alterações.
+                    </ThemedText>
+                    <View 
+                        onTouchStart={() => {
+                            sheetRef.current?.dismiss()
+                            if (pendingService) {
+                                if (contactId) {
+                                    router.push({
+                                        pathname: '/(app)/(client)/companies/[companyId]/booking/team',
+                                        params: { companyId, serviceId: pendingService.id, contactId, carName }
+                                    })
+                                } else {
+                                    router.push({
+                                        pathname: '/(app)/(client)/companies/[companyId]/booking/vehicle',
+                                        params: { companyId, serviceId: pendingService.id }
+                                    })
+                                }
+                            }
+                        }}
+                    >
+                        <PrimaryButton name="Continuar" />
+                    </View>
+                </View>
+            </TrueSheet>
         </ThemedView>
     )
 }
@@ -349,5 +387,34 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: Colors.primary,
         flexShrink: 1
+    },
+    sheetContent: {
+        padding: 24,
+        paddingBottom: 40,
+        alignItems: 'stretch'
+    },
+    sheetHeader: {
+        alignItems: 'center',
+        marginBottom: 16
+    },
+    iconContainer: {
+        width: 64,
+        height: 64,
+        borderRadius: 32,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 16
+    },
+    sheetTitle: {
+        fontSize: 22,
+        fontWeight: 'bold',
+        textAlign: 'center'
+    },
+    sheetDescription: {
+        fontSize: 16,
+        textAlign: 'center',
+        opacity: 0.8,
+        lineHeight: 24,
+        marginBottom: 24
     }
 })
