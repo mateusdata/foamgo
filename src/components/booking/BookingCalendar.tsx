@@ -72,12 +72,15 @@ const CustomTodayButton = () => {
 
     if (isToday) return null;
 
+    /*
     return (
         <TouchableOpacity style={styles.todayButton} onPress={onPress}>
             <Ionicons name="calendar" size={16} color="#FFF" style={{ marginRight: 6 }} />
             <ThemedText style={styles.todayButtonText}>Hoje</ThemedText>
         </TouchableOpacity>
     );
+    */
+    return null;
 };
 
 export const BookingCalendar = ({ 
@@ -225,6 +228,7 @@ export const BookingCalendar = ({
                 theme={theme}
             >
                 <AgendaList
+                    contentContainerStyle={{ paddingBottom: 120 }}
                     // ===== HEADER QUE ROLA =====
                     ListHeaderComponent={ListHeaderComponent}
                     
