@@ -76,8 +76,8 @@ const statusConfig: Record<string, { label: string; color: string; backgroundCol
   CANCELLED: { label: 'Cancelado', color: '#EF5350', backgroundColor: 'rgba(239, 83, 80, 0.1)', icon: 'close-circle-outline' },
 }
 
-const STATUS_FILTERS: { label: string; value: BookingStatus | 'ALL' | 'ACTIVE' }[] = [
-  { label: 'Confirmados/Agendados', value: 'ACTIVE' },
+const STATUS_FILTERS: { label: string; value: BookingStatus | 'ALL' }[] = [
+  { label: 'Todos', value: 'ALL' },
   // { label: 'Confirmados', value: 'CONFIRMED' },
   // { label: 'Agendados', value: 'SCHEDULED' },
   { label: 'Concluídos', value: 'COMPLETED' },
@@ -91,7 +91,7 @@ export default function MyBookingsScreen() {
   const [refreshing, setRefreshing] = useState(false)
   const colorScheme = useColorScheme() || 'light'
   const isDark = colorScheme === 'dark'
-  const [selectedStatus, setSelectedStatus] = useState<BookingStatus | 'ALL' | 'ACTIVE'>('ACTIVE')
+  const [selectedStatus, setSelectedStatus] = useState<BookingStatus | 'ALL'>('ALL')
 
   const fetchBookings = useCallback(async (initialLoad = false) => {
     if (!user?.id) return
@@ -125,12 +125,14 @@ export default function MyBookingsScreen() {
     fetchBookings(false).finally(() => setRefreshing(false))
   }
 
-  const renderBookingItem = ({ item }: { item: Booking }) => {
+  const filteredBookings = selectedStatus === 'ALL'
+    ? bookings.filter(b => b.status === 'SCHEDULED' || b.status === 'CONFIRMED' || b.status === 'Scheduled' || b.status === 'Confirmed')
+    : bookings;
+
+  const renderItem = ({ item }: { item: Booking }) => {
     const statusInfo = statusConfig[item.status] || statusConfig['CONFIRMED'];
     const company = item.company || item.carWash;
     const serviceName = item.service?.name || item.carService?.name || 'Serviço';
-
-    // Simplified view: Name, Service, Status
 
     return (
       <TouchableOpacity
@@ -159,15 +161,12 @@ export default function MyBookingsScreen() {
     )
   }
 
-
   return (
     <ThemedView style={styles.container}>
-
-
       <FlatList
-        data={bookings}
+        data={filteredBookings}
         contentInsetAdjustmentBehavior='automatic'
-        renderItem={renderBookingItem}
+        renderItem={renderItem}
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={
           <View style={styles.filtersContainer}>
@@ -205,10 +204,11 @@ export default function MyBookingsScreen() {
           !loading ? (
             <View style={styles.emptyState}>
               <Ionicons name="calendar-clear-outline" size={64} color={isDark ? '#555' : '#CCC'} />
+              <ThemedText style={styles.emptyTitle}>Nenhum Agendamento</ThemedText>
               <ThemedText style={styles.emptyText}>
                 {selectedStatus === 'ALL'
-                  ? 'Você ainda não possui agendamentos.'
-                  : `Nenhum agendamento ${STATUS_FILTERS.find(f => f.value === selectedStatus)?.label.toLowerCase().slice(0, -1) || 'encontrado'}.`}
+                  ? 'Você não tem agendamentos confirmados ou agendados.'
+                  : `Nenhum agendamento ${STATUS_FILTERS.find(f => f.value === selectedStatus)?.label.toLowerCase() || 'encontrado'}.`}
               </ThemedText>
             </View>
           ) : null

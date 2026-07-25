@@ -16,7 +16,7 @@ export default function Bookings() {
     const [bookings, setBookings] = useState<Booking[]>([])
     const [loading, setLoading] = useState(false)
     const [refreshing, setRefreshing] = useState(false)
-    const [selectedStatus, setSelectedStatus] = useState<'ACTIVE' | 'SCHEDULED' | 'CONFIRMED' | 'COMPLETED' | 'CANCELLED' | 'ALL'>('ACTIVE')
+    const [selectedStatus, setSelectedStatus] = useState<'SCHEDULED' | 'CONFIRMED' | 'COMPLETED' | 'CANCELLED' | 'ALL'>('ALL')
     const insets = useSafeAreaInsets()
 
     useFocusEffect(
