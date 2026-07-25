@@ -260,10 +260,10 @@ export default function BookingServicesScreen() {
                         <View style={[styles.iconContainer, { backgroundColor: isDark ? '#333' : '#F0F0F0' }]}>
                             <Ionicons name="warning-outline" size={32} color={Colors.primary} />
                         </View>
-                        <ThemedText style={styles.sheetTitle}>Preço Variável</ThemedText>
+                        <ThemedText style={styles.sheetTitle}>Confirmação de Valor</ThemedText>
                     </View>
                     <ThemedText style={styles.sheetDescription}>
-                        Este tipo de serviço tem preço variável. A depender do modelo do carro, o valor no momento do atendimento pode sofrer alterações.
+                        Para esse tipo de serviço o valor pode ser confirmado no ato da lavagem. Confirme o valor do serviço em função do modelo no dia do agendamento ou no ato da lavagem.
                     </ThemedText>
                     <View 
                         onTouchStart={() => {

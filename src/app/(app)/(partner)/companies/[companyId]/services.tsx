@@ -293,7 +293,7 @@ export default function Services() {
           />
 
           <View style={[styles.row, { alignItems: 'center', marginVertical: 12, paddingHorizontal: 4 }]}>
-            <ThemedText style={{ flex: 1, fontSize: 16 }}>Preço Variável?</ThemedText>
+            <ThemedText style={{ flex: 1, fontSize: 16 }}>Confirmar valor no ato da lavagem?</ThemedText>
             <Switch
               value={watch('hasVariablePricing')}
               onValueChange={(val) => setValue('hasVariablePricing', val, { shouldDirty: true, shouldValidate: true })}

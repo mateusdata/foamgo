@@ -129,7 +129,7 @@ export default function Manager() {
               <View style={{ flex: 1, paddingRight: 10 }}>
                 <ThemedText style={{ fontWeight: '600' }}>Exigir Confirmação Manual</ThemedText>
                 <ThemedText style={{ fontSize: 13, color: '#8E8E93', marginTop: 4 }}>
-                  Os agendamentos entrarão como pendentes e você e seus usuários precisarão aprová-los manualmente após o agendamento.
+                  Os agendamentos entrarão como agendados e o cliente precisará confirmá-los manualmente. Você também poderá enviar um lembrete para ele confirmar.
                 </ThemedText>
               </View>
               <Controller

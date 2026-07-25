@@ -97,7 +97,7 @@ export default function BookingSuccessScreen() {
                         <View style={[styles.row, { alignItems: 'flex-start', marginTop: 4 }]}>
                             <Ionicons name="information-circle-outline" size={20} color="#ef4444" style={styles.rowIcon} />
                             <ThemedText style={{ color: '#ef4444', fontSize: 13, flex: 1, lineHeight: 18 }}>
-                                A depender do modelo do carro para esse serviço, o preço pode ser variável.
+                                Para esse tipo de serviço o valor pode ser confirmado no ato da lavagem.
                             </ThemedText>
                         </View>
                     ) : null}
