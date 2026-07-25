@@ -76,8 +76,8 @@ const statusConfig: Record<string, { label: string; color: string; backgroundCol
   CANCELLED: { label: 'Cancelado', color: '#EF5350', backgroundColor: 'rgba(239, 83, 80, 0.1)', icon: 'close-circle-outline' },
 }
 
-const STATUS_FILTERS: { label: string; value: BookingStatus | 'ALL' }[] = [
-  { label: 'Todos', value: 'ALL' },
+const STATUS_FILTERS: { label: string; value: BookingStatus | 'ALL' | 'ACTIVE' }[] = [
+  { label: 'Confirmados/Agendados', value: 'ACTIVE' },
   // { label: 'Confirmados', value: 'CONFIRMED' },
   // { label: 'Agendados', value: 'SCHEDULED' },
   { label: 'Concluídos', value: 'COMPLETED' },
@@ -91,7 +91,7 @@ export default function MyBookingsScreen() {
   const [refreshing, setRefreshing] = useState(false)
   const colorScheme = useColorScheme() || 'light'
   const isDark = colorScheme === 'dark'
-  const [selectedStatus, setSelectedStatus] = useState<BookingStatus | 'ALL'>('ALL')
+  const [selectedStatus, setSelectedStatus] = useState<BookingStatus | 'ALL' | 'ACTIVE'>('ACTIVE')
 
   const fetchBookings = useCallback(async (initialLoad = false) => {
     if (!user?.id) return

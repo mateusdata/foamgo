@@ -48,13 +48,13 @@ type BookingCalendarProps = {
     refreshing?: boolean;
     onRefresh?: () => void;
     onItemPress?: (id: string) => void;
-    filterStatus?: 'ALL' | 'SCHEDULED' | 'CONFIRMED' | 'COMPLETED' | 'CANCELLED' | string;
-    selectedStatus: 'SCHEDULED' | 'CONFIRMED' | 'COMPLETED' | 'CANCELLED' | 'ALL';
-    onStatusChange: (status: 'SCHEDULED' | 'CONFIRMED' | 'COMPLETED' | 'CANCELLED' | 'ALL') => void;
+    filterStatus?: 'ACTIVE' | 'ALL' | 'SCHEDULED' | 'CONFIRMED' | 'COMPLETED' | 'CANCELLED' | string;
+    selectedStatus: 'ACTIVE' | 'SCHEDULED' | 'CONFIRMED' | 'COMPLETED' | 'CANCELLED' | 'ALL';
+    onStatusChange: (status: 'ACTIVE' | 'SCHEDULED' | 'CONFIRMED' | 'COMPLETED' | 'CANCELLED' | 'ALL') => void;
 };
 
-const STATUS_FILTERS: { label: string; value: 'SCHEDULED' | 'CONFIRMED' | 'COMPLETED' | 'CANCELLED' | 'ALL' }[] = [
-    { label: 'Todos', value: 'ALL' },
+const STATUS_FILTERS: { label: string; value: 'SCHEDULED' | 'CONFIRMED' | 'COMPLETED' | 'CANCELLED' | 'ALL' | 'ACTIVE' }[] = [
+    { label: 'Confirmados/Agendados', value: 'ACTIVE' },
     // { label: 'Confirmados', value: 'CONFIRMED' },
     // { label: 'Agendados', value: 'SCHEDULED' },
     { label: 'Concluídos', value: 'COMPLETED' },
@@ -105,6 +105,9 @@ export const BookingCalendar = ({
 
         const filteredBookings = bookings.filter(b => {
             if (!filterStatus || filterStatus === 'ALL') return true;
+            if (filterStatus === 'ACTIVE') {
+                return b.status === 'SCHEDULED' || b.status === 'CONFIRMED' || b.status === 'Scheduled' || b.status === 'Confirmed';
+            }
             return b.status === filterStatus;
         });
 
