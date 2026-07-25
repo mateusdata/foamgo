@@ -238,8 +238,8 @@ export default function BookingDetailsScreen() {
                                 <Ionicons name="information-circle-outline" size={18} color="#ef4444" />
                             </View>
                             <View style={styles.detailContent}>
-                                <ThemedText style={{ color: '#ef4444', fontSize: 13, lineHeight: 18 }}>
-                                    A depender do modelo do carro para esse serviço, o valor pode sofrer alteração.
+                                <ThemedText style={{ color: '#ef4444', fontSize: 13, flex: 1, lineHeight: 18 }}>
+                                    Para esse tipo de serviço o valor pode ser confirmado no ato da lavagem.
                                 </ThemedText>
                             </View>
                         </View>
