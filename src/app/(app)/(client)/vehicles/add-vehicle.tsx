@@ -189,6 +189,11 @@ export default function AddVehicle() {
                     headerTitle: editingVehicle ? 'Editar Veículo' : 'Adicionar Veículo',
                     headerBackVisible: !isFirstVehicleRequired,
                     gestureEnabled: !isFirstVehicleRequired,
+                    headerRight: isFirstVehicleRequired ? () => (
+                        <TouchableOpacity onPress={logOut} style={{ padding: 8, marginRight: -8 }}>
+                            <Ionicons name="close" size={28} color={isDark ? '#fff' : '#000'} />
+                        </TouchableOpacity>
+                    ) : undefined,
                 }}
             />
             <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
@@ -256,12 +261,6 @@ export default function AddVehicle() {
                         name={editingVehicle ? 'Salvar' : 'Adicionar veículo'}
                         onPress={handleSubmit(onSubmit)}
                     />
-
-                    {isFirstVehicleRequired && (
-                        <TouchableOpacity onPress={logOut} style={styles.cancelButton}>
-                             <ThemedText style={styles.cancelButtonText}>Sair da conta</ThemedText>
-                        </TouchableOpacity>
-                    )}
                 </ThemedView>
 
                 {vehicles.length > 0 && (
@@ -331,6 +330,8 @@ const styles = StyleSheet.create({
     title: { fontSize: 24, fontWeight: 'bold', marginBottom: 20 },
     cancelButton: { alignItems: 'center', marginTop: 10, marginBottom: 10 },
     cancelButtonText: { color: Colors.primary, fontSize: 14 },
+    logoutButton: { alignItems: 'center', marginTop: 15, marginBottom: 20, opacity: 0.8 },
+    logoutButtonText: { color: '#ef4444', fontSize: 14, fontWeight: '500' },
     vehiclesContainer: { paddingHorizontal: 20, paddingTop: 30, paddingBottom: 20 },
     vehiclesTitle: { fontSize: 20, fontWeight: 'bold', marginBottom: 15 },
     vehicleCard: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 15, borderRadius: 12, marginBottom: 12 },

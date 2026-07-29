@@ -5,7 +5,7 @@ export default function _layout() {
   return (
     <>
     <StatusBar style='auto' />  
-    <Stack screenOptions={{ headerShadowVisible: false, headerTitleAlign: "center", headerShown: false }}>
+    <Stack screenOptions={{ headerShadowVisible: false, headerTitleAlign: "center", headerShown: false, headerBackButtonDisplayMode: 'minimal' }}>
 
       <Stack.Screen name="index" options={{
         headerShown: false, headerTitle: "Welcome", title: "Welcome",
