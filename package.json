@@ -10,6 +10,7 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "deploy": "time ./deploy-android.sh",
+    "deploy-ios": "time ./deploy-ios.sh",
     "update": "time eas update --branch production --environment production --message \"production\" --non-interactive"
   },
   "dependencies": {
