@@ -89,7 +89,7 @@ export default function SignUp() {
       <ThemedScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingBottom: 60 }}>
         <ThemedView style={styles.formContainer}>
           <ThemedText type="subtitle" style={styles.welcomeText}>
-            {isPartner ? 'Criar Conta Parceiro' : 'Criar Conta Cliente'}
+            {isPartner ? 'Cadastrar seu Lava Jato' : 'Criar conta de cliente'}
           </ThemedText>
 
           <PaperInput name="name" control={control} label="Nome Completo" autoCapitalize="words" error={errors?.name?.message} />
