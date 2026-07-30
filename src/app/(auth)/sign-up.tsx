@@ -88,7 +88,7 @@ export default function SignUp() {
       >
       <ThemedScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingBottom: 60 }}>
         <ThemedView style={styles.formContainer}>
-          <ThemedText style={styles.welcomeText}>
+          <ThemedText type="subtitle" style={styles.welcomeText}>
             {isPartner ? 'Criar Conta Parceiro' : 'Criar Conta Cliente'}
           </ThemedText>
 
@@ -133,8 +133,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   welcomeText: {
-    fontSize: 28,
-    fontWeight: 'bold',
     marginBottom: 20,
     textAlign: 'center',
   },

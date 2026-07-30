@@ -87,7 +87,7 @@ export default function SignIn() {
     <>
     <Stack.Screen options={{ headerTitle: isPartner ? 'Conta do Parceiro' : 'Conta do Cliente' }} />
     <ThemedView style={styles.container}>
-      <ThemedText style={styles.welcomeText}>
+      <ThemedText type="subtitle" style={styles.welcomeText}>
         Bem-vindo(a) de volta!
       </ThemedText>
 
@@ -152,8 +152,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   welcomeText: {
-    fontSize: 28,
-    fontWeight: 'bold',
     marginBottom: 40,
     textAlign: 'center',
   },
