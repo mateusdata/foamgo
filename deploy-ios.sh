@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# Verifica se já está no contexto do launchctl. Se não estiver, se auto-executa.
+if [ -z "$EAS_BUILD_CONTEXT" ]; then
+  export EAS_BUILD_CONTEXT=1
+  exec sudo launchctl asuser $(id -u) sudo -u $USER env EAS_BUILD_CONTEXT=1 bash "$0" "$@"
+fi
+
 source .env.local
 
 [ ! -f "$APP_STORE_CONNECT_API_KEY_KEY_FILEPATH" ] && echo "Error: .p8 not found" && exit 1
