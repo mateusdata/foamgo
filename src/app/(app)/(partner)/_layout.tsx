@@ -15,7 +15,7 @@ export default function PartnerStack() {
   }
 
   return (
-    <Stack initialRouteName="(tabs)" screenOptions={{ headerShown: true, headerTitleAlign: 'center', headerBackButtonDisplayMode: 'minimal' }}>
+    <Stack initialRouteName="(tabs)" screenOptions={{ headerShown: true, headerTitleAlign: 'left', headerBackButtonDisplayMode: 'minimal' }}>
 
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 

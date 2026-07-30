@@ -80,7 +80,7 @@ export default function SignUp() {
 
   return (
     <>
-      <Stack.Screen options={{ headerTitle: isPartner ? 'Conta do Parceiro' : 'Conta do Cliente' }} />
+      <Stack.Screen options={{ headerTitle: isPartner ? 'Conta de Lava Jato' : 'Conta do Cliente' }} />
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}

@@ -85,7 +85,7 @@ export default function SignIn() {
 
   return (
     <>
-    <Stack.Screen options={{ headerTitle: isPartner ? 'Conta do Parceiro' : 'Conta do Cliente' }} />
+    <Stack.Screen options={{ headerTitle: isPartner ? 'Conta de Lava Jato' : 'Conta do Cliente' }} />
     <ThemedView style={styles.container}>
       <ThemedText type="subtitle" style={styles.welcomeText}>
         Bem-vindo(a) de volta!

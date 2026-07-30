@@ -11,8 +11,8 @@ export default function _layout() {
         headerShown: false, headerTitle: "Welcome", title: "Welcome",
         headerTitleAlign: "center", headerShadowVisible: false,
       }} />
-      <Stack.Screen name="sign-in" options={{ headerTitle: "Conta do Parceiro", headerShown: true, }} />
-      <Stack.Screen name="sign-up" options={{ headerTitle: "Conta do Parceiro", headerShown: true, }} />
+      <Stack.Screen name="sign-in" options={{ headerTitle: "Conta de Lava Jato", headerShown: true, }} />
+      <Stack.Screen name="sign-up" options={{ headerTitle: "Conta de Lava Jato", headerShown: true, }} />
       <Stack.Screen name="forgot-password" options={{ headerTitle: "", headerShown: true, }} />
       <Stack.Screen name="reset-password" options={{ headerTitle: "", headerShown: true, }} />
       <Stack.Screen name="verify-code" options={{ headerTitle: "", headerShown: true, }} />
