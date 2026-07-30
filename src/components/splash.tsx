@@ -1,18 +1,22 @@
+import { useEffect } from 'react';
 import { useAuth } from '@/contexts/auth-provider';
-import { SplashScreen } from 'expo-router';
+import * as SplashScreen from 'expo-splash-screen';
 
 SplashScreen.preventAutoHideAsync();
-SplashScreen.setOptions({
-  duration: 3000,
+
+SplashScreen.setOptions?.({
+  duration: 1000,
   fade: true,
 });
 
 export function SplashScreenController() {
   const { isLoading } = useAuth();
 
-  if (!isLoading) {
-    SplashScreen.hide();
-  }
+  useEffect(() => {
+    if (!isLoading) {
+      SplashScreen.hideAsync();
+    }
+  }, [isLoading]);
 
   return null;
 }
