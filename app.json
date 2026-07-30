@@ -2,7 +2,7 @@
   "expo": {
     "name": "foamgo",
     "slug": "foamgo",
-    "version": "2.0.4",
+    "version": "2.0.2",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "foamgo",
@@ -77,7 +77,8 @@
     "owner": "2mm",
     "updates": {
       "url": "https://u.expo.dev/d2fbf022-a18d-44fb-a49e-f04088c4517d",
-      "enableBsdiffPatchSupport": true
+      "checkAutomatically": "ON_LOAD",
+      "fallbackToCacheTimeout": 10000
     }
   }
 }
