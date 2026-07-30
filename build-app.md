@@ -24,6 +24,11 @@ bunx expo run:android --variant release -d
 eas build --local --platform ios --profile development
 ```
 
+### Build local (macOS SSH / Headless)
+```bash
+sudo launchctl asuser $(id -u) sudo -u $USER eas build --local -p ios
+```
+
 ### Build remote
 ```bash
 eas build --platform ios --profile development
