@@ -42,6 +42,9 @@ firebase.json
 *.apk
 *.keystore
 *.aab
+*.tar.gz
+*.ipa
+
 android/
 ios/
 backup/google-services.json
@@ -49,3 +52,4 @@ GoogleService-Info.plist
 google-play-key.json
 key.json
 .playwright-mcp
+ZTCOPY.md
