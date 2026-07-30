@@ -13,6 +13,7 @@ export default function Layout() {
   return (
     <Stack
       screenOptions={{
+        headerTitleAlign: 'left',
         headerTransparent: Platform.OS === 'ios',
         headerLargeTitleShadowVisible: true,
         headerShadowVisible: true,
@@ -22,6 +23,7 @@ export default function Layout() {
         name="index"
         options={{
           title: 'Foamgo',
+          headerTitleAlign: 'left',
           headerRight: () => {
             if (user?.hasPlan) return null;
 
