@@ -1,6 +1,5 @@
 import InAppUpdates from '@/components/In-app-updates'
 import PushNotification from '@/components/notification'
-import { SplashScreenController } from '@/components/splash'
 import { useAuth } from '@/contexts/auth-provider'
 import Providers from '@/contexts/providers'
 import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router/react-navigation'
@@ -18,7 +17,6 @@ export default function RootLayout() {
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <StatusBar style='auto' />
         <Providers>
-          <SplashScreenController />
           <InAppUpdates />
           <PushNotification />
           <RootNavigation />

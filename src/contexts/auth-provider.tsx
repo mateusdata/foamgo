@@ -1,4 +1,3 @@
-import Loading from '@/components/loading';
 import { api, setInterceptors } from '@/config/api';
 import { configGoogleSignin } from '@/config/signinGoogle';
 import { AuthContextProps, User } from '@/types';
@@ -6,10 +5,15 @@ import { Haptics } from '@/utils/Haptics';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import * as AppleAuthentication from 'expo-apple-authentication';
-import { router } from 'expo-router';
+import { router, SplashScreen } from 'expo-router';
 import React, { useEffect } from 'react';
 
 GoogleSignin.configure(configGoogleSignin);
+SplashScreen.preventAutoHideAsync();
+SplashScreen.setOptions({
+  duration: 3000,
+  fade: true,
+});
 
 const AuthContext = React.createContext<AuthContextProps>({} as AuthContextProps);
 
@@ -43,6 +47,7 @@ export default function AuthProvider({ children }: React.PropsWithChildren<{}>) 
       // storage corrompido: deixa user nulo, root layout redireciona para login
     } finally {
       setIsLoading(false);
+      SplashScreen.hideAsync();
     }
   };
 
@@ -138,10 +143,8 @@ export default function AuthProvider({ children }: React.PropsWithChildren<{}>) 
       }
     }
   };
-  // ─── Logout ───────────────────────────────────────────────────────────────
   const logOut = async () => {
     try {
-      setIsLoading(true);
       await AsyncStorage.clear();
       setUser(null);
       setActiveRole(null);
@@ -149,13 +152,11 @@ export default function AuthProvider({ children }: React.PropsWithChildren<{}>) 
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
     } catch (_) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
   if (isLoading) {
-    return <Loading />;
+    return null;
   }
 
   return (
