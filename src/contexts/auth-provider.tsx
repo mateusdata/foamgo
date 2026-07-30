@@ -5,13 +5,14 @@ import { Haptics } from '@/utils/Haptics';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import * as AppleAuthentication from 'expo-apple-authentication';
-import { router, SplashScreen } from 'expo-router';
+import { router } from 'expo-router';
+import * as SplashScreen from 'expo-splash-screen';
 import React, { useEffect } from 'react';
 
 GoogleSignin.configure(configGoogleSignin);
 SplashScreen.preventAutoHideAsync();
 SplashScreen.setOptions({
-  duration: 3000,
+  duration: 1000,
   fade: true,
 });
 
