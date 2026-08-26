@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-const PROD_URL = " https://foamgoapi.onrender.com/api";
+const PROD_URL = "https://foamgoapi.onrender.com/api";
 const DEV_URL = "http://192.168.25.168:3000/api";
 
 const api = axios.create({

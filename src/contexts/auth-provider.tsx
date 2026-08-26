@@ -32,20 +32,28 @@ export default function AuthProvider({ children }: React.PropsWithChildren<{}>) 
     fetchUser();
   }, []);
 
-  // ─── Carrega o usuário persistido no storage ──────────────────────────────
   const fetchUser = async () => {
     try {
       setIsLoading(true);
       const stored = await AsyncStorage.getItem('user');
       const savedRole = await AsyncStorage.getItem('activeRole');
-      if (stored) {
-        setUser(JSON.parse(stored));
-      }
-      if (savedRole) {
-        setActiveRole(savedRole);
+      const token = await AsyncStorage.getItem('token');
+      if (stored && token) {
+        const parsedUser = JSON.parse(stored);
+        setUser(parsedUser);
+        if (savedRole) {
+          setActiveRole(savedRole);
+        }
+        try {
+          await refreshUser();
+        } catch (err: any) {
+          const status = err?.response?.status;
+          if (status === 401 || status === 404) {
+            await logOut();
+          }
+        }
       }
     } catch (_) {
-      // storage corrompido: deixa user nulo, root layout redireciona para login
     } finally {
       setIsLoading(false);
       SplashScreen.hideAsync();
