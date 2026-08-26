@@ -8,6 +8,7 @@ import * as AppleAuthentication from 'expo-apple-authentication';
 import { router } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import React, { useEffect } from 'react';
+import Purchases from 'react-native-purchases';
 
 GoogleSignin.configure(configGoogleSignin);
 SplashScreen.preventAutoHideAsync();
@@ -41,6 +42,9 @@ export default function AuthProvider({ children }: React.PropsWithChildren<{}>) 
       if (stored && token) {
         const parsedUser = JSON.parse(stored);
         setUser(parsedUser);
+        if (parsedUser.id) {
+          Purchases.logIn(parsedUser.id).catch(() => {});
+        }
         if (savedRole) {
           setActiveRole(savedRole);
         }
@@ -60,7 +64,6 @@ export default function AuthProvider({ children }: React.PropsWithChildren<{}>) 
     }
   };
 
-  // ─── Salva token + user no storage e atualiza o estado ───────────────────
   const loadUser = async (data: any) => {
     await AsyncStorage.setItem('token', JSON.stringify(data.token));
     if (data.refreshToken) {
@@ -68,6 +71,9 @@ export default function AuthProvider({ children }: React.PropsWithChildren<{}>) 
     }
     await AsyncStorage.setItem('user', JSON.stringify(data));
     setUser(data);
+    if (data.id) {
+      Purchases.logIn(data.id).catch(() => {});
+    }
   };
 
   // ─── Busca dados frescos do usuário na API ────────────────────────────────
@@ -154,6 +160,7 @@ export default function AuthProvider({ children }: React.PropsWithChildren<{}>) 
   };
   const logOut = async () => {
     try {
+      await Purchases.logOut().catch(() => {});
       await AsyncStorage.clear();
       setUser(null);
       setActiveRole(null);

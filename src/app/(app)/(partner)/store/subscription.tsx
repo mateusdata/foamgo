@@ -8,9 +8,11 @@ import { Ionicons } from '@expo/vector-icons'
 import { router } from 'expo-router'
 import React, { useEffect, useState } from 'react'
 import { Alert, Image, Linking, StyleSheet, TouchableOpacity, useColorScheme, View, ActivityIndicator, Platform } from 'react-native'
+import { useAuth } from '@/contexts/auth-provider'
 import Purchases, { PurchasesPackage } from 'react-native-purchases'
 
 const Subscription = () => {
+    const { refreshUser } = useAuth()
     const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'annual'>('annual')
     const colorScheme = useColorScheme()
     const isDark = colorScheme === 'dark'
@@ -85,20 +87,14 @@ const Subscription = () => {
 
             if (customerInfo.entitlements.active["Foam go Partner Pro"] !== undefined) {
                 try {
-                    const updateUser = await api.patch('/users', {
-                        hasPlan: true,
-                    });
-                    console.log('User updated on server:', updateUser.data);
+                    await refreshUser();
+                } catch (_) {}
 
-                    Alert.alert(
-                        "Sucesso",
-                        "Assinatura realizada com sucesso!",
-                        [{ text: "OK", onPress: () => router.back() }]
-                    );
-                } catch (error: any) {
-                    console.log('Error updating user on server:', error?.response?.data || error.response || error.message);
-                    Alert.alert('Erro', 'Erro ao atualizar plano no servidor. Entre em contato com o suporte.');
-                }
+                Alert.alert(
+                    "Sucesso",
+                    "Assinatura realizada com sucesso!",
+                    [{ text: "OK", onPress: () => router.back() }]
+                );
             }
         } catch (e: any) {
             if (!e.userCancelled) {
@@ -114,6 +110,10 @@ const Subscription = () => {
         try {
             const customerInfo = await Purchases.restorePurchases();
             if (customerInfo.entitlements.active["Foam go Partner Pro"] !== undefined) {
+                try {
+                    await refreshUser();
+                } catch (_) {}
+
                 Alert.alert(
                     "Sucesso",
                     "Compras restauradas com sucesso!",
