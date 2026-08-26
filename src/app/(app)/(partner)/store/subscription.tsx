@@ -85,7 +85,20 @@ const Subscription = () => {
                 customerInfo = purchaseResult.customerInfo;
             }
 
-            if (customerInfo.entitlements.active["Foam go Partner Pro"] !== undefined) {
+            const activeEntitlement = customerInfo.entitlements.active["Foam go Partner Pro"];
+            if (activeEntitlement !== undefined) {
+                try {
+                    await api.post('/subscriptions/sync', {
+                        hasActivePlan: true,
+                        productId: activeEntitlement.productIdentifier,
+                        platform: Platform.OS === 'ios' ? 'APPLE' : 'GOOGLE',
+                        expiresAt: activeEntitlement.expirationDate,
+                        revenuecatId: activeEntitlement.originalPurchaseDate,
+                    });
+                } catch (syncErr) {
+                    console.log('Erro ao sincronizar com a API:', syncErr);
+                }
+
                 try {
                     await refreshUser();
                 } catch (_) {}
@@ -109,7 +122,20 @@ const Subscription = () => {
         setIsPurchasing(true);
         try {
             const customerInfo = await Purchases.restorePurchases();
-            if (customerInfo.entitlements.active["Foam go Partner Pro"] !== undefined) {
+            const activeEntitlement = customerInfo.entitlements.active["Foam go Partner Pro"];
+            if (activeEntitlement !== undefined) {
+                try {
+                    await api.post('/subscriptions/sync', {
+                        hasActivePlan: true,
+                        productId: activeEntitlement.productIdentifier,
+                        platform: Platform.OS === 'ios' ? 'APPLE' : 'GOOGLE',
+                        expiresAt: activeEntitlement.expirationDate,
+                        revenuecatId: activeEntitlement.originalPurchaseDate,
+                    });
+                } catch (syncErr) {
+                    console.log('Erro ao sincronizar com a API:', syncErr);
+                }
+
                 try {
                     await refreshUser();
                 } catch (_) {}
