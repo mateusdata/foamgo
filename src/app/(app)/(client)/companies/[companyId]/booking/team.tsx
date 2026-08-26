@@ -26,7 +26,7 @@ interface Team {
 }
 
 export default function BookingTeamScreen() {
-    const { companyId, serviceId, contactId, carName, vehicleId } = useLocalSearchParams<{ companyId: string, serviceId: string, contactId?: string, carName?: string, vehicleId?: string }>()
+    const { companyId, serviceId, contactId, carName, vehicleId, origin, clientName } = useLocalSearchParams<{ companyId: string, serviceId: string, contactId?: string, carName?: string, vehicleId?: string, origin?: string, clientName?: string }>()
     const router = useRouter()
     const colorScheme = useColorScheme()
     const isDark = colorScheme === 'dark'
@@ -66,7 +66,9 @@ export default function BookingTeamScreen() {
                 teamId,
                 vehicleId,
                 contactId,
-                carName
+                carName,
+                origin,
+                clientName
             }
         })
     }

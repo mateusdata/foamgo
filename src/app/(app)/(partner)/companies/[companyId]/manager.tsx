@@ -160,7 +160,7 @@ export default function Manager() {
               <TouchableOpacity
                 style={styles.toggleButton}
                 onPress={() => router.push({
-                  pathname: '/companies/[companyId]/address',
+                  pathname: '/(app)/(partner)/companies/[companyId]/address',
                   params: { companyId: user!.company!.id }
                 })}
               >

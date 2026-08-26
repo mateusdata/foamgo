@@ -44,6 +44,16 @@ export default function ClientStack() {
     return <Redirect href={"/(app)/(client)/vehicles/add-vehicle" as any} />;
   }
 
+  const isClientOnlySection = currentSegments.includes('(tabs)') || currentSegments.includes('account') || currentSegments.includes('vehicles');
+  if (!isClientMode && isClientOnlySection) {
+    if (user?.role === 'PARTNER' && activeRole === 'PARTNER') {
+      return <Redirect href={"/(app)/(partner)/(tabs)/companies" as any} />;
+    }
+    if (user?.activeCompanyId && activeRole === 'TEAM') {
+      return <Redirect href={"/(app)/(team)/(tabs)/companies" as any} />;
+    }
+  }
+
   return (
    <>
    <StatusBar style='auto' />

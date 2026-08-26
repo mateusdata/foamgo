@@ -9,10 +9,12 @@ import { PrimaryButton } from '@/components/buttons/primary-button'
 import { api } from '@/config/api'
 import dayjs from 'dayjs'
 import { useTheme } from '@/hooks/use-theme'
+import { useAuth } from '@/contexts/auth-provider'
 
 export default function BookingSuccessScreen() {
-    const { date, time, serviceName, companyId, teamName, price, hasVariablePricing, carName } = useLocalSearchParams<{ date: string, time: string, serviceName: string, companyId: string, teamName?: string, price?: string, hasVariablePricing?: string, carName?: string }>()
+    const { date, time, serviceName, companyId, teamName, price, hasVariablePricing, carName, origin, contactId, clientName } = useLocalSearchParams<{ date: string, time: string, serviceName: string, companyId: string, teamName?: string, price?: string, hasVariablePricing?: string, carName?: string, origin?: string, contactId?: string, clientName?: string }>()
     const [companyName, setCompanyName] = useState('')
+    const { user, activeRole } = useAuth()
     const theme = useTheme()
     const colorScheme = useColorScheme() || 'light'
     const isDark = colorScheme === 'dark'
@@ -27,21 +29,30 @@ export default function BookingSuccessScreen() {
         }
     }, [companyId])
 
-    useEffect(() => {
-        const onBackPress = () => {
-            handleFinish();
-            return true;
-        };
-        const subscription = BackHandler.addEventListener('hardwareBackPress', onBackPress);
-        return () => subscription.remove();
-    }, [])
-
     const handleFinish = () => {
-        // Router.replace garante que a tela de sucesso e agendamento não fiquem no histórico
-        router.replace('/(app)/(client)/(tabs)/companies')
+        const isPartner = origin === 'partner' || activeRole === 'PARTNER' || (user?.role === 'PARTNER' && activeRole !== 'CLIENT' && activeRole !== 'USER') || !!contactId
+        const isTeam = origin === 'team' || activeRole === 'TEAM' || (!isPartner && !!user?.activeCompanyId && activeRole !== 'CLIENT' && activeRole !== 'USER')
+
+        if (isPartner) {
+            router.replace('/(app)/(partner)/(tabs)/bookings')
+        } else if (isTeam) {
+            router.replace('/(app)/(team)/(tabs)/bookings')
+        } else {
+            router.replace('/(app)/(client)/(tabs)/companies')
+        }
     }
 
+    useEffect(() => {
+        const onBackPress = () => {
+            handleFinish()
+            return true
+        }
+        const subscription = BackHandler.addEventListener('hardwareBackPress', onBackPress)
+        return () => subscription.remove()
+    }, [origin, activeRole, user?.role, user?.activeCompanyId, contactId])
+
     const formattedDate = date ? dayjs(date).format('DD/MM/YYYY') : ''
+    const displayName = clientName || user?.name
 
     return (
         <ThemedView style={styles.container}>
@@ -59,6 +70,13 @@ export default function BookingSuccessScreen() {
                         <ThemedText style={styles.companyName}>{companyName}</ThemedText>
                     ) : null}
                     
+                    {displayName ? (
+                        <View style={styles.row}>
+                            <Ionicons name="person-outline" size={20} color={theme.tint} style={styles.rowIcon} />
+                            <ThemedText style={styles.detailText}>{displayName}</ThemedText>
+                        </View>
+                    ) : null}
+
                     <View style={styles.row}>
                         <Ionicons name="sparkles-outline" size={20} color={theme.tint} style={styles.rowIcon} />
                         <ThemedText style={styles.detailText}>{serviceName}</ThemedText>

@@ -3,10 +3,14 @@ import React from 'react';
 import { useAuth } from '@/contexts/auth-provider';
 
 export default function TeamStack() {
-  const { user } = useAuth();
+  const { user, activeRole } = useAuth();
 
-  if (!user?.activeCompanyId) {
+  if (!user?.activeCompanyId || user?.role === 'PARTNER') {
     return <Redirect href={"/" as any} />;
+  }
+
+  if (activeRole === 'CLIENT' || activeRole === 'USER') {
+    return <Redirect href={"/(app)/(client)" as any} />;
   }
 
   return (

@@ -130,14 +130,14 @@ export default function Teams() {
 
   const goToAddMember = (team: Team) => {
     router.push({
-      pathname: '/companies/[companyId]/team-member',
+      pathname: '/(app)/(partner)/companies/[companyId]/team-member',
       params: { companyId, teamId: team.id, action: 'add' }
     })
   }
 
   const goToMembers = (team: Team) => {
     router.push({
-      pathname: '/companies/[companyId]/team-member',
+      pathname: '/(app)/(partner)/companies/[companyId]/team-member',
       params: { companyId, teamId: team.id }
     })
   }

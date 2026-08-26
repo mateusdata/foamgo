@@ -327,7 +327,7 @@ export default function Services() {
           <View style={styles.pickerContainer}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
               <ThemedText style={{ fontSize: 16, fontWeight: '500', color: '#666', flex: 1, flexShrink: 1, marginRight: 8 }}>Categoria</ThemedText>
-              <TouchableOpacity onPress={() => router.push({ pathname: '/companies/[companyId]/categories', params: { companyId } })}>
+              <TouchableOpacity onPress={() => router.push({ pathname: '/(app)/(partner)/companies/[companyId]/categories', params: { companyId } })}>
                 <ThemedText style={{ color: Colors.primary || '#4285F4', fontSize: 14, fontWeight: '600', flexShrink: 0, right: 8 }}>+ Criar Nova</ThemedText>
               </TouchableOpacity>
             </View>

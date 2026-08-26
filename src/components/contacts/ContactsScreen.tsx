@@ -42,7 +42,7 @@ type Contact = {
 
 export default function ContactsScreen() {
   const theme = useTheme();
-  const { user } = useAuth();
+  const { user, activeRole } = useAuth();
   const router = useRouter();
   
   const [contacts, setContacts] = useState<Contact[]>([]);
@@ -250,9 +250,16 @@ export default function ContactsScreen() {
   const handleAgendar = (data: { carName: string, carModel: string }) => {
     if (!companyId || !selectedContact) return;
     sheetRef.current?.dismiss();
+    const origin = activeRole === 'TEAM' ? 'team' : 'partner';
     router.push({
       pathname: '/(app)/(client)/companies/[companyId]/booking',
-      params: { companyId, contactId: selectedContact.id, carName: `${data.carName} - ${data.carModel}` }
+      params: { 
+        companyId, 
+        contactId: selectedContact.id, 
+        clientName: selectedContact.name,
+        carName: `${data.carName} - ${data.carModel}`,
+        origin
+      }
     });
   };
 

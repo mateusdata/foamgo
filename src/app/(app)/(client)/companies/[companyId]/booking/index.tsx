@@ -39,7 +39,7 @@ interface Category {
 }
 
 export default function BookingServicesScreen() {
-    const { companyId, contactId, carName } = useLocalSearchParams<{ companyId: string, contactId?: string, carName?: string }>()
+    const { companyId, contactId, carName, origin, clientName } = useLocalSearchParams<{ companyId: string, contactId?: string, carName?: string, origin?: string, clientName?: string }>()
     const router = useRouter()
     const colorScheme = useColorScheme()
     const isDark = colorScheme === 'dark'
@@ -49,13 +49,12 @@ export default function BookingServicesScreen() {
     const [services, setServices] = useState<CarService[]>([])
     const [categories, setCategories] = useState<Category[]>([])
     const [selectedCategory, setSelectedCategory] = useState<string>('ALL')
-
-    const sheetRef = useRef<TrueSheet>(null)
     const [pendingService, setPendingService] = useState<CarService | null>(null)
+    const sheetRef = useRef<TrueSheet>(null)
 
-    const fetchData = async (isRefreshing = false) => {
-        if (!isRefreshing) setLoading(true)
+    const fetchData = async (isInitial = false) => {
         try {
+            if (isInitial) setLoading(true)
             const [servicesRes, categoriesRes] = await Promise.all([
                 api.get(`/services?companyId=${companyId}`),
                 api.get(`/categories?companyId=${companyId}`)
@@ -63,20 +62,19 @@ export default function BookingServicesScreen() {
             setServices(servicesRes.data)
             setCategories(categoriesRes.data)
         } catch (error) {
-            console.error('Fetch error:', error)
-            Alert.alert('Erro', 'Erro ao carregar serviços.')
+            console.error('Error fetching services:', error)
         } finally {
             setLoading(false)
-            if (isRefreshing) setRefreshing(false)
+            setRefreshing(false)
         }
     }
 
-    useEffect(() => {
-        if (companyId) fetchData()
-    }, [companyId])
-
-    const onRefresh = useCallback(() => {
+    const onRefresh = () => {
         setRefreshing(true)
+        fetchData()
+    }
+
+    useEffect(() => {
         fetchData(true)
     }, [])
 
@@ -96,12 +94,12 @@ export default function BookingServicesScreen() {
             if (contactId) {
                 router.push({
                     pathname: '/(app)/(client)/companies/[companyId]/booking/team',
-                    params: { companyId, serviceId: svc.id, contactId, carName }
+                    params: { companyId, serviceId: svc.id, contactId, carName, origin, clientName }
                 })
             } else {
                 router.push({
                     pathname: '/(app)/(client)/companies/[companyId]/booking/vehicle',
-                    params: { companyId, serviceId: svc.id }
+                    params: { companyId, serviceId: svc.id, origin, clientName }
                 })
             }
         }
@@ -251,7 +249,7 @@ export default function BookingServicesScreen() {
 
             <TrueSheet
                 ref={sheetRef}
-                sizes={['auto']}
+                detents={['auto']}
                 cornerRadius={24}
                 backgroundColor={isDark ? '#1C1C1E' : '#FFF'}
             >
@@ -272,12 +270,12 @@ export default function BookingServicesScreen() {
                                 if (contactId) {
                                     router.push({
                                         pathname: '/(app)/(client)/companies/[companyId]/booking/team',
-                                        params: { companyId, serviceId: pendingService.id, contactId, carName }
+                                        params: { companyId, serviceId: pendingService.id, contactId, carName, origin, clientName }
                                     })
                                 } else {
                                     router.push({
                                         pathname: '/(app)/(client)/companies/[companyId]/booking/vehicle',
-                                        params: { companyId, serviceId: pendingService.id }
+                                        params: { companyId, serviceId: pendingService.id, origin, clientName }
                                     })
                                 }
                             }

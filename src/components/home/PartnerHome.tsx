@@ -163,7 +163,7 @@ const PartnerHome = () => {
                         { backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF' }
                     ]}
                     onPress={() => router.push({
-                        pathname: '/companies/[companyId]/teams',
+                        pathname: '/(app)/(partner)/companies/[companyId]/teams',
                         params: { companyId: user!!.company!!.id }
                     })}
                     activeOpacity={0.7}
@@ -190,7 +190,7 @@ const PartnerHome = () => {
                         { backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF' }
                     ]}
                     onPress={() => router.push({
-                        pathname: '/companies/[companyId]/services',
+                        pathname: '/(app)/(partner)/companies/[companyId]/services',
                         params: { companyId: user!!.company!!.id }
                     })}
                     activeOpacity={0.7}
@@ -217,7 +217,7 @@ const PartnerHome = () => {
                         { backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF' }
                     ]}
                     onPress={() => router.push({
-                        pathname: '/companies/[companyId]/manager',
+                        pathname: '/(app)/(partner)/companies/[companyId]/manager',
                         params: { companyId: user!!.company!!.id }
                     })}
                     activeOpacity={0.7}
@@ -244,7 +244,7 @@ const PartnerHome = () => {
                         { backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF' }
                     ]}
                     onPress={() => router.push({
-                        pathname: '/companies/[companyId]/slots',
+                        pathname: '/(app)/(partner)/companies/[companyId]/slots',
                         params: { companyId: user!!.company!!.id }
                     })}
                     activeOpacity={0.7}

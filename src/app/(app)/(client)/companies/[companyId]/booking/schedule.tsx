@@ -40,12 +40,13 @@ interface CarService {
     id: string
     name: string
     price: string | number
+    hasVariablePricing?: boolean
 }
 
 
 
 export default function BookingScheduleScreen() {
-    const { companyId, serviceId, teamId, contactId, carName, vehicleId } = useLocalSearchParams<{ companyId: string, serviceId: string, teamId?: string, contactId?: string, carName?: string, vehicleId?: string }>()
+    const { companyId, serviceId, teamId, contactId, carName, vehicleId, origin, clientName } = useLocalSearchParams<{ companyId: string, serviceId: string, teamId?: string, contactId?: string, carName?: string, vehicleId?: string, origin?: string, clientName?: string }>()
     const { user } = useAuth()
     const router = useRouter()
     const colorScheme = useColorScheme()
@@ -219,10 +220,13 @@ export default function BookingScheduleScreen() {
                         time: selectedTime,
                         serviceName: service.name,
                         price: service.price,
-                        hasVariablePricing: service.hasVariablePricing,
+                        hasVariablePricing: service.hasVariablePricing ? 'true' : 'false',
                         companyId,
                         teamName: assignedTeamName,
-                        carName: baseBookingData.carName
+                        carName: baseBookingData.carName,
+                        contactId,
+                        clientName: clientName || user?.name,
+                        origin
                     }
                 })
             } else {
@@ -250,10 +254,13 @@ export default function BookingScheduleScreen() {
                                 time: selectedTime,
                                 serviceName: service.name,
                                 price: service.price,
-                                hasVariablePricing: service.hasVariablePricing,
+                                hasVariablePricing: service.hasVariablePricing ? 'true' : 'false',
                                 companyId,
                                 teamName: teamForRecovery?.name,
-                                carName: baseBookingData.carName
+                                carName: baseBookingData.carName,
+                                contactId,
+                                clientName: clientName || user?.name,
+                                origin
                             }
                         })
                         return

@@ -14,6 +14,10 @@ export default function PartnerStack() {
     return <Redirect href={'/' as any} />
   }
 
+  if (activeRole === 'CLIENT' || activeRole === 'USER') {
+    return <Redirect href={'/(app)/(client)' as any} />
+  }
+
   return (
     <Stack initialRouteName="(tabs)" screenOptions={{ headerShown: true, headerTitleAlign: 'left', headerBackButtonDisplayMode: 'minimal' }}>
 
