@@ -32,12 +32,12 @@ export type Booking = {
     id: string
     scheduledAt: string
     status: 'SCHEDULED' | 'CONFIRMED' | 'COMPLETED' | 'CANCELLED' | string
-    carService?: { name: string, price: string | number }
-    service?: { name: string, price: string | number }
+    carService?: { name: string, price: string | number, hasVariablePricing?: boolean }
+    service?: { name: string, price: string | number, hasVariablePricing?: boolean }
     carWash?: { name: string }
-    company?: { name: string }
-    user?: { name: string, avatar?: string }
-    contact?: { name: string }
+    company?: { name: string, requireBookingConfirmation?: boolean }
+    user?: { name: string, avatar?: string, phone?: string, email?: string }
+    contact?: { name: string, phone?: string, email?: string }
     team?: { name: string, id?: string }
     carName?: string
     vehicle?: { model?: string, make?: string, year?: number | string }

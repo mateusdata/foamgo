@@ -117,6 +117,8 @@ export default function BookingDetails() {
     const avatarUrl = booking.user?.avatar;
 
     const customerName = (booking as any).user?.name || (booking as any).contact?.name || (booking as any).company?.name || 'Cliente';
+    const customerPhone = (booking as any).user?.phone || (booking as any).contact?.phone;
+    const customerEmail = (booking as any).user?.email || (booking as any).contact?.email;
     const serviceName = booking.carService?.name || booking.service?.name;
     const price = booking.carService?.price || booking.service?.price || '0,00';
     const vehicleName = [booking.vehicle?.model, booking.vehicle?.make, booking.vehicle?.year?.toString()]
@@ -134,7 +136,6 @@ export default function BookingDetails() {
                 contentInsetAdjustmentBehavior="automatic"
                 contentContainerStyle={styles.content}
             >
-                {/* Horizontal Header Section */}
                 <View style={[styles.headerSection, { borderBottomColor: isDark ? '#333' : '#F0F0F0' }]}>
                     <View style={[styles.avatarContainer, { backgroundColor: isDark ? '#333' : '#E0E0E0' }]}>
                         {hasAvatar ? (
@@ -157,7 +158,6 @@ export default function BookingDetails() {
                     </View>
                 </View>
 
-                {/* Compact Details Section */}
                 <View style={styles.detailsContainer}>
                     <View style={styles.detailItem}>
                         <View style={[styles.iconBox, { backgroundColor: 'rgba(51, 112, 255, 0.1)' }]}>
@@ -196,7 +196,7 @@ export default function BookingDetails() {
                         </View>
                     </View>
 
-                    <View style={[styles.detailItem, { borderBottomWidth: (booking.service?.hasVariablePricing || booking.carService?.hasVariablePricing) ? 1 : 0 }]}>
+                    <View style={[styles.detailItem, { borderBottomWidth: (booking.service?.hasVariablePricing || booking.carService?.hasVariablePricing || customerPhone || customerEmail) ? 1 : 0 }]}>
                         <View style={[styles.iconBox, { backgroundColor: 'rgba(51, 112, 255, 0.1)' }]}>
                             <Ionicons name="wallet-outline" size={18} color={Colors.primary} />
                         </View>
@@ -207,6 +207,30 @@ export default function BookingDetails() {
                             </ThemedText>
                         </View>
                     </View>
+
+                    {!!customerPhone && (
+                        <View style={[styles.detailItem, { borderBottomWidth: (booking.service?.hasVariablePricing || booking.carService?.hasVariablePricing || customerEmail) ? 1 : 0 }]}>
+                            <View style={[styles.iconBox, { backgroundColor: 'rgba(51, 112, 255, 0.1)' }]}>
+                                <Ionicons name="call-outline" size={18} color={Colors.primary} />
+                            </View>
+                            <View style={styles.detailContent}>
+                                <ThemedText style={styles.detailLabel}>Telefone</ThemedText>
+                                <ThemedText style={styles.detailValue}>{customerPhone}</ThemedText>
+                            </View>
+                        </View>
+                    )}
+
+                    {!!customerEmail && (
+                        <View style={[styles.detailItem, { borderBottomWidth: (booking.service?.hasVariablePricing || booking.carService?.hasVariablePricing) ? 1 : 0 }]}>
+                            <View style={[styles.iconBox, { backgroundColor: 'rgba(51, 112, 255, 0.1)' }]}>
+                                <Ionicons name="mail-outline" size={18} color={Colors.primary} />
+                            </View>
+                            <View style={styles.detailContent}>
+                                <ThemedText style={styles.detailLabel}>E-mail</ThemedText>
+                                <ThemedText style={styles.detailValue}>{customerEmail}</ThemedText>
+                            </View>
+                        </View>
+                    )}
 
                     {(booking.service?.hasVariablePricing || booking.carService?.hasVariablePricing) && price && parseFloat(price.toString().replace(',', '.')) > 0 ? (
                         <View style={[styles.detailItem, { borderBottomWidth: 0, marginTop: (booking.service?.hasVariablePricing || booking.carService?.hasVariablePricing) ? 16 : 0 }]}>

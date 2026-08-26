@@ -234,12 +234,22 @@ export default function ContactsScreen() {
   const handleSelectContact = async (contact: Contact) => {
     setSelectedContact(contact);
     
-    if (filterMode === 'recent' && contact.lastCar) {
-      const isDashed = contact.lastCar.includes(' - ');
-      const parts = contact.lastCar.split(isDashed ? ' - ' : ' ');
-      const namePart = parts[0] || '';
-      const modelPart = parts.slice(1).join(isDashed ? ' - ' : ' ') || '';
-      resetSchedule({ carName: namePart, carModel: modelPart });
+    if (contact.lastCar) {
+      let namePart = '';
+      let modelPart = '';
+      if (contact.lastCar.includes(' - ')) {
+        const parts = contact.lastCar.split(' - ');
+        namePart = parts[0]?.trim() || '';
+        modelPart = parts.slice(1).join(' - ').trim() || '';
+      } else if (contact.lastCar.includes(' ')) {
+        const parts = contact.lastCar.split(' ');
+        namePart = parts[0]?.trim() || '';
+        modelPart = parts.slice(1).join(' ').trim() || '';
+      } else {
+        namePart = contact.lastCar.trim();
+        modelPart = '';
+      }
+      resetSchedule({ carName: namePart, carModel: modelPart || namePart });
     } else {
       resetSchedule({ carName: '', carModel: '' });
     }
@@ -255,7 +265,8 @@ export default function ContactsScreen() {
       pathname: '/(app)/(client)/companies/[companyId]/booking',
       params: { 
         companyId, 
-        contactId: selectedContact.id, 
+        contactId: selectedContact.isAppUser ? undefined : selectedContact.id,
+        userId: selectedContact.isAppUser ? selectedContact.id : undefined,
         clientName: selectedContact.name,
         carName: `${data.carName} - ${data.carModel}`,
         origin

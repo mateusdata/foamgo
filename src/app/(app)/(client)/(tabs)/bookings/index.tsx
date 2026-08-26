@@ -126,7 +126,7 @@ export default function MyBookingsScreen() {
   }
 
   const filteredBookings = selectedStatus === 'ALL'
-    ? bookings.filter(b => b.status === 'SCHEDULED' || b.status === 'CONFIRMED' || b.status === 'Scheduled' || b.status === 'Confirmed')
+    ? bookings.filter(b => b.status === 'SCHEDULED' || b.status === 'CONFIRMED')
     : bookings;
 
   const renderItem = ({ item }: { item: Booking }) => {
@@ -290,6 +290,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: 100,
     gap: 16,
+  },
+  emptyTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    textAlign: 'center',
   },
   emptyText: {
     fontSize: 16,

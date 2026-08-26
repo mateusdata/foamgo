@@ -46,7 +46,7 @@ interface CarService {
 
 
 export default function BookingScheduleScreen() {
-    const { companyId, serviceId, teamId, contactId, carName, vehicleId, origin, clientName } = useLocalSearchParams<{ companyId: string, serviceId: string, teamId?: string, contactId?: string, carName?: string, vehicleId?: string, origin?: string, clientName?: string }>()
+    const { companyId, serviceId, teamId, contactId, userId, carName, vehicleId, origin, clientName } = useLocalSearchParams<{ companyId: string, serviceId: string, teamId?: string, contactId?: string, userId?: string, carName?: string, vehicleId?: string, origin?: string, clientName?: string }>()
     const { user } = useAuth()
     const router = useRouter()
     const colorScheme = useColorScheme()
@@ -110,7 +110,6 @@ export default function BookingScheduleScreen() {
                 grouped[dateKey] = []
             }
 
-            // Evita duplicatas: só adiciona se não existir slot com mesmo horário nessa data
             const alreadyExists = grouped[dateKey].some(existingSlot => existingSlot.time === slot.time)
             if (!alreadyExists) {
                 grouped[dateKey].push(slot)
@@ -140,8 +139,16 @@ export default function BookingScheduleScreen() {
 
         const price = typeof service.price === 'string' ? parseFloat(service.price) : service.price
 
+        const isPartnerOrTeam = origin === 'partner' || origin === 'team'
+        let targetUserId: string | undefined = undefined
+        if (userId) {
+            targetUserId = userId
+        } else if (!contactId && !isPartnerOrTeam) {
+            targetUserId = user.id
+        }
+
         const baseBookingData: any = {
-            userId: contactId ? undefined : user.id,
+            userId: targetUserId,
             companyId,
             serviceId,
             scheduledAt: finalDate.toISOString(),

@@ -15,10 +15,10 @@ type Booking = {
     id: string
     scheduledAt: string
     status: BookingStatus
-    carService?: { name: string; price: string | number }
-    service?: { name: string; price: string | number }
+    carService?: { name: string; price: string | number; hasVariablePricing?: boolean }
+    service?: { name: string; price: string | number; hasVariablePricing?: boolean }
     carWash?: { name: string; avatar: string; addresses?: { street: string; city: string } }
-    company?: { name: string; avatar: string; addresses?: { street: string; city: string } }
+    company?: { name: string; avatar: string; addresses?: { street: string; city: string }; requireBookingConfirmation?: boolean }
     totalPrice?: number | string
     carName?: string
     vehicle?: { model?: string; make?: string; year?: number | string; plate?: string }

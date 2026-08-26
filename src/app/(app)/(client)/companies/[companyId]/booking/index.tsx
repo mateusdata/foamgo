@@ -39,7 +39,7 @@ interface Category {
 }
 
 export default function BookingServicesScreen() {
-    const { companyId, contactId, carName, origin, clientName } = useLocalSearchParams<{ companyId: string, contactId?: string, carName?: string, origin?: string, clientName?: string }>()
+    const { companyId, contactId, userId, carName, origin, clientName } = useLocalSearchParams<{ companyId: string, contactId?: string, userId?: string, carName?: string, origin?: string, clientName?: string }>()
     const router = useRouter()
     const colorScheme = useColorScheme()
     const isDark = colorScheme === 'dark'
@@ -91,10 +91,10 @@ export default function BookingServicesScreen() {
 
     const handleSelectService = (service: CarService) => {
         const navigateNext = (svc: CarService) => {
-            if (contactId) {
+            if (contactId || userId) {
                 router.push({
                     pathname: '/(app)/(client)/companies/[companyId]/booking/team',
-                    params: { companyId, serviceId: svc.id, contactId, carName, origin, clientName }
+                    params: { companyId, serviceId: svc.id, contactId, userId, carName, origin, clientName }
                 })
             } else {
                 router.push({
