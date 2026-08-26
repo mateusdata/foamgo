@@ -47,8 +47,9 @@ export default function BookingDetails() {
         try {
             await api.post(`/bookings/${id}/remind-confirmation`);
             Alert.alert('Sucesso', 'Lembrete enviado ao cliente.');
-        } catch (error) {
-            Alert.alert('Erro', 'Não foi possível enviar o lembrete.');
+        } catch (error: any) {
+            const msg = error?.response?.data?.message || 'Não foi possível enviar o lembrete.';
+            Alert.alert('Aviso', msg);
         }
     };
 
