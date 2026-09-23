@@ -52,7 +52,7 @@ export default function AuthProvider({ children }: React.PropsWithChildren<{}>) 
           await refreshUser();
         } catch (err: any) {
           const status = err?.response?.status;
-          if (status === 401 || status === 404) {
+          if (status === 401 || status === 404 || status === 503 || status === 502 || status === 504) {
             await logOut();
           }
         }

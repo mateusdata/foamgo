@@ -3,6 +3,7 @@ import axios from 'axios';
 const PROD_URL = "https://foamgoapi.onrender.com/api";
 const DEV_URL = "http://192.168.25.168:3000/api";
 
+// Configuração da API
 const api = axios.create({
   baseURL: false ? DEV_URL : PROD_URL,
 });
@@ -84,8 +85,8 @@ api.interceptors.response.use(
       }
     }
 
-    if (status === 401 && hadAuthHeader) {
-      console.log('🛑 [Interceptor] Erro 401 final. Deslogando usuário...');
+    if ((status === 401 || status === 503 || status === 502 || status === 504) && hadAuthHeader) {
+      console.log(`🛑 [Interceptor] Erro ${status} (indisponível/não autorizado). Deslogando usuário...`);
       await AsyncStorage.removeItem('token');
       await AsyncStorage.removeItem('refreshToken');
       await AsyncStorage.removeItem('user');
